@@ -2,6 +2,7 @@ import { useState } from "react";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { Button } from "../../components/ui/Button";
+import { submitQuoteRequest } from "../../api/endpoints";
 
 export default function SupportQuote() {
   const [form, setForm] = useState({
@@ -13,13 +14,25 @@ export default function SupportQuote() {
     message: "",
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // NOTE: the QuoteRequest backend model/endpoint is planned for the next
-    // (content-management) phase — this form is fully built and validated on
-    // the frontend, ready to POST to /api/quotes once that lands.
-    setSubmitted(true);
+    setError("");
+    setSubmitting(true);
+    try {
+      await submitQuoteRequest(form);
+      setSubmitted(true);
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === "object" && "response" in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      setError(message || "Something went wrong submitting your request. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -88,7 +101,10 @@ export default function SupportQuote() {
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
               />
-              <Button type="submit">Submit request</Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Submitting..." : "Submit request"}
+              </Button>
+              {error && <p className="text-sm text-red-500">{error}</p>}
             </form>
           )}
         </Reveal>

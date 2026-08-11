@@ -15,6 +15,12 @@ export interface IProduct extends Document {
   stock: number;
   sku: string;
   isActive: boolean;
+  // Promotional flags — this is what lets admin "boost" a product without
+  // hardcoding it into the homepage or a specific page.
+  isFeatured: boolean;
+  isNewArrival: boolean; // named to avoid colliding with Mongoose's built-in Document.isNew
+  isBestSeller: boolean;
+  badges: string[]; // freeform extra badges e.g. "Limited offer", "Bundle"
 }
 
 const productSchema = new Schema<IProduct>(
@@ -31,9 +37,16 @@ const productSchema = new Schema<IProduct>(
     stock: { type: Number, required: true, min: 0, default: 0 },
     sku: { type: String, required: true, unique: true },
     isActive: { type: Boolean, default: true },
+    isFeatured: { type: Boolean, default: false },
+    isNewArrival: { type: Boolean, default: false },
+    isBestSeller: { type: Boolean, default: false },
+    badges: { type: [String], default: [] },
   },
   { timestamps: true }
 );
+
+productSchema.index({ isFeatured: 1 });
+productSchema.index({ isBestSeller: 1 });
 
 productSchema.index({ name: "text", description: "text", category: "text" });
 

@@ -13,6 +13,11 @@ import brandRoutes from "./routes/brandRoutes";
 import cityRoutes from "./routes/cityRoutes";
 import dealerRoutes from "./routes/dealerRoutes";
 import orderRoutes from "./routes/orderRoutes";
+import categoryRoutes from "./routes/categoryRoutes";
+import campaignRoutes from "./routes/campaignRoutes";
+import resourceRoutes from "./routes/resourceRoutes";
+import homepageSectionRoutes from "./routes/homepageSectionRoutes";
+import quoteRoutes from "./routes/quoteRoutes";
 
 dotenv.config();
 connectDB();
@@ -32,6 +37,11 @@ app.use("/api/brands", brandRoutes);
 app.use("/api/cities", cityRoutes);
 app.use("/api/dealers", dealerRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/campaigns", campaignRoutes);
+app.use("/api/resources", resourceRoutes);
+app.use("/api/homepage-sections", homepageSectionRoutes);
+app.use("/api/quotes", quoteRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
