@@ -29,45 +29,83 @@ import ResourceDetail from "./pages/resources/ResourceDetail";
 import Dealers from "./pages/dealers/Dealers";
 import DealerDetail from "./pages/dealers/DealerDetail";
 
-function App() {
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminLayout from "./pages/admin/AdminLayout";
+import RequireAdmin from "./pages/admin/RequireAdmin";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminBrands from "./pages/admin/AdminBrands";
+import AdminDealers from "./pages/admin/AdminDealers";
+import AdminCampaigns from "./pages/admin/AdminCampaigns";
+import AdminResources from "./pages/admin/AdminResources";
+import AdminQuotes from "./pages/admin/AdminQuotes";
+
+// Wraps the public-facing site with the shared Navbar/Footer chrome.
+// The admin area intentionally does NOT use this — it has its own sidebar layout.
+function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<Home />} />
-
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:slug" element={<ProductDetail />} />
-          <Route path="/categories/:slug" element={<CategoryLanding />} />
-          <Route path="/campaigns/:slug" element={<CampaignLanding />} />
-
-          <Route path="/brands" element={<Brands />} />
-          <Route path="/brands/:slug" element={<BrandDetail />} />
-
-          <Route path="/company/about" element={<CompanyAbout />} />
-          <Route path="/company/facilities" element={<CompanyFacilities />} />
-          <Route path="/company/news" element={<CompanyNews />} />
-          <Route path="/company/events" element={<CompanyEvents />} />
-          <Route path="/company/careers" element={<CompanyCareers />} />
-
-          <Route path="/support/contact" element={<SupportContact />} />
-          <Route path="/support/faq" element={<SupportFAQ />} />
-          <Route path="/support/warranty" element={<SupportWarranty />} />
-          <Route path="/support/quote" element={<SupportQuote />} />
-
-          <Route path="/resources" element={<Resources />} />
-          <Route path="/resources/:slug" element={<ResourceDetail />} />
-
-          <Route path="/dealers" element={<Dealers />} />
-          <Route path="/dealers/:slug" element={<DealerDetail />} />
-
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-        </Routes>
-      </main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <Routes>
+      {/* Admin area — own layout, no public Navbar/Footer */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route
+        path="/admin"
+        element={
+          <RequireAdmin>
+            <AdminLayout />
+          </RequireAdmin>
+        }
+      >
+        <Route index element={<AdminProducts />} />
+        <Route path="products" element={<AdminProducts />} />
+        <Route path="categories" element={<AdminCategories />} />
+        <Route path="brands" element={<AdminBrands />} />
+        <Route path="dealers" element={<AdminDealers />} />
+        <Route path="campaigns" element={<AdminCampaigns />} />
+        <Route path="resources" element={<AdminResources />} />
+        <Route path="quotes" element={<AdminQuotes />} />
+      </Route>
+
+      {/* Public site — shared Navbar/Footer chrome */}
+      <Route path="/" element={<SiteLayout><Home /></SiteLayout>} />
+
+      <Route path="/products" element={<SiteLayout><Products /></SiteLayout>} />
+      <Route path="/products/:slug" element={<SiteLayout><ProductDetail /></SiteLayout>} />
+      <Route path="/categories/:slug" element={<SiteLayout><CategoryLanding /></SiteLayout>} />
+      <Route path="/campaigns/:slug" element={<SiteLayout><CampaignLanding /></SiteLayout>} />
+
+      <Route path="/brands" element={<SiteLayout><Brands /></SiteLayout>} />
+      <Route path="/brands/:slug" element={<SiteLayout><BrandDetail /></SiteLayout>} />
+
+      <Route path="/company/about" element={<SiteLayout><CompanyAbout /></SiteLayout>} />
+      <Route path="/company/facilities" element={<SiteLayout><CompanyFacilities /></SiteLayout>} />
+      <Route path="/company/news" element={<SiteLayout><CompanyNews /></SiteLayout>} />
+      <Route path="/company/events" element={<SiteLayout><CompanyEvents /></SiteLayout>} />
+      <Route path="/company/careers" element={<SiteLayout><CompanyCareers /></SiteLayout>} />
+
+      <Route path="/support/contact" element={<SiteLayout><SupportContact /></SiteLayout>} />
+      <Route path="/support/faq" element={<SiteLayout><SupportFAQ /></SiteLayout>} />
+      <Route path="/support/warranty" element={<SiteLayout><SupportWarranty /></SiteLayout>} />
+      <Route path="/support/quote" element={<SiteLayout><SupportQuote /></SiteLayout>} />
+
+      <Route path="/resources" element={<SiteLayout><Resources /></SiteLayout>} />
+      <Route path="/resources/:slug" element={<SiteLayout><ResourceDetail /></SiteLayout>} />
+
+      <Route path="/dealers" element={<SiteLayout><Dealers /></SiteLayout>} />
+      <Route path="/dealers/:slug" element={<SiteLayout><DealerDetail /></SiteLayout>} />
+
+      <Route path="/cart" element={<SiteLayout><Cart /></SiteLayout>} />
+      <Route path="/checkout" element={<SiteLayout><Checkout /></SiteLayout>} />
+    </Routes>
   );
 }
 

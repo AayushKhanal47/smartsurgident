@@ -106,6 +106,110 @@ export const getResources = (params?: { type?: string; category?: string; search
 export const getResourceBySlug = (slug: string) =>
   api.get<Resource>(`/resources/${slug}`).then((r) => r.data);
 
+export interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+}
+
+export const getCategories = () => api.get<Category[]>("/categories").then((r) => r.data);
+
+export const createCategory = (data: { name: string; slug: string; description?: string }) =>
+  api.post<Category>("/categories", data).then((r) => r.data);
+
+export const createBrandAdmin = (data: { name: string; slug: string; logoUrl?: string; description?: string }) =>
+  api.post<Brand>("/brands", data).then((r) => r.data);
+
+export interface CreateProductInput {
+  name: string;
+  slug: string;
+  brand: string;
+  category: string;
+  description: string;
+  price: number;
+  clinicPrice: number;
+  stock: number;
+  sku: string;
+  isFeatured?: boolean;
+  isNewArrival?: boolean;
+  isBestSeller?: boolean;
+}
+
+export const createProductAdmin = (data: CreateProductInput) =>
+  api.post<Product>("/products", data).then((r) => r.data);
+
+export interface CreateDealerInput {
+  name: string;
+  city: string;
+  phone: string;
+  email: string;
+  password: string;
+  province?: string;
+  whatsapp?: string;
+}
+
+export const createDealerAdmin = (data: CreateDealerInput) =>
+  api.post("/dealers", data).then((r) => r.data);
+
+export const getDealersAdmin = () => api.get("/dealers").then((r) => r.data);
+
+export interface CreateCampaignInput {
+  title: string;
+  slug: string;
+  description?: string;
+  placement: "homepage" | "category" | "standalone";
+  isActive: boolean;
+}
+
+export const createCampaignAdmin = (data: CreateCampaignInput) =>
+  api.post("/campaigns", data).then((r) => r.data);
+
+export const getCampaigns = (params?: { placement?: string }) =>
+  api.get("/campaigns", { params }).then((r) => r.data);
+
+export interface CreateResourceInput {
+  title: string;
+  slug: string;
+  type: "article" | "guide" | "catalog" | "video" | "brochure" | "manual";
+  summary: string;
+  body?: string;
+  isPublished: boolean;
+}
+
+export const createResourceAdmin = (data: CreateResourceInput) =>
+  api.post<Resource>("/resources", data).then((r) => r.data);
+
+export interface QuoteRequestRecord {
+  _id: string;
+  organizationName: string;
+  contactName: string;
+  phone: string;
+  email?: string;
+  items: string;
+  message?: string;
+  status: "new" | "in_progress" | "quoted" | "closed";
+  createdAt: string;
+}
+
+export const getQuoteRequestsAdmin = () => api.get<QuoteRequestRecord[]>("/quotes").then((r) => r.data);
+
+export const updateQuoteStatusAdmin = (id: string, status: string) =>
+  api.patch(`/quotes/${id}/status`, { status }).then((r) => r.data);
+
+export interface AdminUser {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export const loginAdmin = (email: string, password: string) =>
+  api.post<AdminUser>("/auth/login", { email, password }).then((r) => r.data);
+
+export const getMe = () => api.get<AdminUser>("/auth/me").then((r) => r.data);
+
 export interface QuoteRequestInput {
   organizationName: string;
   contactName: string;
