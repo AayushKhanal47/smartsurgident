@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getProducts, getBrands, createProductAdmin } from "../../api/endpoints";
 import type { Product, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
+import ImageUploader from "./ImageUploader";
 
 const emptyForm = {
   name: "",
@@ -19,6 +20,7 @@ export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState(emptyForm);
+  const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -27,7 +29,9 @@ export default function AdminProducts() {
     getBrands().then(setBrands).catch(() => setBrands([]));
   };
 
-  useEffect(load, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,8 +43,10 @@ export default function AdminProducts() {
         price: Number(form.price),
         clinicPrice: Number(form.clinicPrice),
         stock: Number(form.stock),
+        images: imageUrl ? [imageUrl] : [],
       });
       setForm(emptyForm);
+      setImageUrl("");
       load();
     } catch (err: unknown) {
       const message =
@@ -62,8 +68,13 @@ export default function AdminProducts() {
           <p className="text-sm font-medium text-brand-navy mb-3">Existing products ({products.length})</p>
           <div className="bg-white rounded-2xl divide-y divide-slate-100 max-h-[500px] overflow-y-auto">
             {products.map((p) => (
-              <div key={p._id} className="p-4 flex justify-between items-center">
-                <div>
+              <div key={p._id} className="p-4 flex items-center gap-3">
+                {p.images?.[0] ? (
+                  <img src={p.images[0]} alt={p.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                ) : (
+                  <div className="w-10 h-10 rounded-lg bg-brand-tint shrink-0" />
+                )}
+                <div className="flex-1">
                   <p className="text-sm font-medium text-brand-navy">{p.name}</p>
                   <p className="text-xs text-brand-muted">{p.brand?.name} · Stock: {p.stock}</p>
                 </div>
@@ -76,6 +87,7 @@ export default function AdminProducts() {
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">
           <p className="text-sm font-medium text-brand-navy mb-1">Add product</p>
+          <ImageUploader value={imageUrl} onChange={setImageUrl} label="Product photo" />
           <input required placeholder="Name" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
             value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input required placeholder="Slug (e.g. extraction-forceps-set)" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"

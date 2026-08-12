@@ -18,6 +18,7 @@ import campaignRoutes from "./routes/campaignRoutes";
 import resourceRoutes from "./routes/resourceRoutes";
 import homepageSectionRoutes from "./routes/homepageSectionRoutes";
 import quoteRoutes from "./routes/quoteRoutes";
+import uploadRoutes from "./routes/uploadRoutes";
 
 dotenv.config();
 connectDB();
@@ -42,6 +43,7 @@ app.use("/api/campaigns", campaignRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/homepage-sections", homepageSectionRoutes);
 app.use("/api/quotes", quoteRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

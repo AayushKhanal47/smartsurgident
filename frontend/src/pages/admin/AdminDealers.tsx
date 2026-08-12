@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getCities, getDealersAdmin, createDealerAdmin } from "../../api/endpoints";
 import type { City } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
+import ImageUploader from "./ImageUploader";
 
 interface DealerRow { _id: string; name: string; email: string; city?: { name: string } }
 
@@ -11,6 +12,7 @@ export default function AdminDealers() {
   const [dealers, setDealers] = useState<DealerRow[]>([]);
   const [cities, setCities] = useState<City[]>([]);
   const [form, setForm] = useState(emptyForm);
+  const [profilePhoto, setProfilePhoto] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -25,8 +27,9 @@ export default function AdminDealers() {
     setError("");
     setSubmitting(true);
     try {
-      await createDealerAdmin(form);
+      await createDealerAdmin({ ...form, profilePhoto });
       setForm(emptyForm);
+      setProfilePhoto("");
       load();
     } catch (err: unknown) {
       const message = err && typeof err === "object" && "response" in err
@@ -55,6 +58,7 @@ export default function AdminDealers() {
         </div>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">
           <p className="text-sm font-medium text-brand-navy mb-1">Add dealer</p>
+          <ImageUploader value={profilePhoto} onChange={setProfilePhoto} label="Profile photo" />
           <input required placeholder="Dealer / business name" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
             value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <select required className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"

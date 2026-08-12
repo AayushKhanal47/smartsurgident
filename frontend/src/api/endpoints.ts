@@ -132,6 +132,7 @@ export interface CreateProductInput {
   clinicPrice: number;
   stock: number;
   sku: string;
+  images?: string[];
   isFeatured?: boolean;
   isNewArrival?: boolean;
   isBestSeller?: boolean;
@@ -148,6 +149,7 @@ export interface CreateDealerInput {
   password: string;
   province?: string;
   whatsapp?: string;
+  profilePhoto?: string;
 }
 
 export const createDealerAdmin = (data: CreateDealerInput) =>
