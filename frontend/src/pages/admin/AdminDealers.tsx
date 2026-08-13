@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCities, getDealersAdmin, createDealerAdmin } from "../../api/endpoints";
+import { getCities, getDealersAdmin, createDealerAdmin, deleteDealerAdmin } from "../../api/endpoints";
 import type { City } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import ImageUploader from "./ImageUploader";
@@ -21,6 +21,12 @@ export default function AdminDealers() {
     getCities().then(setCities).catch(() => setCities([]));
   };
   useEffect(load, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this dealer? Their city will have no active dealer until a new one is added.")) return;
+    await deleteDealerAdmin(id);
+    load();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,9 +54,14 @@ export default function AdminDealers() {
           <p className="text-sm font-medium text-brand-navy mb-3">Existing dealers ({dealers.length})</p>
           <div className="bg-white rounded-2xl divide-y divide-slate-100">
             {dealers.map((d) => (
-              <div key={d._id} className="p-4">
-                <p className="text-sm font-medium text-brand-navy">{d.name}</p>
-                <p className="text-xs text-brand-muted">{d.city?.name} · {d.email}</p>
+              <div key={d._id} className="p-4 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-brand-navy">{d.name}</p>
+                  <p className="text-xs text-brand-muted">{d.city?.name} · {d.email}</p>
+                </div>
+                <button onClick={() => handleDelete(d._id)} className="text-xs text-red-500 font-medium">
+                  Delete
+                </button>
               </div>
             ))}
             {dealers.length === 0 && <p className="p-4 text-sm text-brand-muted">No dealers yet.</p>}

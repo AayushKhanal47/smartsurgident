@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getResources, createResourceAdmin } from "../../api/endpoints";
+import { getAllResourcesAdmin, createResourceAdmin, deleteResourceAdmin } from "../../api/endpoints";
 import type { Resource } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 
@@ -12,10 +12,16 @@ export default function AdminResources() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const load = () => getResources().then(setResources).catch(() => setResources([]));
+  const load = () => getAllResourcesAdmin().then(setResources).catch(() => setResources([]));
   useEffect(() => {
     load();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this resource? This cannot be undone.")) return;
+    await deleteResourceAdmin(id);
+    load();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,12 +48,17 @@ export default function AdminResources() {
           <p className="text-sm font-medium text-brand-navy mb-3">Existing resources ({resources.length})</p>
           <div className="bg-white rounded-2xl divide-y divide-slate-100">
             {resources.map((r) => (
-              <div key={r._id} className="p-4">
-                <p className="text-sm font-medium text-brand-navy">{r.title}</p>
-                <p className="text-xs text-brand-muted">{r.type}</p>
+              <div key={r._id} className="p-4 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-brand-navy">{r.title}</p>
+                  <p className="text-xs text-brand-muted">{r.type}</p>
+                </div>
+                <button onClick={() => handleDelete(r._id)} className="text-xs text-red-500 font-medium">
+                  Delete
+                </button>
               </div>
             ))}
-            {resources.length === 0 && <p className="p-4 text-sm text-brand-muted">No resources yet — note: newly created ones are unpublished by default unless "Published" is checked, and this list only shows published resources.</p>}
+            {resources.length === 0 && <p className="p-4 text-sm text-brand-muted">No resources yet.</p>}
           </div>
         </div>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">

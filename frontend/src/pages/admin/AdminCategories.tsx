@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCategories, createCategory } from "../../api/endpoints";
+import { getCategories, createCategory, deleteCategoryAdmin } from "../../api/endpoints";
 import type { Category } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 
@@ -13,6 +13,12 @@ export default function AdminCategories() {
   useEffect(() => {
     load();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this category? This cannot be undone.")) return;
+    await deleteCategoryAdmin(id);
+    load();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,9 +45,14 @@ export default function AdminCategories() {
           <p className="text-sm font-medium text-brand-navy mb-3">Existing categories ({categories.length})</p>
           <div className="bg-white rounded-2xl divide-y divide-slate-100">
             {categories.map((c) => (
-              <div key={c._id} className="p-4">
-                <p className="text-sm font-medium text-brand-navy">{c.name}</p>
-                <p className="text-xs text-brand-muted">/{c.slug}</p>
+              <div key={c._id} className="p-4 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-brand-navy">{c.name}</p>
+                  <p className="text-xs text-brand-muted">/{c.slug}</p>
+                </div>
+                <button onClick={() => handleDelete(c._id)} className="text-xs text-red-500 font-medium">
+                  Delete
+                </button>
               </div>
             ))}
             {categories.length === 0 && <p className="p-4 text-sm text-brand-muted">No categories yet.</p>}

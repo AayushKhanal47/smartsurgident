@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getBrands, createBrandAdmin } from "../../api/endpoints";
+import { getBrands, createBrandAdmin, deleteBrandAdmin } from "../../api/endpoints";
 import type { Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import ImageUploader from "./ImageUploader";
@@ -15,6 +15,12 @@ export default function AdminBrands() {
   useEffect(() => {
     load();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this brand? This cannot be undone.")) return;
+    await deleteBrandAdmin(id);
+    load();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,10 +54,13 @@ export default function AdminBrands() {
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-brand-tint shrink-0" />
                 )}
-                <div>
+                <div className="flex-1">
                   <p className="text-sm font-medium text-brand-navy">{b.name}</p>
                   <p className="text-xs text-brand-muted">/{b.slug}</p>
                 </div>
+                <button onClick={() => handleDelete(b._id)} className="text-xs text-red-500 font-medium">
+                  Delete
+                </button>
               </div>
             ))}
             {brands.length === 0 && <p className="p-4 text-sm text-brand-muted">No brands yet.</p>}
