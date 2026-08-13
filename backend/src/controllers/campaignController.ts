@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import Campaign from "../models/Campaign";
 
-// GET /api/campaigns?placement=homepage — only active, currently-running campaigns
 export const getCampaigns = asyncHandler(async (req: Request, res: Response) => {
   const { placement } = req.query;
   const now = new Date();
@@ -17,6 +16,11 @@ export const getCampaigns = asyncHandler(async (req: Request, res: Response) => 
   if (placement) filter.placement = placement;
 
   const campaigns = await Campaign.find(filter).populate("products");
+  res.json(campaigns);
+});
+
+export const getAllCampaignsAdmin = asyncHandler(async (_req: Request, res: Response) => {
+  const campaigns = await Campaign.find().sort({ createdAt: -1 }).populate("products");
   res.json(campaigns);
 });
 
@@ -43,4 +47,13 @@ export const updateCampaign = asyncHandler(async (req: Request, res: Response) =
     throw new Error("Campaign not found");
   }
   res.json(campaign);
+});
+
+export const deleteCampaign = asyncHandler(async (req: Request, res: Response) => {
+  const campaign = await Campaign.findByIdAndDelete(req.params.id);
+  if (!campaign) {
+    res.status(404);
+    throw new Error("Campaign not found");
+  }
+  res.json({ message: "Campaign removed" });
 });
