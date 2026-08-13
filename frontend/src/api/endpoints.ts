@@ -223,3 +223,13 @@ export interface QuoteRequestInput {
 
 export const submitQuoteRequest = (data: QuoteRequestInput) =>
   api.post("/quotes", data).then((r) => r.data);
+
+export const deleteProductAdmin = (id: string) => api.delete(`/products/${id}`).then((r) => r.data);
+export const deleteCategoryAdmin = (id: string) => api.delete(`/categories/${id}`).then((r) => r.data);
+export const deleteBrandAdmin = (id: string) => api.delete(`/brands/${id}`).then((r) => r.data);
+export const deleteDealerAdmin = (id: string) => api.delete(`/dealers/${id}`).then((r) => r.data);
+export const deleteCampaignAdmin = (id: string) => api.delete(`/campaigns/${id}`).then((r) => r.data);
+export const deleteResourceAdmin = (id: string) => api.delete(`/resources/${id}`).then((r) => r.data);
+
+export const getAllCampaignsAdmin = () => api.get("/campaigns/admin/all").then((r) => r.data);
+export const getAllResourcesAdmin = () => api.get<Resource[]>("/resources/admin/all").then((r) => r.data);

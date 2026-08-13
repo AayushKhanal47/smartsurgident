@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProducts, getBrands, createProductAdmin } from "../../api/endpoints";
+import { getProducts, getBrands, createProductAdmin, deleteProductAdmin } from "../../api/endpoints";
 import type { Product, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import ImageUploader from "./ImageUploader";
@@ -32,6 +32,12 @@ export default function AdminProducts() {
   useEffect(() => {
     load();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this product? This cannot be undone.")) return;
+    await deleteProductAdmin(id);
+    load();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +85,12 @@ export default function AdminProducts() {
                   <p className="text-xs text-brand-muted">{p.brand?.name} · Stock: {p.stock}</p>
                 </div>
                 <p className="text-sm text-brand-blue font-medium">Rs {p.price}</p>
+                <button
+                  onClick={() => handleDelete(p._id)}
+                  className="text-xs text-red-500 font-medium shrink-0"
+                >
+                  Delete
+                </button>
               </div>
             ))}
             {products.length === 0 && <p className="p-4 text-sm text-brand-muted">No products yet.</p>}
