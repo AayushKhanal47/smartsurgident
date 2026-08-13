@@ -4,6 +4,7 @@ import {
   getProductBySlug,
   createProduct,
   updateProduct,
+  deleteProduct,
 } from "../controllers/productController";
 import { protect, adminOnly } from "../middleware/auth";
 
@@ -13,5 +14,6 @@ router.get("/", getProducts);
 router.get("/:slug", getProductBySlug);
 router.post("/", protect, adminOnly, createProduct);
 router.put("/:id", protect, adminOnly, updateProduct);
+router.delete("/:id", protect, adminOnly, deleteProduct);
 
 export default router;

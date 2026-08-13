@@ -29,3 +29,12 @@ export const updateCategory = asyncHandler(async (req: Request, res: Response) =
   }
   res.json(category);
 });
+
+export const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
+  const category = await Category.findByIdAndDelete(req.params.id);
+  if (!category) {
+    res.status(404);
+    throw new Error("Category not found");
+  }
+  res.json({ message: "Category removed" });
+});
