@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import Resource from "../models/Resource";
 
-// GET /api/resources?type=&category=&search=
 export const getResources = asyncHandler(async (req: Request, res: Response) => {
   const { type, category, search } = req.query;
   const filter: Record<string, unknown> = { isPublished: true };
@@ -14,6 +13,11 @@ export const getResources = asyncHandler(async (req: Request, res: Response) => 
   const resources = await Resource.find(filter)
     .sort({ publishedAt: -1 })
     .populate("linkedBrands", "name slug");
+  res.json(resources);
+});
+
+export const getAllResourcesAdmin = asyncHandler(async (_req: Request, res: Response) => {
+  const resources = await Resource.find().sort({ createdAt: -1 });
   res.json(resources);
 });
 
@@ -41,4 +45,13 @@ export const updateResource = asyncHandler(async (req: Request, res: Response) =
     throw new Error("Resource not found");
   }
   res.json(resource);
+});
+
+export const deleteResource = asyncHandler(async (req: Request, res: Response) => {
+  const resource = await Resource.findByIdAndDelete(req.params.id);
+  if (!resource) {
+    res.status(404);
+    throw new Error("Resource not found");
+  }
+  res.json({ message: "Resource removed" });
 });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getCampaigns, createCampaignAdmin } from "../../api/endpoints";
+import { getAllCampaignsAdmin, createCampaignAdmin, deleteCampaignAdmin } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 
 interface CampaignRow { _id: string; title: string; slug: string; placement: string; isActive: boolean }
@@ -12,10 +12,16 @@ export default function AdminCampaigns() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const load = () => getCampaigns().then((c) => setCampaigns(c as CampaignRow[])).catch(() => setCampaigns([]));
+  const load = () => getAllCampaignsAdmin().then((c) => setCampaigns(c as CampaignRow[])).catch(() => setCampaigns([]));
   useEffect(() => {
     load();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this campaign? This cannot be undone.")) return;
+    await deleteCampaignAdmin(id);
+    load();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,9 +48,14 @@ export default function AdminCampaigns() {
           <p className="text-sm font-medium text-brand-navy mb-3">Existing campaigns ({campaigns.length})</p>
           <div className="bg-white rounded-2xl divide-y divide-slate-100">
             {campaigns.map((c) => (
-              <div key={c._id} className="p-4">
-                <p className="text-sm font-medium text-brand-navy">{c.title}</p>
-                <p className="text-xs text-brand-muted">{c.placement} · {c.isActive ? "Active" : "Inactive"}</p>
+              <div key={c._id} className="p-4 flex justify-between items-center">
+                <div>
+                  <p className="text-sm font-medium text-brand-navy">{c.title}</p>
+                  <p className="text-xs text-brand-muted">{c.placement} · {c.isActive ? "Active" : "Inactive"}</p>
+                </div>
+                <button onClick={() => handleDelete(c._id)} className="text-xs text-red-500 font-medium">
+                  Delete
+                </button>
               </div>
             ))}
             {campaigns.length === 0 && <p className="p-4 text-sm text-brand-muted">No campaigns yet.</p>}

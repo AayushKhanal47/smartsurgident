@@ -10,7 +10,6 @@ const signToken = (id: string) =>
 const slugify = (value: string) =>
   value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
-// POST /api/dealers  (admin only — onboard a new sub-dealer for a city)
 export const createDealer = asyncHandler(async (req: Request, res: Response) => {
   const {
     name,
@@ -65,7 +64,6 @@ export const createDealer = asyncHandler(async (req: Request, res: Response) => 
   res.status(201).json({ _id: dealer._id, name: dealer.name, city: dealer.city, slug: dealer.slug });
 });
 
-// POST /api/dealers/login
 export const loginDealer = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const dealer = await Dealer.findOne({ email });
@@ -80,13 +78,11 @@ export const loginDealer = asyncHandler(async (req: Request, res: Response) => {
   res.json({ _id: dealer._id, name: dealer.name, city: dealer.city, token });
 });
 
-// GET /api/dealers  (admin only — includes inactive dealers and contact/login info)
 export const getDealers = asyncHandler(async (_req: Request, res: Response) => {
   const dealers = await Dealer.find().populate("city", "name").select("-password");
   res.json(dealers);
 });
 
-// GET /api/dealers/public  (public — powers the Dealer Network directory)
 export const getPublicDealers = asyncHandler(async (req: Request, res: Response) => {
   const { province, city } = req.query;
   const filter: Record<string, unknown> = { isActive: true };
@@ -100,7 +96,6 @@ export const getPublicDealers = asyncHandler(async (req: Request, res: Response)
   res.json(dealers);
 });
 
-// GET /api/dealers/public/:slug  (public — dealer profile page)
 export const getPublicDealerBySlug = asyncHandler(async (req: Request, res: Response) => {
   const dealer = await Dealer.findOne({ slug: req.params.slug, isActive: true })
     .populate("city", "name")
@@ -112,4 +107,27 @@ export const getPublicDealerBySlug = asyncHandler(async (req: Request, res: Resp
     throw new Error("Dealer not found");
   }
   res.json(dealer);
+});
+
+export const updateDealer = asyncHandler(async (req: Request, res: Response) => {
+  const { password, ...rest } = req.body;
+  const update = password ? { ...rest, password: await bcrypt.hash(password, 10) } : rest;
+
+  const dealer = await Dealer.findByIdAndUpdate(req.params.id, update, { new: true }).select(
+    "-password"
+  );
+  if (!dealer) {
+    res.status(404);
+    throw new Error("Dealer not found");
+  }
+  res.json(dealer);
+});
+
+export const deleteDealer = asyncHandler(async (req: Request, res: Response) => {
+  const dealer = await Dealer.findByIdAndDelete(req.params.id);
+  if (!dealer) {
+    res.status(404);
+    throw new Error("Dealer not found");
+  }
+  res.json({ message: "Dealer removed — that city now has no active dealer until a new one is added" });
 });
