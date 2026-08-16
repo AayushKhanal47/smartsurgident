@@ -1,32 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand palette pulled from the Smart Surgident logo */
-  --color-brand-navy: #0C2340;
+  /* Refined navy/blue healthcare palette per design spec */
+  --color-brand-navy: #0D2947;
   --color-brand-navy-dark: #04141F;
-  --color-brand-blue: #1B5C8A;
+  --color-brand-blue: #17699A;
   --color-brand-light: #4FA8D8;
-  --color-brand-tint: #EAF3FB;
-  --color-brand-bg: #F7FAFC;
-  --color-brand-slate: #5B6B7A;
+  --color-brand-tint: #E8F1FA;
+  --color-brand-bg: #F7FAFD;
+  --color-brand-slate: #64748B;
   --color-brand-muted: #8B98A6;
+  --color-brand-border: #DCE6EF;
+  --color-brand-text: #102A43;
 
-  --font-display: "Manrope", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-sans: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-display: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
+/* Page defaults to white — individual sections apply bg-brand-bg,
+   bg-brand-tint, or bg-brand-navy explicitly for visual rhythm,
+   rather than tinting the whole page uniformly. */
 body {
-  background-color: var(--color-brand-bg);
+  background-color: #FFFFFF;
   font-family: var(--font-sans);
-  color: var(--color-brand-navy);
+  color: var(--color-brand-text);
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
 }
 
-/* Respect reduced-motion preference globally as a fallback;
-   Framer Motion components also check this individually via useReducedMotion() */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
