@@ -4,8 +4,6 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { HiArrowRight, HiOutlineMap, HiOutlineUserGroup, HiOutlineGlobeAlt, HiOutlineClock } from "react-icons/hi";
 
-// Vite doesn't resolve Leaflet's default marker image paths correctly out of
-// the box — this manually points at the CDN-hosted icon set instead.
 const markerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -15,14 +13,13 @@ const markerIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
-// Real cities where the site references a dealer network — coordinates only,
-// no invented dealer counts per city since that data isn't available yet.
+// Matches the site's actual seeded/planned dealer cities
 const CITIES = [
   { name: "Kathmandu", lat: 27.7172, lng: 85.324 },
   { name: "Pokhara", lat: 28.2096, lng: 83.9856 },
-  { name: "Bharatpur", lat: 27.6244, lng: 84.4407 },
+  { name: "Chitwan", lat: 27.5291, lng: 84.3542 },
   { name: "Butwal", lat: 27.7, lng: 83.4485 },
-  { name: "Bhairahawa", lat: 27.5042, lng: 83.4523 },
+  { name: "Biratnagar", lat: 26.4525, lng: 87.2718 },
 ];
 
 const INFO = [
@@ -48,14 +45,16 @@ export default function NepalDealerNetwork() {
         <div className="grid md:grid-cols-3 gap-8 items-start">
           <div className="md:col-span-2 rounded-2xl overflow-hidden border border-[#DCE6EF] h-[420px]">
             <MapContainer
-              center={[27.9, 84.3]}
+              center={[27.6, 84.7]}
               zoom={7}
+              minZoom={7}
+              maxZoom={11}
               scrollWheelZoom={false}
               style={{ height: "100%", width: "100%" }}
             >
               <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               />
               {CITIES.map((city) => (
                 <Marker key={city.name} position={[city.lat, city.lng]} icon={markerIcon}>
