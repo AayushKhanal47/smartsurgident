@@ -3,6 +3,9 @@ import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { Button } from "../../components/ui/Button";
 import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa";
+
+const WHATSAPP_NUMBER = "977980XXXXXXX";
 
 export default function SupportContact() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -10,9 +13,6 @@ export default function SupportContact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // NOTE: no backend endpoint exists for general contact messages yet —
-    // this is frontend-foundation phase. Wire this up to a real API route
-    // (e.g. POST /api/contact) once the backend content-management phase lands.
     setSubmitted(true);
   };
 
@@ -42,6 +42,15 @@ export default function SupportContact() {
               <HiOutlineMail className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
               info@smartsurgident.com
             </span>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 hover:text-brand-blue transition-colors"
+            >
+              <FaWhatsapp className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
+              Chat on WhatsApp
+            </a>
           </div>
         </Reveal>
 

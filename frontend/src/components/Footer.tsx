@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
+import { FaWhatsapp } from "react-icons/fa";
 import Logo from "./ui/Logo";
 
 const COLUMNS: { heading: string; links: { label: string; to: string }[] }[] = [
@@ -40,6 +41,9 @@ const COLUMNS: { heading: string; links: { label: string; to: string }[] }[] = [
   },
 ];
 
+// Placeholder — replace with your real WhatsApp business number once set up
+const WHATSAPP_NUMBER = "977980XXXXXXX";
+
 export default function Footer() {
   return (
     <footer className="bg-brand-navy text-white mt-16">
@@ -60,6 +64,14 @@ export default function Footer() {
             <span className="flex items-center gap-2">
               <HiOutlineMail className="shrink-0" aria-hidden="true" /> info@smartsurgident.com
             </span>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 hover:text-white transition-colors"
+            >
+              <FaWhatsapp className="shrink-0" aria-hidden="true" /> WhatsApp us
+            </a>
           </div>
         </div>
 

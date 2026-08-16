@@ -116,10 +116,15 @@ export default function DealerDetail() {
               {dealer.phone}
             </span>
             {dealer.whatsapp && (
-              <span className="flex items-center gap-2 text-brand-slate">
+              <a
+                href={`https://wa.me/${dealer.whatsapp.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-brand-slate hover:text-brand-blue transition-colors"
+              >
                 <FaWhatsapp className="shrink-0" aria-hidden="true" />
                 {dealer.whatsapp}
-              </span>
+              </a>
             )}
             {dealer.openingHours && (
               <span className="flex items-center gap-2 text-brand-slate">
