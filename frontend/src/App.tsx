@@ -32,6 +32,7 @@ import DealerDetail from "./pages/dealers/DealerDetail";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import RequireAdmin from "./pages/admin/RequireAdmin";
+import AdminOverview from "./pages/admin/AdminOverview";
 import AdminProducts from "./pages/admin/AdminProducts";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminBrands from "./pages/admin/AdminBrands";
@@ -65,7 +66,7 @@ function App() {
           </RequireAdmin>
         }
       >
-        <Route index element={<AdminProducts />} />
+        <Route index element={<AdminOverview />} />
         <Route path="products" element={<AdminProducts />} />
         <Route path="categories" element={<AdminCategories />} />
         <Route path="brands" element={<AdminBrands />} />
