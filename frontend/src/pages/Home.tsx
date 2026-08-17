@@ -1,5 +1,6 @@
 import Hero from "../components/home/Hero";
 import SolutionAreas from "../components/home/SolutionAreas";
+import ClinicShowcase from "../components/home/ClinicShowcase";
 import BestSellers from "../components/home/BestSellers";
 import WhySmartSurgident from "../components/home/WhySmartSurgident";
 import TrustedBrands from "../components/home/TrustedBrands";
@@ -11,6 +12,7 @@ export default function Home() {
     <div>
       <Hero />
       <SolutionAreas />
+      <ClinicShowcase />
       <BestSellers />
       <WhySmartSurgident />
       <TrustedBrands />

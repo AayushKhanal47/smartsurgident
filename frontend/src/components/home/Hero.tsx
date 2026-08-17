@@ -1,11 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { ButtonLink } from "../ui/Button";
-import {
-  HiOutlineCube,
-  HiOutlineTag,
-  HiOutlineViewGrid,
-  HiOutlineUserGroup,
-} from "react-icons/hi";
+import { HiOutlineCube, HiOutlineTag, HiOutlineViewGrid, HiOutlineUserGroup } from "react-icons/hi";
 import heroImage from "../../assets/hero.png";
 
 const STATS = [
@@ -19,12 +14,33 @@ export default function Hero() {
   const reduceMotion = useReducedMotion();
 
   return (
-    <section className="bg-white">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 pt-12 pb-16 md:pt-16 md:pb-20 grid md:grid-cols-2 gap-12 items-center">
+    <section className="relative bg-white overflow-hidden">
+      {/* Desktop: image bleeds to the right edge, blended into white via gradient */}
+      <div className="hidden md:block absolute inset-y-0 right-0 w-[55%] lg:w-[52%]">
+        <img
+          src={heroImage}
+          alt="Dental chair and equipment"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-y-0 left-0 w-2/5 bg-gradient-to-r from-white via-white/70 to-transparent" />
+
+        <div className="absolute top-8 right-8 bg-white rounded-full shadow-md px-5 py-3">
+          <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-wide text-[#0D2947]">
+            <span>Quality</span>
+            <span className="w-px h-3 bg-[#DCE6EF]" />
+            <span>Trust</span>
+            <span className="w-px h-3 bg-[#DCE6EF]" />
+            <span>Service</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative max-w-[1400px] mx-auto px-6 md:px-10 pt-12 pb-10 md:py-24">
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, y: 16 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
+          className="md:max-w-[52%] lg:max-w-[48%]"
         >
           <span className="inline-block bg-[#E8F1FA] text-[#17699A] text-[11px] font-bold uppercase tracking-wider px-4 py-2 rounded-full mb-5">
             Nationwide Dealer Network
@@ -47,12 +63,10 @@ export default function Hero() {
             </ButtonLink>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-5 gap-y-4">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-x-6 gap-y-4">
             {STATS.map((stat) => (
-              <div key={stat.label} className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-[#E8F1FA] flex items-center justify-center shrink-0">
-                  <stat.icon className="text-[#17699A] text-[15px]" aria-hidden="true" />
-                </div>
+              <div key={stat.label} className="flex items-center gap-2">
+                <stat.icon className="text-[#17699A] text-lg shrink-0" aria-hidden="true" />
                 <div>
                   <p className="text-sm font-bold text-[#0D2947] leading-tight">{stat.value}</p>
                   <p className="text-[11px] text-[#64748B] leading-tight">{stat.label}</p>
@@ -62,26 +76,24 @@ export default function Hero() {
           </div>
         </motion.div>
 
+        {/* Mobile: image shown below content as a contained rounded block */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, scale: 0.97 }}
           animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
-          className="relative"
+          className="md:hidden relative mt-8 rounded-2xl overflow-hidden bg-[#E8F1FA]"
         >
-          <div className="rounded-3xl overflow-hidden bg-[#E8F1FA] shadow-[0_20px_50px_-15px_rgba(13,41,71,0.25)]">
-            <img
-              src={heroImage}
-              alt="Dental chair and equipment"
-              className="w-full h-auto object-cover"
-            />
-          </div>
-
-          <div className="absolute top-5 right-5 bg-white rounded-full shadow-md px-4 py-2.5 hidden sm:block">
-            <div className="flex items-center gap-2.5 text-[9px] font-bold uppercase tracking-wide text-[#0D2947]">
+          <img
+            src={heroImage}
+            alt="Dental chair and equipment"
+            className="w-full h-56 sm:h-72 object-cover"
+          />
+          <div className="absolute top-3 right-3 bg-white rounded-full shadow-md px-3.5 py-2">
+            <div className="flex items-center gap-2 text-[8px] font-bold uppercase tracking-wide text-[#0D2947]">
               <span>Quality</span>
-              <span className="w-px h-3 bg-[#DCE6EF]" />
+              <span className="w-px h-2.5 bg-[#DCE6EF]" />
               <span>Trust</span>
-              <span className="w-px h-3 bg-[#DCE6EF]" />
+              <span className="w-px h-2.5 bg-[#DCE6EF]" />
               <span>Service</span>
             </div>
           </div>

@@ -54,7 +54,7 @@ export default function NepalDealerNetwork() {
             >
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+                url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
               />
               {CITIES.map((city) => (
                 <Marker key={city.name} position={[city.lat, city.lng]} icon={markerIcon}>

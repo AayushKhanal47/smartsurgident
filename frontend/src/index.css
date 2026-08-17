@@ -38,3 +38,19 @@ h1, h2, h3, h4 {
     scroll-behavior: auto !important;
   }
 }
+
+@keyframes brand-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.brand-marquee {
+  animation: brand-scroll 30s linear infinite;
+}
+.brand-marquee:hover {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-marquee {
+    animation: none;
+  }
+}
