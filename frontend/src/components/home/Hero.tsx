@@ -52,8 +52,8 @@ export default function Hero() {
           </h1>
 
           <p className="text-[#64748B] text-[15px] leading-relaxed mb-7 max-w-md">
-            Genuine dental and surgical instruments imported from China, India and beyond —
-            verified, stocked, and delivered by dealers across Nepal.
+            Genuine dental and surgical instruments.
+           Delivered all over Nepal.
           </p>
 
           <div className="flex gap-3 flex-wrap mb-9">
