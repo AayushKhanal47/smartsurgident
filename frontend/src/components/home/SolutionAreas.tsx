@@ -82,7 +82,7 @@ export default function SolutionAreas() {
             >
               <Link
                 to={`/categories/${cat.slug}`}
-                className="group block bg-white border border-brand-border rounded-2xl p-6 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
+className="group block bg-white border border-[#DCE6EF] rounded-2xl p-6 hover:shadow-[0_10px_30px_rgba(13,41,71,0.08)] hover:border-[#17699A]/30 hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="w-11 h-11 rounded-xl bg-brand-tint flex items-center justify-center mb-4 group-hover:bg-brand-blue transition-colors">
                   <cat.icon className="text-lg text-brand-blue group-hover:text-white transition-colors" aria-hidden="true" />

@@ -10,13 +10,15 @@ interface BaseProps {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-brand-blue text-white hover:bg-brand-navy",
-  secondary: "bg-white text-brand-blue border border-brand-blue/20 hover:border-brand-blue/50",
-  ghost: "bg-transparent text-brand-navy hover:bg-brand-tint",
+  primary:
+    "bg-[#17699A] text-white shadow-[0_4px_14px_rgba(23,105,154,0.35)] hover:bg-[#0D2947] hover:shadow-[0_6px_18px_rgba(13,41,71,0.4)] hover:-translate-y-0.5",
+  secondary:
+    "bg-white text-[#17699A] border border-[#DCE6EF] hover:border-[#17699A] hover:shadow-[0_4px_14px_rgba(23,105,154,0.15)] hover:-translate-y-0.5",
+  ghost: "bg-transparent text-[#0D2947] hover:bg-[#E8F1FA]",
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors duration-200";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200";
 
 export function ButtonLink({
   to,
@@ -48,7 +50,7 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${base} ${variantClasses[variant]} ${className} disabled:opacity-40 disabled:cursor-not-allowed`}
+      className={`${base} ${variantClasses[variant]} ${className} disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none`}
     >
       {children}
     </button>

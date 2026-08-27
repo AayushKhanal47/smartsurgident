@@ -48,7 +48,7 @@ export default function Hero() {
 
           <h1 className="text-[2.1rem] sm:text-[2.5rem] lg:text-[2.75rem] font-display font-extrabold text-[#0D2947] leading-[1.12] mb-4 tracking-tight">
             Advancing dentistry through{" "}
-            <span className="text-[#17699A]">trusted products</span> &amp; distribution
+            <span className="text-[#17699A]">trusted products</span> &amp; distribution all over Nepal
           </h1>
 
           <p className="text-[#64748B] text-[15px] leading-relaxed mb-7 max-w-md">

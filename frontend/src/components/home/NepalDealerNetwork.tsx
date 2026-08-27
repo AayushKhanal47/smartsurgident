@@ -6,11 +6,11 @@ import { HiArrowRight, HiOutlineMap, HiOutlineUserGroup, HiOutlineGlobeAlt, HiOu
 // map's coordinate space, not hand-guessed, so relative placement
 // (west-to-east, north-to-south) matches actual geography.
 const CITIES = [
-  { name: "Kathmandu", x: 676, y: 413 },
-  { name: "Pokhara", x: 510, y: 346 },
-  { name: "Chitwan", x: 566, y: 426 },
-  { name: "Butwal", x: 443, y: 416 },
-  { name: "Biratnagar", x: 917, y: 587 },
+  { name: "Kathmandu", x: 644, y: 369 },
+  { name: "Pokhara", x: 498, y: 309 },
+  { name: "Chitwan", x: 546, y: 374 },
+  { name: "Butwal", x: 440, y: 372 },
+  { name: "Biratnagar", x: 854, y: 523 },
 ];
 
 const INFO = [
