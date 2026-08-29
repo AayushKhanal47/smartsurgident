@@ -10,7 +10,7 @@ const LINKS = [
   { label: "Brands", to: "/admin/brands" },
   { label: "Dealers", to: "/admin/dealers" },
   { label: "Campaigns", to: "/admin/campaigns" },
-  { label: "Resources", to: "/admin/resources" },
+  { label: "Catalog PDFs", to: "/admin/resources" },
   { label: "Quote requests", to: "/admin/quotes" },
 ];
 

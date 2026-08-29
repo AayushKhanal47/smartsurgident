@@ -5,19 +5,12 @@ import type { Resource } from "../../api/endpoints";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 
-const TYPE_LABELS: Record<string, string> = {
-  article: "Article",
-  guide: "Guide",
-  catalog: "Catalog",
-  video: "Video",
-  brochure: "Brochure",
-  manual: "Manual",
-};
-
 export default function ResourceDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [resource, setResource] = useState<Resource | null>(null);
   const [notFound, setNotFound] = useState(false);
+  const [openingPdf, setOpeningPdf] = useState(false);
+  const [openError, setOpenError] = useState("");
 
   useEffect(() => {
     if (!slug) return;
@@ -40,6 +33,44 @@ export default function ResourceDetail() {
     return <p className="px-6 md:px-10 py-16 text-sm text-brand-muted">Loading...</p>;
   }
 
+  const handleOpenPdf = async () => {
+    if (!resource.fileUrl || openingPdf) return;
+
+    setOpenError("");
+    setOpeningPdf(true);
+
+    const newTab = window.open("about:blank", "_blank");
+    if (!newTab) {
+      setOpeningPdf(false);
+      setOpenError("Your browser blocked the new tab. Allow pop-ups for this site and try again.");
+      return;
+    }
+
+    newTab.opener = null;
+
+    newTab.document.write(
+      "<title>Opening catalog PDF...</title><p style='font-family:sans-serif;padding:24px'>Opening catalog PDF...</p>"
+    );
+
+    try {
+      const response = await fetch(resource.fileUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to load PDF (${response.status})`);
+      }
+
+      const blob = await response.blob();
+      const pdfBlob = blob.type === "application/pdf" ? blob : new Blob([blob], { type: "application/pdf" });
+      const blobUrl = URL.createObjectURL(pdfBlob);
+      newTab.location.href = blobUrl;
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000);
+    } catch {
+      newTab.close();
+      setOpenError("This PDF could not be opened. Re-upload the catalog PDF and try again.");
+    } finally {
+      setOpeningPdf(false);
+    }
+  };
+
   return (
     <div>
       <Breadcrumbs
@@ -50,44 +81,27 @@ export default function ResourceDetail() {
         ]}
       />
 
-      <Reveal className="px-6 md:px-10 py-12 max-w-2xl">
-        <span className="text-xs font-semibold text-brand-blue uppercase tracking-wide">
-          {TYPE_LABELS[resource.type]}
-        </span>
+      <Reveal className="px-6 md:px-10 py-12 max-w-3xl">
+        {resource.coverImage && (
+          <div className="h-56 md:h-72 bg-brand-tint rounded-3xl overflow-hidden mb-8">
+            <img src={resource.coverImage} alt={resource.title} className="w-full h-full object-cover" />
+          </div>
+        )}
         <h1 className="text-2xl md:text-3xl font-display font-bold text-brand-navy mt-2 mb-4">
           {resource.title}
         </h1>
         <p className="text-brand-slate text-sm mb-6">{resource.summary}</p>
 
-        {resource.body && (
-          <div className="bg-white rounded-2xl p-6 text-sm text-brand-navy whitespace-pre-line mb-6">
-            {resource.body}
-          </div>
-        )}
-
-        {resource.videoUrl && (
-          <div className="mb-6">
-            <a
-              href={resource.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-brand-blue text-sm font-medium"
-            >
-              Watch video &rarr;
-            </a>
-          </div>
-        )}
-
         {resource.fileUrl && (
-          <a
-            href={resource.fileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={handleOpenPdf}
             className="inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold bg-brand-blue text-white hover:bg-brand-navy transition-colors"
           >
-            Download
-          </a>
+            {openingPdf ? "Opening..." : "Open Catalog PDF"}
+          </button>
         )}
+        {openError && <p className="mt-3 text-sm text-red-500">{openError}</p>}
       </Reveal>
     </div>
   );

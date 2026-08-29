@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { Button } from "../../components/ui/Button";
 import Logo from "../../components/ui/Logo";
@@ -9,6 +10,7 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -48,14 +50,24 @@ export default function AdminLogin() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <input
-            required
-            type="password"
-            placeholder="Password"
-            className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="relative">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="w-full border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button
+              type="button"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              onClick={() => setShowPassword((value) => !value)}
+              className="absolute inset-y-0 right-0 px-3 text-brand-muted hover:text-brand-navy transition-colors"
+            >
+              {showPassword ? <HiEyeOff className="text-lg" /> : <HiEye className="text-lg" />}
+            </button>
+          </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" disabled={submitting} className="justify-center">
             {submitting ? "Signing in..." : "Sign in"}

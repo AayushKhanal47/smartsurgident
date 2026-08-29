@@ -2,9 +2,16 @@ import { useEffect, useState } from "react";
 import { getAllResourcesAdmin, createResourceAdmin, deleteResourceAdmin } from "../../api/endpoints";
 import type { Resource } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
+import ImageUploader from "./ImageUploader";
+import PdfUploader from "./PdfUploader";
 
-const emptyForm = { title: "", slug: "", type: "article" as const, summary: "", body: "", isPublished: true };
-const TYPES = ["article", "guide", "catalog", "video", "brochure", "manual"] as const;
+const emptyForm = {
+  title: "",
+  summary: "",
+  coverImage: "",
+  fileUrl: "",
+  isPublished: true,
+};
 
 export default function AdminResources() {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -42,45 +49,88 @@ export default function AdminResources() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-brand-navy mb-6">E-Library resources</h1>
+      <h1 className="text-xl font-semibold text-brand-navy mb-6">Catalog PDFs</h1>
       <div className="grid md:grid-cols-2 gap-8">
         <div>
-          <p className="text-sm font-medium text-brand-navy mb-3">Existing resources ({resources.length})</p>
-          <div className="bg-white rounded-2xl divide-y divide-slate-100">
+          <p className="text-sm font-medium text-brand-navy mb-3">Existing catalogs ({resources.length})</p>
+          <div className="bg-white rounded-2xl divide-y divide-slate-100 overflow-hidden">
             {resources.map((r) => (
-              <div key={r._id} className="p-4 flex justify-between items-center">
-                <div>
+              <div key={r._id} className="p-4 flex items-center gap-3">
+                {r.coverImage ? (
+                  <img
+                    src={r.coverImage}
+                    alt={r.title}
+                    className="w-14 h-14 rounded-xl object-cover shrink-0 border border-slate-200"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-xl bg-brand-tint shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-brand-navy">{r.title}</p>
-                  <p className="text-xs text-brand-muted">{r.type}</p>
+                  <p className="text-xs text-brand-muted line-clamp-2">{r.summary}</p>
+                  <p className="text-xs text-brand-blue mt-1">
+                    {r.isPublished ? "Published" : "Draft"} · {r.fileUrl ? "PDF ready" : "PDF missing"}
+                  </p>
                 </div>
-                <button onClick={() => handleDelete(r._id)} className="text-xs text-red-500 font-medium">
-                  Delete
-                </button>
+                <div className="flex flex-col items-end gap-2 shrink-0">
+                  {r.fileUrl && (
+                    <a
+                      href={r.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-brand-blue font-medium"
+                    >
+                      Open PDF
+                    </a>
+                  )}
+                  <button onClick={() => handleDelete(r._id)} className="text-xs text-red-500 font-medium">
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
-            {resources.length === 0 && <p className="p-4 text-sm text-brand-muted">No resources yet.</p>}
+            {resources.length === 0 && <p className="p-4 text-sm text-brand-muted">No catalog PDFs yet.</p>}
           </div>
         </div>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">
-          <p className="text-sm font-medium text-brand-navy mb-1">Add resource</p>
-          <input required placeholder="Title" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-          <input required placeholder="Slug" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-          <select className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value as typeof form.type })}>
-            {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <textarea required placeholder="Summary" rows={2} className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} />
-          <textarea placeholder="Body (optional, for articles/guides)" rows={4} className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} />
+          <p className="text-sm font-medium text-brand-navy mb-1">Upload catalog PDF</p>
+          <ImageUploader
+            value={form.coverImage}
+            onChange={(coverImage) => setForm((current) => ({ ...current, coverImage }))}
+            label="Banner image"
+          />
+          <PdfUploader
+            value={form.fileUrl}
+            onChange={(fileUrl) => setForm((current) => ({ ...current, fileUrl }))}
+            label="Catalog PDF"
+          />
+          <input
+            required
+            placeholder="Title"
+            className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
+            value={form.title}
+            onChange={(e) => setForm({ ...form, title: e.target.value })}
+          />
+          <textarea
+            required
+            placeholder="Short description"
+            rows={3}
+            className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
+            value={form.summary}
+            onChange={(e) => setForm({ ...form, summary: e.target.value })}
+          />
           <label className="flex items-center gap-2 text-sm text-brand-navy">
-            <input type="checkbox" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} />
+            <input
+              type="checkbox"
+              checked={form.isPublished}
+              onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+            />
             Published
           </label>
           {error && <p className="text-sm text-red-500">{error}</p>}
-          <Button type="submit" disabled={submitting}>{submitting ? "Adding..." : "Add resource"}</Button>
+          <Button type="submit" disabled={submitting}>
+            {submitting ? "Uploading..." : "Save catalog"}
+          </Button>
         </form>
       </div>
     </div>

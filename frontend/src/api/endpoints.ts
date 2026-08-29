@@ -50,13 +50,10 @@ export interface Resource {
   _id: string;
   title: string;
   slug: string;
-  type: "article" | "guide" | "catalog" | "video" | "brochure" | "manual";
   summary: string;
-  body?: string;
   fileUrl?: string;
-  videoUrl?: string;
   coverImage?: string;
-  category?: string;
+  isPublished: boolean;
   publishedAt?: string;
 }
 
@@ -100,7 +97,7 @@ export const getPublicDealers = (params?: { province?: string; city?: string }) 
 export const getPublicDealerBySlug = (slug: string) =>
   api.get<Dealer>(`/dealers/public/${slug}`).then((r) => r.data);
 
-export const getResources = (params?: { type?: string; category?: string; search?: string }) =>
+export const getResources = (params?: { search?: string }) =>
   api.get<Resource[]>("/resources", { params }).then((r) => r.data);
 
 export const getResourceBySlug = (slug: string) =>
@@ -173,10 +170,9 @@ export const getCampaigns = (params?: { placement?: string }) =>
 
 export interface CreateResourceInput {
   title: string;
-  slug: string;
-  type: "article" | "guide" | "catalog" | "video" | "brochure" | "manual";
   summary: string;
-  body?: string;
+  coverImage: string;
+  fileUrl: string;
   isPublished: boolean;
 }
 

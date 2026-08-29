@@ -15,7 +15,7 @@ const CARDS = [
   { to: "/admin/brands", icon: HiOutlineTag, title: "Brands", description: "Manage the brands you carry" },
   { to: "/admin/dealers", icon: HiOutlineUserGroup, title: "Dealers", description: "Onboard and manage sub-dealers" },
   { to: "/admin/campaigns", icon: HiOutlineSpeakerphone, title: "Campaigns", description: "Run promotions and featured pushes" },
-  { to: "/admin/resources", icon: HiOutlineBookOpen, title: "E-Library", description: "Publish articles, guides and catalogs" },
+  { to: "/admin/resources", icon: HiOutlineBookOpen, title: "Catalog PDFs", description: "Upload product catalogs with a banner image and PDF" },
   { to: "/admin/quotes", icon: HiOutlineClipboardList, title: "Quote requests", description: "Review and respond to B2B inquiries" },
 ];
 

@@ -1,16 +1,11 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
-export type ResourceType = "article" | "guide" | "catalog" | "video" | "brochure" | "manual";
-
 export interface IResource extends Document {
   title: string;
   slug: string;
-  type: ResourceType;
   summary: string;
-  body?: string; // for articles/guides — rendered content
-  fileUrl?: string; // for catalogs/brochures/manuals — a downloadable file
-  videoUrl?: string; // for videos — external embed link
-  coverImage?: string;
+  fileUrl: string;
+  coverImage: string;
   category?: string;
   linkedProducts: Types.ObjectId[];
   linkedBrands: Types.ObjectId[];
@@ -22,16 +17,9 @@ const resourceSchema = new Schema<IResource>(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true },
-    type: {
-      type: String,
-      enum: ["article", "guide", "catalog", "video", "brochure", "manual"],
-      required: true,
-    },
     summary: { type: String, required: true },
-    body: { type: String },
-    fileUrl: { type: String },
-    videoUrl: { type: String },
-    coverImage: { type: String },
+    fileUrl: { type: String, required: true },
+    coverImage: { type: String, required: true },
     category: { type: String },
     linkedProducts: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     linkedBrands: [{ type: Schema.Types.ObjectId, ref: "Brand" }],
