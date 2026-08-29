@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
+import { useState } from "react";
 import { HiArrowRight, HiOutlineMap, HiOutlineUserGroup, HiOutlineGlobeAlt, HiOutlineClock } from "react-icons/hi";
 
 // City positions are approximated from real longitude/latitude within the
@@ -27,6 +28,7 @@ const NEPAL_OUTLINE =
 
 export default function NepalDealerNetwork() {
   const reduceMotion = useReducedMotion();
+  const [activeCity, setActiveCity] = useState<string | null>(null);
 
   return (
     <section className="bg-white py-16 md:py-20">
@@ -47,22 +49,72 @@ export default function NepalDealerNetwork() {
               {CITIES.map((city, i) => (
                 <motion.g
                   key={city.name}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={city.name}
                   initial={reduceMotion ? undefined : { opacity: 0, scale: 0.5 }}
                   whileInView={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ duration: 0.3, delay: i * 0.1 }}
+                  onMouseEnter={() => setActiveCity(city.name)}
+                  onMouseLeave={() => setActiveCity((current) => (current === city.name ? null : current))}
+                  onFocus={() => setActiveCity(city.name)}
+                  onBlur={() => setActiveCity((current) => (current === city.name ? null : current))}
+                  onClick={() =>
+                    setActiveCity((current) => (current === city.name ? null : city.name))
+                  }
+                  className="cursor-pointer outline-none"
                 >
-                  <circle cx={city.x} cy={city.y} r="20" fill="#17699A" opacity="0.15" />
+                  <motion.circle
+                    cx={city.x}
+                    cy={city.y}
+                    r="20"
+                    fill="#17699A"
+                    opacity="0.15"
+                    animate={
+                      reduceMotion
+                        ? undefined
+                        : activeCity === city.name
+                        ? { scale: 1.05, opacity: 0.22 }
+                        : { scale: [1, 1.28, 1], opacity: [0.16, 0.04, 0.16] }
+                    }
+                    transition={
+                      reduceMotion
+                        ? undefined
+                        : activeCity === city.name
+                        ? { duration: 0.2 }
+                        : {
+                            duration: 1.8,
+                            repeat: Infinity,
+                            ease: "easeInOut",
+                            delay: i * 0.12,
+                          }
+                    }
+                    style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                  />
                   <circle cx={city.x} cy={city.y} r="9" fill="#17699A" stroke="#fff" strokeWidth="3" />
-                  <text
-                    x={city.x}
-                    y={city.y - 24}
-                    textAnchor="middle"
-                    className="fill-[#0D2947]"
-                    style={{ fontSize: "26px", fontWeight: 700 }}
-                  >
-                    {city.name}
-                  </text>
+                  {activeCity === city.name && (
+                    <>
+                      <rect
+                        x={city.x - 72}
+                        y={city.y - 68}
+                        rx="18"
+                        width="144"
+                        height="34"
+                        fill="#FFFFFF"
+                        stroke="#DCE6EF"
+                      />
+                      <text
+                        x={city.x}
+                        y={city.y - 45}
+                        textAnchor="middle"
+                        className="fill-[#0D2947]"
+                        style={{ fontSize: "22px", fontWeight: 700 }}
+                      >
+                        {city.name}
+                      </text>
+                    </>
+                  )}
                 </motion.g>
               ))}
             </svg>
