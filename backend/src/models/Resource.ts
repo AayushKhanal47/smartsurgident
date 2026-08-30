@@ -5,7 +5,7 @@ export interface IResource extends Document {
   slug: string;
   summary: string;
   fileUrl: string;
-  coverImage: string;
+  coverImage?: string;
   category?: string;
   linkedProducts: Types.ObjectId[];
   linkedBrands: Types.ObjectId[];
@@ -19,7 +19,7 @@ const resourceSchema = new Schema<IResource>(
     slug: { type: String, required: true, unique: true, lowercase: true },
     summary: { type: String, required: true },
     fileUrl: { type: String, required: true },
-    coverImage: { type: String, required: true },
+    coverImage: { type: String },
     category: { type: String },
     linkedProducts: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     linkedBrands: [{ type: Schema.Types.ObjectId, ref: "Brand" }],

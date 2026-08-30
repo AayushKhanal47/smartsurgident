@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { getAllResourcesAdmin, createResourceAdmin, deleteResourceAdmin } from "../../api/endpoints";
 import type { Resource } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
-import ImageUploader from "./ImageUploader";
 import PdfUploader from "./PdfUploader";
 
 const emptyForm = {
   title: "",
   summary: "",
-  coverImage: "",
   fileUrl: "",
   isPublished: true,
 };
@@ -56,15 +54,6 @@ export default function AdminResources() {
           <div className="bg-white rounded-2xl divide-y divide-slate-100 overflow-hidden">
             {resources.map((r) => (
               <div key={r._id} className="p-4 flex items-center gap-3">
-                {r.coverImage ? (
-                  <img
-                    src={r.coverImage}
-                    alt={r.title}
-                    className="w-14 h-14 rounded-xl object-cover shrink-0 border border-slate-200"
-                  />
-                ) : (
-                  <div className="w-14 h-14 rounded-xl bg-brand-tint shrink-0" />
-                )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-brand-navy">{r.title}</p>
                   <p className="text-xs text-brand-muted line-clamp-2">{r.summary}</p>
@@ -94,11 +83,6 @@ export default function AdminResources() {
         </div>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">
           <p className="text-sm font-medium text-brand-navy mb-1">Upload catalog PDF</p>
-          <ImageUploader
-            value={form.coverImage}
-            onChange={(coverImage) => setForm((current) => ({ ...current, coverImage }))}
-            label="Banner image"
-          />
           <PdfUploader
             value={form.fileUrl}
             onChange={(fileUrl) => setForm((current) => ({ ...current, fileUrl }))}

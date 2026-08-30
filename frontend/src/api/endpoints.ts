@@ -171,7 +171,7 @@ export const getCampaigns = (params?: { placement?: string }) =>
 export interface CreateResourceInput {
   title: string;
   summary: string;
-  coverImage: string;
+  coverImage?: string;
   fileUrl: string;
   isPublished: boolean;
 }

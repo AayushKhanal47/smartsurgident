@@ -44,10 +44,6 @@ const validateRequiredFields = (
     res.status(400);
     throw new Error("Short description is required");
   }
-  if (!payload.coverImage?.trim()) {
-    res.status(400);
-    throw new Error("Banner image is required");
-  }
   if (!payload.fileUrl?.trim()) {
     res.status(400);
     throw new Error("PDF file is required");
