@@ -5,12 +5,12 @@ import {
   updateOrderStatus,
   getAllOrders,
 } from "../controllers/orderController";
-import { protect, adminOnly, dealerOnly } from "../middleware/auth";
+import { protect, optionalProtect, adminOnly, dealerOnly } from "../middleware/auth";
 
 const router = express.Router();
 
 // Public — anyone (guest or logged in) can place an order
-router.post("/", createOrder);
+router.post("/", optionalProtect, createOrder);
 
 // Dealer's own routed orders
 router.get("/dealer", protect, dealerOnly, getDealerOrders);

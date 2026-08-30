@@ -10,6 +10,13 @@ const signToken = (id: string) =>
 const slugify = (value: string) =>
   value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+const dealerCookieOptions = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+};
+
 export const createDealer = asyncHandler(async (req: Request, res: Response) => {
   const {
     name,
@@ -74,9 +81,18 @@ export const loginDealer = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const token = signToken(dealer._id.toString());
-  res.cookie("token", token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
-  res.json({ _id: dealer._id, name: dealer.name, city: dealer.city, token });
+  res.cookie("dealerToken", token, dealerCookieOptions);
+  res.json({ _id: dealer._id, name: dealer.name, city: dealer.city });
 });
+
+export const logoutDealer = (_req: Request, res: Response) => {
+  res.clearCookie("dealerToken", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(204).send();
+};
 
 export const getDealers = asyncHandler(async (_req: Request, res: Response) => {
   const dealers = await Dealer.find().populate("city", "name").select("-password");

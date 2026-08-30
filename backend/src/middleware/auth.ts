@@ -20,7 +20,7 @@ declare global {
 }
 
 export const protect = asyncHandler(async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+  const token = req.cookies?.token || req.cookies?.dealerToken || req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     res.status(401);
@@ -40,6 +40,25 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
     res.status(401);
     throw new Error("Not authorized, token invalid");
   }
+});
+
+// Orders may be placed by guests, but an authenticated customer must be
+// identified when applying account-specific pricing.
+export const optionalProtect = asyncHandler(async (req: Request, _res: Response, next: NextFunction) => {
+  const token = req.cookies?.token || req.headers.authorization?.split(" ")[1];
+
+  if (!token) return next();
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    if (decoded.type === "user") {
+      req.user = await User.findById(decoded.id).select("-password");
+    }
+  } catch {
+    // A guest checkout must not fail because a stale browser cookie exists.
+  }
+
+  next();
 });
 
 export const adminOnly = (req: Request, res: Response, next: NextFunction) => {

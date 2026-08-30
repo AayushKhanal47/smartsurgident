@@ -3,6 +3,13 @@ import asyncHandler from "express-async-handler";
 import jwt from "jsonwebtoken";
 import User from "../models/User";
 
+const cookieOptions = {
+  httpOnly: true,
+  sameSite: "lax" as const,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 30 * 24 * 60 * 60 * 1000,
+};
+
 const signToken = (id: string) =>
   jwt.sign({ id, type: "user" }, process.env.JWT_SECRET as string, { expiresIn: "30d" });
 
@@ -28,14 +35,13 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   });
 
   const token = signToken(user._id.toString());
-  res.cookie("token", token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
+  res.cookie("token", token, cookieOptions);
   res.status(201).json({
     _id: user._id,
     name: user.name,
     email: user.email,
     role: user.role,
     isVerifiedClinic: user.isVerifiedClinic,
-    token,
   });
 });
 
@@ -50,16 +56,24 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const token = signToken(user._id.toString());
-  res.cookie("token", token, { httpOnly: true, maxAge: 30 * 24 * 60 * 60 * 1000 });
+  res.cookie("token", token, cookieOptions);
   res.json({
     _id: user._id,
     name: user.name,
     email: user.email,
     role: user.role,
     isVerifiedClinic: user.isVerifiedClinic,
-    token,
   });
 });
+
+export const logoutUser = (_req: Request, res: Response) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
+  res.status(204).send();
+};
 
 // GET /api/auth/me
 export const getMe = asyncHandler(async (req: Request, res: Response) => {

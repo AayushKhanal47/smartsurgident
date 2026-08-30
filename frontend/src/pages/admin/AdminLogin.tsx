@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiEye, HiEyeOff } from "react-icons/hi";
-import { HiEye, HiEyeOff } from "react-icons/hi";
+
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { Button } from "../../components/ui/Button";
 import Logo from "../../components/ui/Logo";
@@ -12,7 +12,7 @@ export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 

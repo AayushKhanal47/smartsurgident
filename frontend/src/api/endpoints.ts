@@ -206,7 +206,34 @@ export interface AdminUser {
 export const loginAdmin = (email: string, password: string) =>
   api.post<AdminUser>("/auth/login", { email, password }).then((r) => r.data);
 
+export const logoutAdmin = () => api.post("/auth/logout");
+
 export const getMe = () => api.get<AdminUser>("/auth/me").then((r) => r.data);
+
+export interface DealerSession {
+  _id: string;
+  name: string;
+  city: string;
+}
+
+export interface DealerOrder {
+  _id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  shippingAddress: string;
+  totalAmount: number;
+  status: "placed" | "accepted_by_dealer" | "dispatched" | "delivered" | "cancelled";
+  createdAt: string;
+  items: Array<{ name: string; quantity: number; price: number }>;
+}
+
+export const loginDealer = (email: string, password: string) =>
+  api.post<DealerSession>("/dealers/login", { email, password }).then((r) => r.data);
+export const logoutDealer = () => api.post("/dealers/logout");
+export const getDealerOrders = () => api.get<DealerOrder[]>("/orders/dealer").then((r) => r.data);
+export const updateDealerOrderStatus = (id: string, status: DealerOrder["status"]) =>
+  api.patch<DealerOrder>(`/orders/${id}/status`, { status }).then((r) => r.data);
 
 export interface QuoteRequestInput {
   organizationName: string;

@@ -28,6 +28,7 @@ import ResourceDetail from "./pages/resources/ResourceDetail";
 
 import Dealers from "./pages/dealers/Dealers";
 import DealerDetail from "./pages/dealers/DealerDetail";
+import DealerPortal from "./pages/dealers/DealerPortal";
 
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
@@ -58,6 +59,8 @@ function App() {
     <Routes>
       {/* Admin area — own layout, no public Navbar/Footer */}
       <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/dealer/login" element={<DealerPortal />} />
+      <Route path="/dealer" element={<DealerPortal />} />
       <Route
         path="/admin"
         element={

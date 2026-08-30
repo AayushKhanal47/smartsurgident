@@ -19,9 +19,12 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/admin/login");
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } finally {
+      navigate("/admin/login");
+    }
   };
 
   const SidebarContent = (

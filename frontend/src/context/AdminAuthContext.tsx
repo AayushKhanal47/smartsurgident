@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
-import { loginAdmin, getMe } from "../api/endpoints";
+import { loginAdmin, logoutAdmin, getMe } from "../api/endpoints";
 import type { AdminUser } from "../api/endpoints";
 
 interface AdminAuthContextValue {
   admin: AdminUser | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextValue | undefined>(undefined);
@@ -34,9 +34,8 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     setAdmin(user);
   };
 
-  const logout = () => {
-    // The backend has no explicit logout route yet (cookie just expires after
-    // 30 days) — clearing local state is enough to hide the admin UI.
+  const logout = async () => {
+    await logoutAdmin();
     setAdmin(null);
   };
 
