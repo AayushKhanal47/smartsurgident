@@ -26,5 +26,5 @@ export const imageUpload = multer({
 export const pdfUpload = multer({
   storage,
   fileFilter: createFileFilter(["application/pdf"], "Only PDF files are allowed"),
-  limits: { fileSize: 15 * 1024 * 1024 }, // 15MB per file
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB per file
 });

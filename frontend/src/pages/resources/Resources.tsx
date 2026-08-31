@@ -60,9 +60,6 @@ export default function Resources() {
                   </div>
                   <div className="p-2.5 text-center">
                     <p className="font-medium text-brand-navy text-xs truncate">{r.title}</p>
-                    <span className="text-[10px] font-semibold text-brand-blue uppercase tracking-wide">
-                      View PDF
-                    </span>
                   </div>
                 </a>
               </Reveal>

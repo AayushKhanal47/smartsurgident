@@ -256,3 +256,6 @@ export const deleteResourceAdmin = (id: string) => api.delete(`/resources/${id}`
 
 export const getAllCampaignsAdmin = () => api.get("/campaigns/admin/all").then((r) => r.data);
 export const getAllResourcesAdmin = () => api.get<Resource[]>("/resources/admin/all").then((r) => r.data);
+
+export const updateResourceAdmin = (id: string, data: Partial<CreateResourceInput>) =>
+  api.put<Resource>(`/resources/${id}`, data).then((r) => r.data);

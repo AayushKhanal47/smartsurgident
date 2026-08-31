@@ -40,10 +40,6 @@ const validateRequiredFields = (
     res.status(400);
     throw new Error("Title is required");
   }
-  if (!payload.summary?.trim()) {
-    res.status(400);
-    throw new Error("Short description is required");
-  }
   if (!payload.fileUrl?.trim()) {
     res.status(400);
     throw new Error("PDF file is required");

@@ -3,7 +3,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 export interface IResource extends Document {
   title: string;
   slug: string;
-  summary: string;
+  summary?: string;
   fileUrl: string;
   coverImage?: string;
   category?: string;
@@ -17,7 +17,7 @@ const resourceSchema = new Schema<IResource>(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true },
-    summary: { type: String, required: true },
+    summary: { type: String },
     fileUrl: { type: String, required: true },
     coverImage: { type: String },
     category: { type: String },
