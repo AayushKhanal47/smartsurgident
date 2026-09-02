@@ -29,14 +29,14 @@ password and database name.
 
 Run it:
 ```bash
-npm run dev       # starts on http://localhost:5000
+npm run dev       # starts on http://localhost:5002
 npm run seed      # optional: adds 5 cities + 1 sample brand/product
 ```
 
 Onboard your 5 dealers (one per city) — you'll need this before checkout
 works, since an order can't route to a city with no dealer:
 ```bash
-curl -X POST http://localhost:5000/api/dealers \
+curl -X POST http://localhost:5002/api/dealers \
   -H "Content-Type: application/json" \
   -d '{"name":"KTM Dealer","city":"<city_id_from_seed_output>","phone":"98XXXXXXXX","email":"ktm@smartsurgident.com","password":"changeme123"}'
 ```

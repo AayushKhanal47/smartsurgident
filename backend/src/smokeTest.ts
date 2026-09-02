@@ -40,4 +40,4 @@ app.use("/api/quotes", quoteRoutes);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(5000, () => console.log("SMOKE_TEST_SERVER_UP"));
+app.listen(Number(process.env.PORT) || 5002, () => console.log("SMOKE_TEST_SERVER_UP"));

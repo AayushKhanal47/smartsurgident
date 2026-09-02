@@ -3,19 +3,13 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Dealer from "../models/Dealer";
+import { authCookieOptions, clearCookieOptions } from "../config/cookies";
 
 const signToken = (id: string) =>
   jwt.sign({ id, type: "dealer" }, process.env.JWT_SECRET as string, { expiresIn: "30d" });
 
 const slugify = (value: string) =>
   value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
-const dealerCookieOptions = {
-  httpOnly: true,
-  sameSite: "lax" as const,
-  secure: process.env.NODE_ENV === "production",
-  maxAge: 30 * 24 * 60 * 60 * 1000,
-};
 
 export const createDealer = asyncHandler(async (req: Request, res: Response) => {
   const {
@@ -73,6 +67,12 @@ export const createDealer = asyncHandler(async (req: Request, res: Response) => 
 
 export const loginDealer = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
+
+  if (typeof email !== "string" || typeof password !== "string") {
+    res.status(401);
+    throw new Error("Invalid dealer credentials");
+  }
+
   const dealer = await Dealer.findOne({ email });
 
   if (!dealer || !(await bcrypt.compare(password, dealer.password))) {
@@ -81,16 +81,12 @@ export const loginDealer = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const token = signToken(dealer._id.toString());
-  res.cookie("dealerToken", token, dealerCookieOptions);
+  res.cookie("dealerToken", token, authCookieOptions);
   res.json({ _id: dealer._id, name: dealer.name, city: dealer.city });
 });
 
 export const logoutDealer = (_req: Request, res: Response) => {
-  res.clearCookie("dealerToken", {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  res.clearCookie("dealerToken", clearCookieOptions);
   res.status(204).send();
 };
 
