@@ -113,11 +113,31 @@ export interface Category {
 
 export const getCategories = () => api.get<Category[]>("/categories").then((r) => r.data);
 
-export const createCategory = (data: { name: string; slug: string; description?: string }) =>
+export interface CategoryInput {
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+}
+
+export const createCategory = (data: CategoryInput) =>
   api.post<Category>("/categories", data).then((r) => r.data);
 
-export const createBrandAdmin = (data: { name: string; slug: string; logoUrl?: string; description?: string }) =>
+export const updateCategoryAdmin = (id: string, data: Partial<CategoryInput>) =>
+  api.put<Category>(`/categories/${id}`, data).then((r) => r.data);
+
+export interface BrandInput {
+  name: string;
+  slug: string;
+  logoUrl?: string;
+  description?: string;
+}
+
+export const createBrandAdmin = (data: BrandInput) =>
   api.post<Brand>("/brands", data).then((r) => r.data);
+
+export const updateBrandAdmin = (id: string, data: Partial<BrandInput>) =>
+  api.put<Brand>(`/brands/${id}`, data).then((r) => r.data);
 
 export interface CreateProductInput {
   name: string;
@@ -138,6 +158,9 @@ export interface CreateProductInput {
 export const createProductAdmin = (data: CreateProductInput) =>
   api.post<Product>("/products", data).then((r) => r.data);
 
+export const updateProductAdmin = (id: string, data: Partial<CreateProductInput>) =>
+  api.put<Product>(`/products/${id}`, data).then((r) => r.data);
+
 export interface CreateDealerInput {
   name: string;
   city: string;
@@ -152,6 +175,9 @@ export interface CreateDealerInput {
 export const createDealerAdmin = (data: CreateDealerInput) =>
   api.post("/dealers", data).then((r) => r.data);
 
+export const updateDealerAdmin = (id: string, data: Partial<Omit<CreateDealerInput, "password">> & { password?: string }) =>
+  api.put(`/dealers/${id}`, data).then((r) => r.data);
+
 export const getDealersAdmin = () => api.get("/dealers").then((r) => r.data);
 
 export interface CreateCampaignInput {
@@ -164,6 +190,9 @@ export interface CreateCampaignInput {
 
 export const createCampaignAdmin = (data: CreateCampaignInput) =>
   api.post("/campaigns", data).then((r) => r.data);
+
+export const updateCampaignAdmin = (id: string, data: Partial<CreateCampaignInput>) =>
+  api.put(`/campaigns/${id}`, data).then((r) => r.data);
 
 export const getCampaigns = (params?: { placement?: string }) =>
   api.get("/campaigns", { params }).then((r) => r.data);

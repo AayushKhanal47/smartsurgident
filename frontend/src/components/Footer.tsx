@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
-import { FaWhatsapp } from "react-icons/fa";
+import { HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
 import Logo from "./ui/Logo";
 
 const COLUMNS: { heading: string; links: { label: string; to: string }[] }[] = [
@@ -19,7 +18,7 @@ const COLUMNS: { heading: string; links: { label: string; to: string }[] }[] = [
     links: [
       { label: "All products", to: "/products" },
       { label: "Brands", to: "/brands" },
-      { label: "Categories", to: "/products" },
+      { label: "E-Library", to: "/resources" },
     ],
   },
   {
@@ -32,56 +31,42 @@ const COLUMNS: { heading: string; links: { label: string; to: string }[] }[] = [
     ],
   },
   {
-    heading: "Resources",
+    heading: "Network",
     links: [
-      { label: "E-Library", to: "/resources" },
       { label: "Dealer network", to: "/dealers" },
       { label: "Become a dealer", to: "/support/contact" },
+      { label: "Dealer login", to: "/dealer" },
     ],
   },
 ];
 
-// Placeholder — replace with your real WhatsApp business number once set up
-const WHATSAPP_NUMBER = "977980XXXXXXX";
-
 export default function Footer() {
   return (
-    <footer className="bg-brand-navy text-white mt-16">
-      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-14 grid grid-cols-2 md:grid-cols-6 gap-10">
+    <footer className="bg-brand-footer text-white/75 mt-20">
+      <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-16 grid grid-cols-2 md:grid-cols-6 gap-x-8 gap-y-12">
         <div className="col-span-2">
           <Logo theme="light" />
-          <p className="text-slate-300 text-sm mt-4 max-w-xs">
-            Genuine dental and surgical instruments, imported and distributed across Nepal
-            through a nationwide dealer network.
+          <p className="text-sm mt-4 max-w-xs leading-relaxed">
+            Genuine dental and surgical equipment, distributed and supported across
+            Nepal through a growing dealer network.
           </p>
-          <div className="flex flex-col gap-2 mt-5 text-sm text-slate-300">
+          <div className="flex flex-col gap-2 mt-5 text-sm">
             <span className="flex items-center gap-2">
-              <HiOutlineLocationMarker className="shrink-0" aria-hidden="true" /> Kathmandu, Nepal
+              <HiOutlineLocationMarker className="shrink-0 text-brand-light" aria-hidden="true" /> Kathmandu, Nepal
             </span>
             <span className="flex items-center gap-2">
-              <HiOutlinePhone className="shrink-0" aria-hidden="true" /> 01-4XXXXXX
+              <HiOutlineMail className="shrink-0 text-brand-light" aria-hidden="true" /> info@smartsurgident.com
             </span>
-            <span className="flex items-center gap-2">
-              <HiOutlineMail className="shrink-0" aria-hidden="true" /> info@smartsurgident.com
-            </span>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 hover:text-white transition-colors"
-            >
-              <FaWhatsapp className="shrink-0" aria-hidden="true" /> WhatsApp us
-            </a>
           </div>
         </div>
 
         {COLUMNS.map((col) => (
           <div key={col.heading}>
-            <p className="font-semibold text-sm mb-4">{col.heading}</p>
+            <p className="font-display font-semibold text-sm text-white mb-4">{col.heading}</p>
             <ul className="flex flex-col gap-2.5">
               {col.links.map((link) => (
                 <li key={link.label}>
-                  <Link to={link.to} className="text-slate-300 text-sm hover:text-white transition-colors">
+                  <Link to={link.to} className="text-sm hover:text-white transition-colors">
                     {link.label}
                   </Link>
                 </li>
@@ -92,12 +77,11 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-5 flex flex-col md:flex-row justify-between items-center gap-3 text-xs text-slate-400">
+        <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/55">
           <p>&copy; {new Date().getFullYear()} Smart Surgident Pvt. Ltd. All rights reserved.</p>
           <div className="flex gap-5">
             <Link to="/support/faq" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/support/faq" className="hover:text-white transition-colors">Terms</Link>
-            
           </div>
         </div>
       </div>

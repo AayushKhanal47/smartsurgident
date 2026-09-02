@@ -1,26 +1,43 @@
 import { useEffect, useState } from "react";
-import { getProducts, getBrands, createProductAdmin, deleteProductAdmin } from "../../api/endpoints";
+import {
+  getProducts,
+  getBrands,
+  createProductAdmin,
+  updateProductAdmin,
+  deleteProductAdmin,
+} from "../../api/endpoints";
 import type { Product, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
-import ImageUploader from "./ImageUploader";
+import MultiImageUploader from "./MultiImageUploader";
+import { PageHeader, Card, Field, Textarea, Select, Toggle, Badge, EmptyState, DangerButton } from "./ui";
 
-const emptyForm = {
-  name: "",
-  slug: "",
-  brand: "",
-  category: "",
-  description: "",
-  price: "",
-  clinicPrice: "",
-  stock: "",
-  sku: "",
+interface FormState {
+  name: string;
+  slug: string;
+  brand: string;
+  category: string;
+  description: string;
+  price: string;
+  clinicPrice: string;
+  stock: string;
+  sku: string;
+  isFeatured: boolean;
+  isNewArrival: boolean;
+  isBestSeller: boolean;
+}
+
+const empty: FormState = {
+  name: "", slug: "", brand: "", category: "", description: "",
+  price: "", clinicPrice: "", stock: "", sku: "",
+  isFeatured: false, isNewArrival: false, isBestSeller: false,
 };
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
-  const [form, setForm] = useState(emptyForm);
-  const [imageUrl, setImageUrl] = useState("");
+  const [form, setForm] = useState<FormState>(empty);
+  const [images, setImages] = useState<string[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
@@ -28,14 +45,35 @@ export default function AdminProducts() {
     getProducts().then(setProducts).catch(() => setProducts([]));
     getBrands().then(setBrands).catch(() => setBrands([]));
   };
+  useEffect(() => { load(); }, []);
 
-  useEffect(() => {
-    load();
-  }, []);
+  const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  const resetForm = () => {
+    setForm(empty);
+    setImages([]);
+    setEditingId(null);
+    setError("");
+  };
+
+  const startEdit = (p: Product) => {
+    setEditingId(p._id);
+    setForm({
+      name: p.name, slug: p.slug,
+      brand: p.brand?._id ?? "",
+      category: p.category, description: p.description,
+      price: String(p.price), clinicPrice: String(p.clinicPrice), stock: String(p.stock),
+      sku: (p as unknown as { sku?: string }).sku ?? "",
+      isFeatured: !!p.isFeatured, isNewArrival: !!p.isNewArrival, isBestSeller: !!p.isBestSeller,
+    });
+    setImages(p.images ?? []);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this product? This cannot be undone.")) return;
     await deleteProductAdmin(id);
+    if (editingId === id) resetForm();
     load();
   };
 
@@ -43,23 +81,24 @@ export default function AdminProducts() {
     e.preventDefault();
     setError("");
     setSubmitting(true);
+    const payload = {
+      ...form,
+      price: Number(form.price),
+      clinicPrice: Number(form.clinicPrice),
+      stock: Number(form.stock),
+      images,
+    };
     try {
-      await createProductAdmin({
-        ...form,
-        price: Number(form.price),
-        clinicPrice: Number(form.clinicPrice),
-        stock: Number(form.stock),
-        images: imageUrl ? [imageUrl] : [],
-      });
-      setForm(emptyForm);
-      setImageUrl("");
+      if (editingId) await updateProductAdmin(editingId, payload);
+      else await createProductAdmin(payload);
+      resetForm();
       load();
     } catch (err: unknown) {
       const message =
         err && typeof err === "object" && "response" in err
           ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
           : undefined;
-      setError(message || "Failed to create product");
+      setError(message || "Failed to save product");
     } finally {
       setSubmitting(false);
     }
@@ -67,65 +106,71 @@ export default function AdminProducts() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-brand-navy mb-6">Products</h1>
+      <PageHeader title="Products" subtitle={`${products.length} in the catalogue`} />
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div>
-          <p className="text-sm font-medium text-brand-navy mb-3">Existing products ({products.length})</p>
-          <div className="bg-white rounded-2xl divide-y divide-slate-100 max-h-[500px] overflow-y-auto">
-            {products.map((p) => (
-              <div key={p._id} className="p-4 flex items-center gap-3">
-                {p.images?.[0] ? (
-                  <img src={p.images[0]} alt={p.name} className="w-10 h-10 rounded-lg object-cover shrink-0" />
-                ) : (
-                  <div className="w-10 h-10 rounded-lg bg-brand-tint shrink-0" />
-                )}
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-brand-navy">{p.name}</p>
-                  <p className="text-xs text-brand-muted">{p.brand?.name} · Stock: {p.stock}</p>
-                </div>
-                <p className="text-sm text-brand-blue font-medium">Rs {p.price}</p>
-                <button
-                  onClick={() => handleDelete(p._id)}
-                  className="text-xs text-red-500 font-medium shrink-0"
-                >
-                  Delete
-                </button>
+      <div className="grid lg:grid-cols-[1fr_400px] gap-8 items-start">
+        <Card className="divide-y divide-brand-border overflow-hidden">
+          {products.map((p) => (
+            <div key={p._id} className="p-4 flex items-center gap-4">
+              {p.images?.[0] ? (
+                <img src={p.images[0]} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+              ) : (
+                <div className="w-12 h-12 rounded-lg bg-brand-sunk shrink-0" />
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-brand-navy truncate">{p.name}</p>
+                <p className="text-xs text-brand-muted truncate">
+                  {p.brand?.name} · Stock {p.stock} · {p.images?.length ?? 0} photo{(p.images?.length ?? 0) === 1 ? "" : "s"}
+                </p>
               </div>
-            ))}
-            {products.length === 0 && <p className="p-4 text-sm text-brand-muted">No products yet.</p>}
-          </div>
-        </div>
+              {p.stock === 0 && <Badge tone="amber">Out of stock</Badge>}
+              <p className="text-sm font-semibold text-brand-navy shrink-0">Rs {p.price.toLocaleString()}</p>
+              <div className="flex items-center gap-3 shrink-0">
+                <button onClick={() => startEdit(p)} className="text-xs font-semibold text-brand-primary hover:text-brand-primary-hover">
+                  Edit
+                </button>
+                <DangerButton onClick={() => handleDelete(p._id)} />
+              </div>
+            </div>
+          ))}
+          {products.length === 0 && <EmptyState>No products yet.</EmptyState>}
+        </Card>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">
-          <p className="text-sm font-medium text-brand-navy mb-1">Add product</p>
-          <ImageUploader value={imageUrl} onChange={setImageUrl} label="Product photo" />
-          <input required placeholder="Name" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input required placeholder="Slug (e.g. extraction-forceps-set)" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
-          <select required className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })}>
-            <option value="">Select brand</option>
-            {brands.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
-          </select>
-          <input required placeholder="Category (e.g. Hand instruments)" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} />
-          <textarea required placeholder="Description" rows={2} className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <div className="grid grid-cols-3 gap-3">
-            <input required type="number" placeholder="Price" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-              value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
-            <input required type="number" placeholder="Clinic price" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-              value={form.clinicPrice} onChange={(e) => setForm({ ...form, clinicPrice: e.target.value })} />
-            <input required type="number" placeholder="Stock" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-              value={form.stock} onChange={(e) => setForm({ ...form, stock: e.target.value })} />
+        <Card className="p-6 flex flex-col gap-3.5">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-brand-navy">{editingId ? "Edit product" : "Add product"}</p>
+            {editingId && (
+              <button onClick={resetForm} className="text-xs text-brand-muted hover:text-brand-navy">Cancel</button>
+            )}
           </div>
-          <input required placeholder="SKU (unique)" className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.sku} onChange={(e) => setForm({ ...form, sku: e.target.value })} />
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <Button type="submit" disabled={submitting}>{submitting ? "Adding..." : "Add product"}</Button>
-        </form>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+            <MultiImageUploader value={images} onChange={setImages} label="Product photos" />
+            <Field label="Name" required value={form.name} onChange={(e) => set("name", e.target.value)} />
+            <Field label="Slug" hint="lowercase-with-dashes, unique" required value={form.slug} onChange={(e) => set("slug", e.target.value)} />
+            <Select label="Brand" required value={form.brand} onChange={(e) => set("brand", e.target.value)}>
+              <option value="">Select brand</option>
+              {brands.map((b) => <option key={b._id} value={b._id}>{b.name}</option>)}
+            </Select>
+            <Field label="Category" hint="free text, e.g. Hand instruments" required value={form.category} onChange={(e) => set("category", e.target.value)} />
+            <Textarea label="Description" rows={3} required value={form.description} onChange={(e) => set("description", e.target.value)} />
+            <div className="grid grid-cols-3 gap-3">
+              <Field label="Price" type="number" min="0" required value={form.price} onChange={(e) => set("price", e.target.value)} />
+              <Field label="Clinic price" type="number" min="0" required value={form.clinicPrice} onChange={(e) => set("clinicPrice", e.target.value)} />
+              <Field label="Stock" type="number" min="0" required value={form.stock} onChange={(e) => set("stock", e.target.value)} />
+            </div>
+            <Field label="SKU" hint="unique" required value={form.sku} onChange={(e) => set("sku", e.target.value)} />
+            <div className="flex flex-wrap gap-4 pt-1">
+              <Toggle label="Featured" checked={form.isFeatured} onChange={(v) => set("isFeatured", v)} />
+              <Toggle label="New" checked={form.isNewArrival} onChange={(v) => set("isNewArrival", v)} />
+              <Toggle label="Best seller" checked={form.isBestSeller} onChange={(v) => set("isBestSeller", v)} />
+            </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <Button type="submit" disabled={submitting} className="justify-center">
+              {submitting ? "Saving…" : editingId ? "Save changes" : "Add product"}
+            </Button>
+          </form>
+        </Card>
       </div>
     </div>
   );

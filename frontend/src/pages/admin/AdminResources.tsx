@@ -8,47 +8,43 @@ import {
 import type { Resource } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import PdfUploader from "./PdfUploader";
+import ImageUploader from "./ImageUploader";
+import { PageHeader, Card, Field, Textarea, Toggle, Badge, EmptyState, DangerButton } from "./ui";
 
-const emptyForm = {
-  title: "",
-  summary: "",
-  fileUrl: "",
-  isPublished: true,
-};
+const empty = { title: "", summary: "", fileUrl: "", coverImage: "", isPublished: true };
 
 export default function AdminResources() {
   const [resources, setResources] = useState<Resource[]>([]);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(empty);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const load = () => getAllResourcesAdmin().then(setResources).catch(() => setResources([]));
-  useEffect(() => {
-    load();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  const handleEdit = (r: Resource) => {
+  const reset = () => {
+    setEditingId(null);
+    setForm(empty);
+    setError("");
+  };
+
+  const startEdit = (r: Resource) => {
     setEditingId(r._id);
     setForm({
       title: r.title,
-      summary: r.summary,
-      fileUrl: r.fileUrl || "",
+      summary: r.summary ?? "",
+      fileUrl: r.fileUrl ?? "",
+      coverImage: r.coverImage ?? "",
       isPublished: r.isPublished,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setForm(emptyForm);
-    setError("");
-  };
-
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this resource? This cannot be undone.")) return;
+    if (!confirm("Delete this catalogue? This cannot be undone.")) return;
     await deleteResourceAdmin(id);
-    if (editingId === id) handleCancelEdit();
+    if (editingId === id) reset();
     load();
   };
 
@@ -57,17 +53,14 @@ export default function AdminResources() {
     setError("");
     setSubmitting(true);
     try {
-      if (editingId) {
-        await updateResourceAdmin(editingId, form);
-      } else {
-        await createResourceAdmin(form);
-      }
-      handleCancelEdit();
+      if (editingId) await updateResourceAdmin(editingId, form);
+      else await createResourceAdmin(form);
+      reset();
       load();
     } catch (err: unknown) {
       const message = err && typeof err === "object" && "response" in err
         ? (err as { response?: { data?: { message?: string } } }).response?.data?.message : undefined;
-      setError(message || "Failed to save resource");
+      setError(message || "Failed to save catalogue");
     } finally {
       setSubmitting(false);
     }
@@ -75,82 +68,51 @@ export default function AdminResources() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold text-brand-navy mb-6">Catalog PDFs</h1>
-      <div className="grid md:grid-cols-2 gap-8">
-        <div>
-          <p className="text-sm font-medium text-brand-navy mb-3">Existing catalogs ({resources.length})</p>
-          <div className="bg-white rounded-2xl divide-y divide-slate-100 overflow-hidden">
-            {resources.map((r) => (
-              <div key={r._id} className="p-4 flex items-center gap-3">
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-brand-navy">{r.title}</p>
-                  <p className="text-xs text-brand-muted line-clamp-2">{r.summary}</p>
-                  <p className="text-xs text-brand-blue mt-1">
-                    {r.isPublished ? "Published" : "Draft"} · {r.fileUrl ? "PDF ready" : "PDF missing"}
-                  </p>
+      <PageHeader title="Catalogue PDFs" subtitle={`${resources.length} in the E-Library`} />
+
+      <div className="grid lg:grid-cols-[1fr_400px] gap-8 items-start">
+        <Card className="divide-y divide-brand-border overflow-hidden">
+          {resources.map((r) => (
+            <div key={r._id} className="p-4 flex items-center gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-sm font-medium text-brand-navy truncate">{r.title}</p>
+                  <Badge tone={r.isPublished ? "green" : "slate"}>{r.isPublished ? "Published" : "Draft"}</Badge>
+                  {!r.fileUrl && <Badge tone="amber">No PDF</Badge>}
                 </div>
-                <div className="flex flex-col items-end gap-2 shrink-0">
-                  {r.fileUrl && (
-                    <a href={r.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-brand-blue font-medium">
-                      Open PDF
-                    </a>
-                  )}
-                  <button onClick={() => handleEdit(r)} className="text-xs text-brand-navy font-medium">
-                    Edit
-                  </button>
-                  <button onClick={() => handleDelete(r._id)} className="text-xs text-red-500 font-medium">
-                    Delete
-                  </button>
-                </div>
+                <p className="text-xs text-brand-muted line-clamp-1 mt-0.5">{r.summary}</p>
               </div>
-            ))}
-            {resources.length === 0 && <p className="p-4 text-sm text-brand-muted">No catalog PDFs yet.</p>}
+              <div className="flex items-center gap-3 shrink-0">
+                {r.fileUrl && (
+                  <a href={r.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs font-semibold text-brand-primary">
+                    PDF
+                  </a>
+                )}
+                <button onClick={() => startEdit(r)} className="text-xs font-semibold text-brand-primary hover:text-brand-primary-hover">Edit</button>
+                <DangerButton onClick={() => handleDelete(r._id)} />
+              </div>
+            </div>
+          ))}
+          {resources.length === 0 && <EmptyState>No catalogues yet.</EmptyState>}
+        </Card>
+
+        <Card className="p-6 flex flex-col gap-3.5">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-brand-navy">{editingId ? "Edit catalogue" : "Upload catalogue"}</p>
+            {editingId && <button onClick={reset} className="text-xs text-brand-muted hover:text-brand-navy">Cancel</button>}
           </div>
-        </div>
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-3 h-fit">
-          <p className="text-sm font-medium text-brand-navy mb-1">
-            {editingId ? "Edit catalog" : "Upload catalog PDF"}
-          </p>
-          <PdfUploader
-            value={form.fileUrl}
-            onChange={(fileUrl) => setForm((current) => ({ ...current, fileUrl }))}
-            label="Catalog PDF"
-          />
-          <input
-            required
-            placeholder="Title"
-            className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.title}
-            onChange={(e) => setForm({ ...form, title: e.target.value })}
-          />
-          <textarea
-            required
-            placeholder="Short description"
-            rows={3}
-            className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={form.summary}
-            onChange={(e) => setForm({ ...form, summary: e.target.value })}
-          />
-          <label className="flex items-center gap-2 text-sm text-brand-navy">
-            <input
-              type="checkbox"
-              checked={form.isPublished}
-              onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
-            />
-            Published
-          </label>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <div className="flex gap-2">
-            <Button type="submit" disabled={submitting}>
-              {submitting ? "Saving..." : editingId ? "Save changes" : "Save catalog"}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+            <PdfUploader value={form.fileUrl} onChange={(fileUrl) => setForm((c) => ({ ...c, fileUrl }))} label="Catalogue PDF" />
+            <ImageUploader value={form.coverImage} onChange={(coverImage) => setForm((c) => ({ ...c, coverImage }))} label="Cover image (optional)" />
+            <Field label="Title" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+            <Textarea label="Short description" rows={3} required value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} />
+            <Toggle label="Published" checked={form.isPublished} onChange={(v) => setForm({ ...form, isPublished: v })} />
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <Button type="submit" disabled={submitting} className="justify-center">
+              {submitting ? "Saving…" : editingId ? "Save changes" : "Save catalogue"}
             </Button>
-            {editingId && (
-              <Button type="button" variant="secondary" onClick={handleCancelEdit}>
-                Cancel
-              </Button>
-            )}
-          </div>
-        </form>
+          </form>
+        </Card>
       </div>
     </div>
   );

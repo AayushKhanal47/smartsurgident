@@ -5,6 +5,7 @@ import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { Button } from "../../components/ui/Button";
 import Logo from "../../components/ui/Logo";
+import { Field } from "./ui";
 
 export default function AdminLogin() {
   const { login } = useAdminAuth();
@@ -42,37 +43,32 @@ export default function AdminLogin() {
         <div className="flex justify-center mb-8">
           <Logo />
         </div>
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-4">
-          <h1 className="text-lg font-semibold text-brand-navy text-center mb-2">Admin login</h1>
-          <input
-            required
-            type="email"
-            placeholder="Email"
-            className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-brand-border p-7 flex flex-col gap-4">
+          <div className="text-center mb-1">
+            <h1 className="font-display text-lg font-bold text-brand-navy">Admin sign in</h1>
+            <p className="text-xs text-brand-muted mt-1">Manage the Smart Surgident catalogue</p>
+          </div>
+          <Field label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
           <div className="relative">
-            <input
-              required
+            <Field
+              label="Password"
               type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              className="border border-slate-200 rounded-xl px-4 py-2.5 pr-11 text-sm w-full"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-navy"
+              className="absolute right-3 top-[34px] text-brand-muted hover:text-brand-navy"
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
               {showPassword ? <HiEyeOff /> : <HiEye />}
             </button>
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
-          <Button type="submit" disabled={submitting} className="justify-center">
-            {submitting ? "Signing in..." : "Sign in"}
+          <Button type="submit" disabled={submitting} className="justify-center mt-1">
+            {submitting ? "Signing in…" : "Sign in"}
           </Button>
         </form>
       </div>

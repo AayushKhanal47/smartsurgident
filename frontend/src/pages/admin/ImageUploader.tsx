@@ -45,7 +45,7 @@ export default function ImageUploader({ value, onChange, label = "Image" }: Imag
       <p className="text-xs text-brand-muted">{label}</p>
       <div className="flex items-center gap-3">
         {value ? (
-          <img src={value} alt="Preview" className="w-16 h-16 rounded-xl object-cover border border-slate-200" />
+          <img src={value} alt="Preview" className="w-16 h-16 rounded-xl object-cover border border-brand-border" />
         ) : (
           <div className="w-16 h-16 rounded-xl bg-brand-tint flex items-center justify-center text-brand-muted text-xs">
             None
@@ -60,7 +60,7 @@ export default function ImageUploader({ value, onChange, label = "Image" }: Imag
             disabled={uploading}
             className="text-xs"
           />
-          {uploading && <p className="text-xs text-brand-blue mt-1">Uploading...</p>}
+          {uploading && <p className="text-xs text-brand-primary mt-1">Uploading...</p>}
           {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
         </div>
       </div>

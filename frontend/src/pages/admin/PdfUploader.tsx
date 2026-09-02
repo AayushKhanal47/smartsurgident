@@ -41,7 +41,7 @@ export default function PdfUploader({ value, onChange, label = "PDF file" }: Pdf
     <div className="flex flex-col gap-2">
       <p className="text-xs text-brand-muted">{label}</p>
       <div className="flex items-center gap-3">
-        <div className="w-16 h-16 rounded-xl bg-brand-tint flex items-center justify-center text-brand-blue text-xs font-semibold">
+        <div className="w-16 h-16 rounded-xl bg-brand-tint flex items-center justify-center text-brand-primary text-xs font-semibold">
           PDF
         </div>
         <div className="min-w-0">
@@ -53,13 +53,13 @@ export default function PdfUploader({ value, onChange, label = "PDF file" }: Pdf
             disabled={uploading}
             className="text-xs"
           />
-          {uploading && <p className="text-xs text-brand-blue mt-1">Uploading...</p>}
+          {uploading && <p className="text-xs text-brand-primary mt-1">Uploading...</p>}
           {value && (
             <a
               href={value}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-xs text-brand-blue font-medium mt-1 hover:text-brand-navy"
+              className="block text-xs text-brand-primary font-medium mt-1 hover:text-brand-navy"
             >
               Open uploaded PDF
             </a>

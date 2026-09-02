@@ -1,34 +1,104 @@
 @import "tailwindcss";
 
-@theme {
-  /* Refined navy/blue healthcare palette per design spec */
-  --color-brand-navy: #0D2947;
-  --color-brand-navy-dark: #04141F;
-  --color-brand-blue: #17699A;
-  --color-brand-light: #4FA8D8;
-  --color-brand-tint: #E8F1FA;
-  --color-brand-bg: #F7FAFD;
-  --color-brand-slate: #64748B;
-  --color-brand-muted: #8B98A6;
-  --color-brand-border: #DCE6EF;
-  --color-brand-text: #102A43;
-
-  --font-display: "Plus Jakarta Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  --font-sans: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+/* ---------------------------------------------------------------------------
+   Self-hosted variable fonts (latin subset, ~72KB total).
+   Manrope → headings/labels.  Inter → body/UI/product data.
+--------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/inter-latin-var.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url("/fonts/manrope-latin-var.woff2") format("woff2");
 }
 
-/* Page defaults to white — individual sections apply bg-brand-bg,
-   bg-brand-tint, or bg-brand-navy explicitly for visual rhythm,
-   rather than tinting the whole page uniformly. */
+/* ---------------------------------------------------------------------------
+   Brand system — sampled from the Smart Surgident logo (src/assets/logo.png).
+     deep navy   #1F2C41   steel blue #4588B1
+     light steel #629FC1   pale grey  #C0CEDA
+
+   Direction: WHITE dominant. Steel/light blue for brand identity and accents.
+   Navy reserved for typography and TWO deliberate dark moments (final CTA,
+   footer) — never as a section-wide background elsewhere.
+
+   `--color-brand-*` names kept from the prior system so ~50 files follow
+   automatically. `--brand-*` aliases below for raw CSS.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-brand-primary: #3e7da6;        /* steel blue, AA-safe (= logo #4588B1, -8% L) */
+  --color-brand-primary-hover: #33688c;
+  --color-brand-steel: #4588b1;          /* literal logo steel — decorative fills only */
+  --color-brand-accent: #629fc1;         /* light steel — logo */
+
+  --color-brand-navy: #1f2c41;           /* headings + the two dark moments */
+  --color-brand-dark: #1f2c41;
+  --color-brand-footer: #1f2c41;
+  --color-brand-blue: #3e7da6;           /* alias of primary for existing classes */
+  --color-brand-light: #629fc1;          /* alias of accent for existing classes */
+
+  --color-brand-tint: #e1ecf3;           /* pale blue — chips / small fills */
+  --color-brand-bg: #eef4f8;             /* bright pale-blue section wash */
+  --color-brand-sunk: #e4edf3;           /* image wells */
+  --color-brand-border: #d7e1ea;         /* soft blue-grey hairline */
+
+  --color-brand-text: #253243;           /* body text */
+  --color-brand-slate: #56637a;          /* secondary text */
+  --color-brand-muted: #7c8899;          /* captions / labels */
+
+  --font-display: "Manrope", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-sans: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+
+  --radius-card: 16px;
+}
+
+:root {
+  --brand-primary: var(--color-brand-primary);
+  --brand-secondary: var(--color-brand-navy);
+  --brand-accent: var(--color-brand-accent);
+  --brand-steel: var(--color-brand-steel);
+  --brand-dark: var(--color-brand-navy);
+  --surface: #ffffff;
+  --surface-muted: var(--color-brand-bg);
+  --surface-tint: var(--color-brand-tint);
+  --border: var(--color-brand-border);
+  --text-primary: var(--color-brand-navy);
+  --text-secondary: var(--color-brand-slate);
+}
+
 body {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   font-family: var(--font-sans);
   color: var(--color-brand-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1, h2, h3, h4 {
   font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  color: var(--color-brand-navy);
+  text-wrap: balance;
 }
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--color-brand-primary);
+}
+
+/* Fluid display sizes for hero / big section heads */
+.display-1 { font-size: clamp(2.25rem, 1.4rem + 3.4vw, 3.75rem); line-height: 1.05; font-weight: 700; }
+.display-2 { font-size: clamp(1.75rem, 1.2rem + 2vw, 2.75rem); line-height: 1.12; font-weight: 700; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -43,14 +113,6 @@ h1, h2, h3, h4 {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
-.brand-marquee {
-  animation: brand-scroll 30s linear infinite;
-}
-.brand-marquee:hover {
-  animation-play-state: paused;
-}
-@media (prefers-reduced-motion: reduce) {
-  .brand-marquee {
-    animation: none;
-  }
-}
+.brand-marquee { animation: brand-scroll 36s linear infinite; }
+.brand-marquee:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .brand-marquee { animation: none; } }
