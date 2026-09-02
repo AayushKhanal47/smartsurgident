@@ -54,6 +54,59 @@ cp .env.example .env
 npm run dev       # starts on http://localhost:5173
 ```
 
+## 3. Deployment (for later)
+
+Two separate deploys: the API (Node service) and the frontend (static site).
+They will be on different domains, so the cookie/CORS setup below matters.
+
+### Backend (API)
+
+Host it anywhere that runs Node (Render, Railway, Fly, a VPS). `backend/dist/`
+is **not** committed, so the host must build before starting:
+
+```bash
+npm install
+npm run build     # tsc -> dist/
+npm start         # node dist/server.js
+```
+
+Environment variables on the host (see `backend/.env.example`):
+
+| Var | Value in production |
+| --- | --- |
+| `NODE_ENV` | `production` — required. Enables `Secure; SameSite=None` session cookies (needed for cross-domain auth) and hides error stack traces. |
+| `CLIENT_URL` | Exact origin of the deployed frontend, e.g. `https://smartsurgident.com`. No trailing slash. CORS allows this one origin only. |
+| `MONGO_URI` | MongoDB Atlas connection string. Atlas is a replica set, which the order-creation transactions require. |
+| `JWT_SECRET` | Long random string. |
+| `PORT` | Usually injected by the host; the app falls back to `5002`. |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | From the Cloudinary dashboard. Also enable "Allow delivery of PDF and ZIP files" in Cloudinary settings, or E-Library PDFs 401. |
+| `EMAIL_USER` / `EMAIL_PASS` | Gmail address + app password for dealer order-notification emails. If unset, emails are silently skipped. |
+
+The API must be served over HTTPS — browsers reject `SameSite=None` cookies
+without `Secure`, so admin/dealer login won't work over plain HTTP.
+
+### Frontend (static site)
+
+Host on Netlify, Vercel, Cloudflare Pages, etc.
+
+```bash
+npm install
+npm run build     # -> frontend/dist/
+```
+
+- Set `VITE_API_URL` in the host's **build** environment to the deployed API
+  URL including `/api`, e.g. `https://api.smartsurgident.com/api`. Vite inlines
+  this at build time — a build made with the local value calls localhost.
+- Add an SPA fallback rewrite (all paths -> `/index.html`) so deep links like
+  `/products/foo` don't 404. Netlify: `_redirects` with `/*  /index.html  200`.
+  Vercel: `{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }`.
+
+### First admin user
+
+There is no admin signup. After the first deploy, create an admin by
+registering via `POST /api/auth/register`, then flipping that user's `role`
+to `"admin"` directly in MongoDB.
+
 ## What's built vs what's next
 
 **Built:** product catalog, product detail/e-library page, cart, checkout
