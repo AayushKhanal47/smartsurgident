@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { HiOutlinePhone, HiOutlineClock, HiOutlineLocationMarker } from "react-icons/hi";
+import { HiOutlinePhone, HiOutlineClock, HiOutlineLocationMarker, HiOutlineExternalLink } from "react-icons/hi";
 import { FaWhatsapp } from "react-icons/fa";
 import { getPublicDealerBySlug } from "../../api/endpoints";
+import { buildWhatsAppLink } from "../../config/whatsapp";
 import type { Dealer } from "../../api/endpoints";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function DealerDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [dealer, setDealer] = useState<Dealer | null>(null);
   const [notFound, setNotFound] = useState(false);
+
+  usePageMeta(
+    dealer ? `${dealer.name} — Dealer in ${dealer.city?.name ?? "Nepal"}` : "",
+    dealer ? `Genuine dental and surgical equipment from ${dealer.name}, Smart Surgident's authorized dealer in ${dealer.city?.name ?? "Nepal"}.` : undefined
+  );
 
   useEffect(() => {
     if (!slug) return;
@@ -117,7 +124,10 @@ export default function DealerDetail() {
             </span>
             {dealer.whatsapp && (
               <a
-                href={`https://wa.me/${dealer.whatsapp.replace(/\D/g, "")}`}
+                href={buildWhatsAppLink(
+                  dealer.whatsapp,
+                  `Hello, I found you through Smart Surgident and I'm interested in your products.`
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 text-brand-slate hover:text-brand-blue transition-colors"
@@ -133,6 +143,18 @@ export default function DealerDetail() {
               </span>
             )}
           </div>
+
+          {dealer.website && /^https?:\/\//i.test(dealer.website) && (
+            <a
+              href={dealer.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center justify-center gap-2 w-full rounded-full border border-brand-border px-5 py-2.5 text-sm font-medium text-brand-navy hover:border-brand-primary hover:text-brand-primary transition-colors"
+            >
+              Visit Website
+              <HiOutlineExternalLink aria-hidden="true" />
+            </a>
+          )}
         </div>
       </Reveal>
     </div>

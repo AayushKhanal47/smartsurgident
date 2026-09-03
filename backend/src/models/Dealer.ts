@@ -6,6 +6,7 @@ export interface IDealer extends Document {
   province?: string;
   phone: string;
   whatsapp?: string;
+  website?: string;
   email: string;
   password: string;
   isActive: boolean;
@@ -32,6 +33,7 @@ const dealerSchema = new Schema<IDealer>(
     province: { type: String },
     phone: { type: String, required: true },
     whatsapp: { type: String },
+    website: { type: String },
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
     isActive: { type: Boolean, default: true },

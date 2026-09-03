@@ -71,6 +71,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const reduceMotion = useReducedMotion();
   const { pathname } = useLocation();
 
@@ -89,6 +90,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
+    setMobileSearchOpen(false);
   }, [pathname]);
 
   return (
@@ -152,6 +154,18 @@ export default function Navbar() {
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
           <SearchField className="hidden xl:block w-52" />
 
+          <button
+            className="xl:hidden p-2 text-brand-navy hover:text-brand-primary transition-colors"
+            aria-label={mobileSearchOpen ? "Close search" : "Search"}
+            aria-expanded={mobileSearchOpen}
+            onClick={() => {
+              setMobileSearchOpen((v) => !v);
+              setMobileOpen(false);
+            }}
+          >
+            {mobileSearchOpen ? <HiX className="text-xl" /> : <HiOutlineSearch className="text-xl" />}
+          </button>
+
           <Link
             to="/cart"
             className="relative p-2 text-brand-navy hover:text-brand-primary transition-colors"
@@ -173,12 +187,31 @@ export default function Navbar() {
             className="lg:hidden p-2 -mr-2 text-brand-navy"
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
-            onClick={() => setMobileOpen((v) => !v)}
+            onClick={() => {
+              setMobileOpen((v) => !v);
+              setMobileSearchOpen(false);
+            }}
           >
             {mobileOpen ? <HiX className="text-2xl" /> : <HiMenu className="text-2xl" />}
           </button>
         </div>
       </div>
+
+      <AnimatePresence>
+        {mobileSearchOpen && (
+          <motion.div
+            initial={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+            animate={reduceMotion ? undefined : { height: "auto", opacity: 1 }}
+            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="xl:hidden overflow-hidden bg-white border-t border-brand-border"
+          >
+            <div className="px-5 py-3.5">
+              <SearchField onSubmit={() => setMobileSearchOpen(false)} />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {mobileOpen && (
@@ -190,7 +223,6 @@ export default function Navbar() {
             className="lg:hidden overflow-hidden bg-white border-t border-brand-border"
           >
             <div className="px-5 py-4 flex flex-col">
-              <SearchField className="mb-3" onSubmit={() => setMobileOpen(false)} />
               {NAV_ITEMS.map((item) => (
                 <div key={item.label} className="border-b border-brand-border/70 last:border-0">
                   <Link to={item.to} className="block py-3.5 text-[15px] font-medium text-brand-navy">

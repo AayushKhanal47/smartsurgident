@@ -5,8 +5,14 @@ import type { Brand } from "../api/endpoints";
 import Breadcrumbs from "../components/ui/Breadcrumbs";
 import SectionHeader from "../components/ui/SectionHeader";
 import Reveal from "../components/ui/Reveal";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function Brands() {
+  usePageMeta(
+    "Brands We Carry",
+    "The verified dental and surgical equipment brands Smart Surgident imports and distributes across Nepal."
+  );
+
   const [brands, setBrands] = useState<Brand[]>([]);
   const [search, setSearch] = useState("");
 

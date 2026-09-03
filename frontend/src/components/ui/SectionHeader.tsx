@@ -33,7 +33,7 @@ export default function SectionHeader({
         </span>
       )}
       <div className="flex items-center justify-between gap-4 w-full">
-        <h2 className="text-2xl md:text-3xl font-display font-bold text-brand-navy">{title}</h2>
+        <h1 className="text-2xl md:text-3xl font-display font-bold text-brand-navy">{title}</h1>
         {action && <div className="hidden md:block shrink-0">{action}</div>}
       </div>
       {description && <p className="text-brand-slate text-sm md:text-base">{description}</p>}

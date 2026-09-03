@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+Disallow: /dealer
+Disallow: /dealer/
+
+Sitemap: https://www.smartsurgident.com/sitemap.xml

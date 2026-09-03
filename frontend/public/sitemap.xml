@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Static public routes only. Dynamic pages (individual product/brand/dealer/
+  resource detail pages) are intentionally NOT listed here — a static file
+  can't know live catalogue slugs. A complete sitemap would need to be
+  generated at build/deploy time (or served dynamically) from the live API;
+  that's a follow-up task, not something to fake with placeholder URLs here.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://www.smartsurgident.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://www.smartsurgident.com/products</loc><priority>0.9</priority></url>
+  <url><loc>https://www.smartsurgident.com/brands</loc><priority>0.7</priority></url>
+  <url><loc>https://www.smartsurgident.com/dealers</loc><priority>0.7</priority></url>
+  <url><loc>https://www.smartsurgident.com/resources</loc><priority>0.6</priority></url>
+  <url><loc>https://www.smartsurgident.com/company/about</loc><priority>0.5</priority></url>
+  <url><loc>https://www.smartsurgident.com/company/facilities</loc><priority>0.4</priority></url>
+  <url><loc>https://www.smartsurgident.com/company/news</loc><priority>0.4</priority></url>
+  <url><loc>https://www.smartsurgident.com/company/events</loc><priority>0.4</priority></url>
+  <url><loc>https://www.smartsurgident.com/company/careers</loc><priority>0.4</priority></url>
+  <url><loc>https://www.smartsurgident.com/support/contact</loc><priority>0.5</priority></url>
+  <url><loc>https://www.smartsurgident.com/support/faq</loc><priority>0.3</priority></url>
+  <url><loc>https://www.smartsurgident.com/support/warranty</loc><priority>0.3</priority></url>
+  <url><loc>https://www.smartsurgident.com/support/quote</loc><priority>0.6</priority></url>
+</urlset>

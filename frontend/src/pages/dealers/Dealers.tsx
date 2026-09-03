@@ -6,8 +6,14 @@ import type { Dealer } from "../../api/endpoints";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import SectionHeader from "../../components/ui/SectionHeader";
 import Reveal from "../../components/ui/Reveal";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function Dealers() {
+  usePageMeta(
+    "Dealer Network",
+    "Find an authorized Smart Surgident dealer near you across Nepal — genuine dental and surgical equipment, stocked locally."
+  );
+
   const [dealers, setDealers] = useState<Dealer[]>([]);
   const [loaded, setLoaded] = useState(false);
 

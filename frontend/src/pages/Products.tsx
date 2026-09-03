@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import { getProducts, getBrands } from "../api/endpoints";
 import type { Product, Brand } from "../api/endpoints";
 import ProductCard from "../components/ProductCard";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function Products() {
+  usePageMeta(
+    "Products",
+    "Browse genuine dental units, instruments, sterilization equipment and consumables distributed by Smart Surgident across Nepal."
+  );
+
   const [products, setProducts] = useState<Product[]>([]);
   const [brands, setBrands] = useState<Brand[]>([]);
   const [search, setSearch] = useState("");

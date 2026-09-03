@@ -9,7 +9,6 @@ import { servingCities } from "../../data/homepage";
 // Palette literals mirror index.css brand tokens (SVG paint can't read CSS vars).
 const MAP_FILL = "#E1ECF3"; // --color-brand-tint
 const ACCENT = "#4588B1"; // --color-brand-steel
-const INK = "#1F2C41"; // --color-brand-navy
 
 const MAP = toSvgPaths(NEPAL_PROVINCES_GEO, { width: 1100, padding: 26, fill: MAP_FILL });
 const [minLongitude, , maxLongitude, maxLatitude] = MAP.bbox;
@@ -17,8 +16,11 @@ const mapScale = (MAP.width - 52) / (maxLongitude - minLongitude);
 
 const projectCity = (name: string, latitude: number, longitude: number) => ({
   name,
-  x: (longitude - minLongitude) * mapScale + 26,
-  y: (maxLatitude - latitude) * mapScale + 26,
+  // Percent-of-container coordinates — HTML labels stay a fixed, readable
+  // font size on every screen instead of scaling (and shrinking) with the
+  // SVG viewBox the way in-SVG <text> would on narrow phones.
+  xPct: ((longitude - minLongitude) * mapScale + 26) / MAP.width * 100,
+  yPct: ((maxLatitude - latitude) * mapScale + 26) / MAP.height * 100,
 });
 
 const CITY_COORDS: Record<string, [number, number]> = {
@@ -28,6 +30,11 @@ const CITY_COORDS: Record<string, [number, number]> = {
   Butwal: [27.7006, 83.4484],
   Biratnagar: [26.4525, 87.2718],
 };
+
+// Chitwan and Butwal project close together — drop Chitwan's label below its
+// dot (instead of the default above) so the two never overlap.
+const LABEL_BELOW = new Set(["Chitwan"]);
+
 const CITIES = servingCities
   .filter((c) => CITY_COORDS[c])
   .map((c) => projectCity(c, CITY_COORDS[c][0], CITY_COORDS[c][1]));
@@ -38,63 +45,88 @@ export default function NepalDealerNetwork() {
 
   return (
     <section className="bg-white py-20 md:py-28">
-      <div className="max-w-[1240px] mx-auto px-5 sm:px-8 grid lg:grid-cols-[1.3fr_1fr] gap-12 lg:gap-16 items-center">
+      <div className="max-w-[1440px] mx-auto px-5 sm:px-8 grid xl:grid-cols-[2fr_1fr] gap-10 xl:gap-16 items-center">
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, scale: 0.97 }}
           whileInView={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-2xl bg-brand-bg p-4 sm:p-8"
+          className="rounded-2xl bg-brand-bg p-3 sm:p-5 md:p-6"
         >
-          <svg viewBox={MAP.viewBox} className="w-full h-auto" role="img" aria-label="Map of Nepal showing Smart Surgident dealer cities">
-            <defs>
-              <filter id="nepal-outline" x="-3%" y="-8%" width="106%" height="116%">
-                <feMorphology in="SourceAlpha" operator="dilate" radius="2.5" result="expanded" />
-                <feFlood floodColor={ACCENT} result="outlineColor" />
-                <feComposite in="outlineColor" in2="expanded" operator="in" result="outline" />
-                <feMerge><feMergeNode in="outline" /><feMergeNode in="SourceGraphic" /></feMerge>
-              </filter>
-            </defs>
-            <g filter="url(#nepal-outline)">
-              {MAP.paths.map((path) => <path key={path.id} d={path.d} fill={path.fill} />)}
-            </g>
-            {CITIES.map((city, index) => (
-              <motion.g
-                key={city.name}
-                tabIndex={0}
-                role="button"
-                aria-label={city.name}
-                initial={reduceMotion ? undefined : { opacity: 0, scale: 0.5 }}
-                whileInView={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.3, delay: index * 0.1 }}
-                onMouseEnter={() => setActiveCity(city.name)}
-                onMouseLeave={() => setActiveCity((c) => (c === city.name ? null : c))}
-                onFocus={() => setActiveCity(city.name)}
-                onBlur={() => setActiveCity((c) => (c === city.name ? null : c))}
-                onClick={() => setActiveCity((c) => (c === city.name ? null : city.name))}
-                className="cursor-pointer outline-none"
-              >
-                <motion.circle
-                  cx={city.x}
-                  cy={city.y}
-                  r="20"
-                  fill={ACCENT}
-                  opacity="0.16"
-                  animate={reduceMotion ? undefined : { scale: [1, 1.35, 1], opacity: [0.16, 0.03, 0.16] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: index * 0.14 }}
-                  style={{ transformBox: "fill-box", transformOrigin: "center" }}
-                />
-                <circle cx={city.x} cy={city.y} r="9" fill={ACCENT} stroke="#FFFFFF" strokeWidth="4" />
-                {activeCity === city.name && (
-                  <>
-                    <rect x={city.x - 60} y={city.y - 48} rx="10" width="120" height="28" fill="#FFFFFF" stroke={ACCENT} strokeWidth="1.5" />
-                    <text x={city.x} y={city.y - 29} textAnchor="middle" fill={INK} style={{ fontSize: "13px", fontWeight: 700 }}>{city.name}</text>
-                  </>
-                )}
-              </motion.g>
-            ))}
-          </svg>
+          {/* This wrapper's box exactly matches the SVG's rendered box (no
+              padding of its own) — city markers below are positioned with
+              percentages against IT, not the padded card, so they land
+              exactly on the map instead of drifting into the padding. */}
+          <div className="relative">
+            <svg viewBox={MAP.viewBox} className="w-full h-auto block" role="img" aria-label="Map of Nepal showing Smart Surgident dealer cities">
+              <defs>
+                <filter id="nepal-outline" x="-3%" y="-8%" width="106%" height="116%">
+                  <feMorphology in="SourceAlpha" operator="dilate" radius="2.5" result="expanded" />
+                  <feFlood floodColor={ACCENT} result="outlineColor" />
+                  <feComposite in="outlineColor" in2="expanded" operator="in" result="outline" />
+                  <feMerge><feMergeNode in="outline" /><feMergeNode in="SourceGraphic" /></feMerge>
+                </filter>
+              </defs>
+              <g filter="url(#nepal-outline)">
+                {MAP.paths.map((path) => <path key={path.id} d={path.d} fill={path.fill} />)}
+              </g>
+            </svg>
+
+            {/* City markers + always-visible labels, positioned in HTML over
+                the SVG (percent coordinates) so text stays crisp and legible
+                at any viewport width instead of scaling down with the map. */}
+            {CITIES.map((city, index) => {
+              const isActive = activeCity === city.name;
+              const below = LABEL_BELOW.has(city.name);
+              return (
+                <div
+                  key={city.name}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: `${city.xPct}%`, top: `${city.yPct}%` }}
+                >
+                  <button
+                    type="button"
+                    aria-pressed={isActive}
+                    aria-label={`Smart Surgident dealer in ${city.name}`}
+                    onMouseEnter={() => setActiveCity(city.name)}
+                    onMouseLeave={() => setActiveCity((c) => (c === city.name ? null : c))}
+                    onFocus={() => setActiveCity(city.name)}
+                    onBlur={() => setActiveCity((c) => (c === city.name ? null : c))}
+                    onClick={() => setActiveCity((c) => (c === city.name ? null : city.name))}
+                    className={`group flex items-center gap-1.5 outline-none ${below ? "flex-col-reverse" : "flex-col"}`}
+                  >
+                    <span
+                      className={`whitespace-nowrap rounded-full border bg-white px-1.5 py-0.5 sm:px-2.5 sm:py-1 text-[9px] sm:text-[11px] md:text-xs font-semibold shadow-sm transition-colors duration-200 ${
+                        isActive
+                          ? "border-brand-primary text-brand-primary shadow-md"
+                          : "border-brand-border text-brand-navy"
+                      }`}
+                    >
+                      {city.name}
+                    </span>
+
+                    <span className="relative flex items-center justify-center shrink-0 w-4 h-4 sm:w-6 sm:h-6">
+                      <motion.span
+                        aria-hidden="true"
+                        className="absolute inset-0 rounded-full"
+                        style={{ background: ACCENT, opacity: 0.16 }}
+                        animate={reduceMotion ? undefined : { scale: [1, 1.5, 1], opacity: [0.16, 0.02, 0.16] }}
+                        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut", delay: index * 0.16 }}
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="block rounded-full ring-2 sm:ring-4 ring-white transition-transform duration-200 group-hover:scale-110 w-2 h-2 sm:w-3 sm:h-3"
+                        style={{
+                          background: isActive ? "#2d6285" : ACCENT,
+                          boxShadow: "0 1px 3px rgba(31,44,65,0.35)",
+                        }}
+                      />
+                    </span>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </motion.div>
 
         <motion.div

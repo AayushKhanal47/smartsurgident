@@ -28,7 +28,7 @@ function PromoBannerView({
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const y = useTransform(scrollYProgress, [0, 1], ["-6%", "6%"]);
+  const y = useTransform(scrollYProgress, [0, 1], ["-3%", "3%"]);
 
   const imageLeft = banner.imageSide === "left";
 
@@ -40,14 +40,14 @@ function PromoBannerView({
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className="relative rounded-2xl overflow-hidden bg-white shadow-[0_30px_80px_-32px_rgba(31,44,65,0.32)]"
     >
-      <div className="aspect-[4/3] md:aspect-[5/4] overflow-hidden">
+      <div className="aspect-[4/5] md:aspect-[5/6] overflow-hidden">
         <motion.img
           src={image}
           alt={data.title}
           loading="lazy"
           decoding="async"
           style={reduceMotion ? undefined : { y }}
-          className="w-full h-[112%] object-cover will-change-transform"
+          className="w-full h-[106%] object-cover will-change-transform"
         />
       </div>
     </motion.div>

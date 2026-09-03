@@ -5,11 +5,17 @@ import type { Brand, Product } from "../api/endpoints";
 import Breadcrumbs from "../components/ui/Breadcrumbs";
 import ProductCard from "../components/ProductCard";
 import Reveal from "../components/ui/Reveal";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function BrandDetail() {
   const { slug } = useParams<{ slug: string }>();
   const [brand, setBrand] = useState<Brand | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
+
+  usePageMeta(
+    brand ? brand.name : "",
+    brand ? `${brand.name} dental and surgical equipment, distributed across Nepal by Smart Surgident.` : undefined
+  );
 
   useEffect(() => {
     getBrands().then((brands) => {

@@ -6,6 +6,10 @@
 // that isn't backed by real data.
 // ---------------------------------------------------------------------------
 
+import categoryDentalUnits from "../assets/categories/category-dental-units.jpg";
+import categoryInstruments from "../assets/categories/category-instruments.jpg";
+import categorySterilization from "../assets/categories/category-sterilization.jpg";
+
 export type BannerSource =
   | { type: "product"; slug: string }
   | { type: "resource"; slug: string };
@@ -43,10 +47,25 @@ export const servingCities = ["Kathmandu", "Pokhara", "Chitwan", "Butwal", "Bira
 export const trustBar = ["Nationwide delivery", "Genuine products", "Expert support", "Dealer network"];
 
 // --- EXPLORE THE RANGE (fallback when the Category collection is empty) ---
-export const exploreLinks: { label: string; hint: string; to: string }[] = [
-  { label: "Dental units & equipment", hint: "Treatment units, compressors, delivery systems", to: "/products" },
-  { label: "Instruments & handpieces", hint: "Hand instruments, rotary, endodontics", to: "/products" },
-  { label: "Sterilization & consumables", hint: "Autoclaves, infection control, chairside materials", to: "/products" },
+export const exploreLinks: { label: string; hint: string; to: string; image: string }[] = [
+  {
+    label: "Dental units & equipment",
+    hint: "Treatment units, compressors, delivery systems",
+    to: "/products",
+    image: categoryDentalUnits,
+  },
+  {
+    label: "Instruments & handpieces",
+    hint: "Hand instruments, rotary, endodontics",
+    to: "/products",
+    image: categoryInstruments,
+  },
+  {
+    label: "Sterilization & consumables",
+    hint: "Autoclaves, infection control, chairside materials",
+    to: "/products",
+    image: categorySterilization,
+  },
 ];
 
 // --- PRODUCT SHOWCASES ---------------------------------------------------

@@ -13,6 +13,7 @@ import {
   HiOutlineClipboardList,
   HiOutlineExternalLink,
   HiOutlineLogout,
+  HiOutlineCog,
 } from "react-icons/hi";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import Logo from "../../components/ui/Logo";
@@ -41,6 +42,10 @@ const GROUPS: { heading: string; links: { label: string; to: string; icon: typeo
   {
     heading: "Enquiries",
     links: [{ label: "Quote requests", to: "/admin/quotes", icon: HiOutlineClipboardList }],
+  },
+  {
+    heading: "Account",
+    links: [{ label: "Admin settings", to: "/admin/settings", icon: HiOutlineCog }],
   },
 ];
 

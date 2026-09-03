@@ -26,5 +26,9 @@ export const imageUpload = multer({
 export const pdfUpload = multer({
   storage,
   fileFilter: createFileFilter(["application/pdf"], "Only PDF files are allowed"),
-  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB per file
+  // 200MB app-level cap. Cloudinary's own account plan may still reject
+  // large files below this regardless (free/basic tiers commonly cap raw
+  // uploads well under this) — if big catalogues still fail to upload,
+  // check the Cloudinary plan's file-size limit.
+  limits: { fileSize: 200 * 1024 * 1024 },
 });

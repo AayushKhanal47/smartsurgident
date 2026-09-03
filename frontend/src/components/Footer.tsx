@@ -42,7 +42,7 @@ const COLUMNS: { heading: string; links: { label: string; to: string }[] }[] = [
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-footer text-white/75 mt-20">
+    <footer className="bg-brand-footer text-white/75">
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-16 grid grid-cols-2 md:grid-cols-6 gap-x-8 gap-y-12">
         <div className="col-span-2">
           <Logo theme="light" />

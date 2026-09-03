@@ -18,11 +18,12 @@ interface DealerRow {
   phone?: string;
   province?: string;
   whatsapp?: string;
+  website?: string;
   profilePhoto?: string;
   city?: { _id?: string; name?: string };
 }
 
-const empty = { name: "", city: "", phone: "", email: "", password: "", province: "", whatsapp: "" };
+const empty = { name: "", city: "", phone: "", email: "", password: "", province: "", whatsapp: "", website: "" };
 
 export default function AdminDealers() {
   const [dealers, setDealers] = useState<DealerRow[]>([]);
@@ -52,7 +53,7 @@ export default function AdminDealers() {
     setEditingId(d._id);
     setForm({
       name: d.name, city: d.city?._id ?? "", phone: d.phone ?? "", email: d.email,
-      password: "", province: d.province ?? "", whatsapp: d.whatsapp ?? "",
+      password: "", province: d.province ?? "", whatsapp: d.whatsapp ?? "", website: d.website ?? "",
     });
     setProfilePhoto(d.profilePhoto ?? "");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -130,6 +131,12 @@ export default function AdminDealers() {
               <Field label="Phone" required value={form.phone} onChange={(e) => set("phone", e.target.value)} />
               <Field label="WhatsApp" value={form.whatsapp} onChange={(e) => set("whatsapp", e.target.value)} />
             </div>
+            <Field
+              label="Website (optional)"
+              placeholder="https://example.com"
+              value={form.website}
+              onChange={(e) => set("website", e.target.value)}
+            />
             <Field label="Login email" type="email" required value={form.email} onChange={(e) => set("email", e.target.value)} />
             <Field
               label={editingId ? "New password (leave blank to keep)" : "Login password"}

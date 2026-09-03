@@ -4,6 +4,7 @@ import { getResourceBySlug } from "../../api/endpoints";
 import type { Resource } from "../../api/endpoints";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function ResourceDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -11,6 +12,8 @@ export default function ResourceDetail() {
   const [notFound, setNotFound] = useState(false);
   const [openingPdf, setOpeningPdf] = useState(false);
   const [openError, setOpenError] = useState("");
+
+  usePageMeta(resource ? resource.title : "", resource ? resource.summary : undefined);
 
   useEffect(() => {
     if (!slug) return;

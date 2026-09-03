@@ -40,7 +40,7 @@ export default function ELibraryResources() {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
           {resources.map((r, i) => {
-            const thumb = getPdfThumbnail(r.fileUrl);
+            const thumb = r.coverImage || getPdfThumbnail(r.fileUrl);
             return (
               <motion.div
                 key={r._id}

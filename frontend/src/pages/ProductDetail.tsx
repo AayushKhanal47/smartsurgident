@@ -5,6 +5,7 @@ import { getProductBySlug } from "../api/endpoints";
 import type { Product } from "../api/endpoints";
 import { useCart } from "../context/CartContext";
 import { Button } from "../components/ui/Button";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -17,6 +18,11 @@ export default function ProductDetail() {
     if (slug) getProductBySlug(slug).then(setProduct).catch(() => setProduct(null));
     setActive(0);
   }, [slug]);
+
+  usePageMeta(
+    product ? product.name : "",
+    product ? product.description?.slice(0, 160) || `${product.name} from ${product.brand?.name ?? "Smart Surgident"}, distributed across Nepal.` : undefined
+  );
 
   if (!product) {
     return <p className="max-w-[1240px] mx-auto px-5 sm:px-8 py-16 text-sm text-brand-muted">Loading…</p>;

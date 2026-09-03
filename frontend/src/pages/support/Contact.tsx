@@ -4,10 +4,15 @@ import Reveal from "../../components/ui/Reveal";
 import { Button } from "../../components/ui/Button";
 import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
 import { FaWhatsapp } from "react-icons/fa";
-
-const WHATSAPP_NUMBER = "977980XXXXXXX";
+import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../../config/whatsapp";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function SupportContact() {
+  usePageMeta(
+    "Contact Us",
+    "Reach Smart Surgident for product questions, orders, or dealer inquiries — dental and surgical equipment distribution across Nepal."
+  );
+
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
 
@@ -43,7 +48,10 @@ export default function SupportContact() {
               info@smartsurgident.com
             </span>
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              href={buildWhatsAppLink(
+                ADMIN_WHATSAPP_NUMBER,
+                "Hello Smart Surgident, I have a question about your dental equipment."
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 hover:text-brand-blue transition-colors"

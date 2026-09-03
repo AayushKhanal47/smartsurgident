@@ -5,8 +5,14 @@ import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import SectionHeader from "../../components/ui/SectionHeader";
 import Reveal from "../../components/ui/Reveal";
 import { getPdfThumbnail } from "../../utils/pdfThumbnail";
+import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function Resources() {
+  usePageMeta(
+    "E-Library",
+    "Specifications, manuals and product catalogues for the dental and surgical equipment Smart Surgident distributes across Nepal."
+  );
+
   const [resources, setResources] = useState<Resource[]>([]);
   const [search, setSearch] = useState("");
   const [loaded, setLoaded] = useState(false);
@@ -52,8 +58,8 @@ export default function Resources() {
               <Reveal key={r._id} delay={i * 0.05}>
                 <a href={r.fileUrl} target="_blank" rel="noopener noreferrer" className="block bg-white rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-brand-blue/40 transition-all">
                   <div className="aspect-[3/4] bg-brand-tint flex items-center justify-center overflow-hidden">
-                    {getPdfThumbnail(r.fileUrl) ? (
-                      <img src={getPdfThumbnail(r.fileUrl)!} alt={r.title} className="h-full w-full object-cover" />
+                    {(r.coverImage || getPdfThumbnail(r.fileUrl)) ? (
+                      <img src={r.coverImage || getPdfThumbnail(r.fileUrl)!} alt={r.title} className="h-full w-full object-cover" />
                     ) : (
                       <span className="text-brand-light text-2xl">📄</span>
                     )}

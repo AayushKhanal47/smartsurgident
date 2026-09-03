@@ -53,7 +53,7 @@ export function useBannerSource(source: BannerSource): State {
           setState({
             loading: false,
             data: {
-              image: getPdfThumbnail(r.fileUrl),
+              image: r.coverImage || getPdfThumbnail(r.fileUrl),
               title: r.title,
               href: `/resources/${r.slug}`,
             },

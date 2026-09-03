@@ -33,6 +33,7 @@ export interface Dealer {
   province?: string;
   phone: string;
   whatsapp?: string;
+  website?: string;
   logo?: string;
   profilePhoto?: string;
   storePhotos: string[];
@@ -169,6 +170,7 @@ export interface CreateDealerInput {
   password: string;
   province?: string;
   whatsapp?: string;
+  website?: string;
   profilePhoto?: string;
 }
 
@@ -238,6 +240,26 @@ export const loginAdmin = (email: string, password: string) =>
 export const logoutAdmin = () => api.post("/auth/logout");
 
 export const getMe = () => api.get<AdminUser>("/auth/me").then((r) => r.data);
+
+export interface AdminAccount {
+  _id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
+export const getAdminsAdmin = () => api.get<AdminAccount[]>("/auth/admins").then((r) => r.data);
+
+export const createAdminAdmin = (data: { name: string; email: string; password: string }) =>
+  api.post<AdminAccount>("/auth/admins", data).then((r) => r.data);
+
+export const resetAdminPasswordAdmin = (id: string, password: string) =>
+  api.patch(`/auth/admins/${id}/password`, { password }).then((r) => r.data);
+
+export const deleteAdminAdmin = (id: string) => api.delete(`/auth/admins/${id}`).then((r) => r.data);
+
+export const changeMyPasswordAdmin = (currentPassword: string, newPassword: string) =>
+  api.patch("/auth/me/password", { currentPassword, newPassword }).then((r) => r.data);
 
 export interface DealerSession {
   _id: string;

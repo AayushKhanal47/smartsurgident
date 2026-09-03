@@ -11,6 +11,20 @@ const signToken = (id: string) =>
 const slugify = (value: string) =>
   value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+// Normalizes a dealer-supplied website to a safe absolute http(s) URL, or
+// undefined if blank/unparsable — callers must not persist raw user input.
+const normalizeWebsite = (value: unknown): string | undefined => {
+  if (typeof value !== "string" || !value.trim()) return undefined;
+  const withProtocol = /^https?:\/\//i.test(value.trim()) ? value.trim() : `https://${value.trim()}`;
+  try {
+    const url = new URL(withProtocol);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return undefined;
+    return url.toString();
+  } catch {
+    return undefined;
+  }
+};
+
 export const createDealer = asyncHandler(async (req: Request, res: Response) => {
   const {
     name,
@@ -18,6 +32,7 @@ export const createDealer = asyncHandler(async (req: Request, res: Response) => 
     province,
     phone,
     whatsapp,
+    website,
     email,
     password,
     address,
@@ -46,6 +61,7 @@ export const createDealer = asyncHandler(async (req: Request, res: Response) => 
     province,
     phone,
     whatsapp,
+    website: normalizeWebsite(website),
     email,
     password: hashed,
     slug: slugify(name),
@@ -122,8 +138,9 @@ export const getPublicDealerBySlug = asyncHandler(async (req: Request, res: Resp
 });
 
 export const updateDealer = asyncHandler(async (req: Request, res: Response) => {
-  const { password, ...rest } = req.body;
-  const update = password ? { ...rest, password: await bcrypt.hash(password, 10) } : rest;
+  const { password, website, ...rest } = req.body;
+  const withWebsite = "website" in req.body ? { ...rest, website: normalizeWebsite(website) } : rest;
+  const update = password ? { ...withWebsite, password: await bcrypt.hash(password, 10) } : withWebsite;
 
   const dealer = await Dealer.findByIdAndUpdate(req.params.id, update, { new: true }).select(
     "-password"

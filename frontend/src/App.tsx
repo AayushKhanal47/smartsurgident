@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import WhatsAppButton from "./components/WhatsAppButton";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -41,6 +42,7 @@ import AdminDealers from "./pages/admin/AdminDealers";
 import AdminCampaigns from "./pages/admin/AdminCampaigns";
 import AdminResources from "./pages/admin/AdminResources";
 import AdminQuotes from "./pages/admin/AdminQuotes";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 // Wraps the public-facing site with the shared Navbar/Footer chrome.
 // The admin area intentionally does NOT use this — it has its own sidebar layout.
@@ -50,6 +52,7 @@ function SiteLayout({ children }: { children: React.ReactNode }) {
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
+      <WhatsAppButton />
     </div>
   );
 }
@@ -77,6 +80,7 @@ function App() {
         <Route path="campaigns" element={<AdminCampaigns />} />
         <Route path="resources" element={<AdminResources />} />
         <Route path="quotes" element={<AdminQuotes />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
 
       {/* Public site — shared Navbar/Footer chrome */}
