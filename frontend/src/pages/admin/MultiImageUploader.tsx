@@ -95,7 +95,7 @@ export default function MultiImageUploader({ value, onChange, label = "Images", 
           accept="image/jpeg,image/png,image/webp,image/gif"
           onChange={handleFiles}
           disabled={uploading}
-          className="text-xs text-brand-slate file:mr-3 file:rounded-full file:border-0 file:bg-brand-tint file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-primary"
+          className="text-xs text-brand-slate file:mr-3 file:rounded-full file:border-0 file:bg-brand-tint file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-brand-primary file:transition-colors hover:file:bg-brand-primary hover:file:text-white"
         />
       )}
       {uploading && <p className="text-xs text-brand-primary">Uploading…</p>}

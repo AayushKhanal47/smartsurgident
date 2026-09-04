@@ -109,6 +109,22 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Pointer cursor on every clickable control site-wide — native form
+   controls default to a text/arrow cursor otherwise, which reads as
+   unpolished next to the rest of the UI. */
+button:not(:disabled),
+[role="button"]:not(:disabled),
+input[type="file"]:not(:disabled),
+input[type="file"]:not(:disabled)::file-selector-button,
+input[type="file"]:not(:disabled)::-webkit-file-upload-button,
+label:has(> input[type="file"]) {
+  cursor: pointer;
+}
+button:disabled,
+[role="button"][aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
 @keyframes brand-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }

@@ -1,4 +1,5 @@
-import type { ReactNode, InputHTMLAttributes, TextareaHTMLAttributes, SelectHTMLAttributes } from "react";
+import { useState, type ReactNode, type InputHTMLAttributes, type TextareaHTMLAttributes, type SelectHTMLAttributes } from "react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 
 // ---------------------------------------------------------------------------
 // Shared admin UI primitives. One consistent visual language for every
@@ -38,12 +39,33 @@ export function Field({
   label,
   hint,
   className = "",
+  type,
   ...props
 }: { label?: string; hint?: string } & InputHTMLAttributes<HTMLInputElement>) {
+  const [visible, setVisible] = useState(false);
+  const isPassword = type === "password";
+
   return (
     <label className={`flex flex-col gap-1.5 ${className}`}>
       {label && <span className="text-xs font-medium text-brand-slate">{label}</span>}
-      <input className={fieldBase} {...props} />
+      <div className="relative">
+        <input
+          type={isPassword ? (visible ? "text" : "password") : type}
+          className={`${fieldBase} ${isPassword ? "pr-10" : ""}`}
+          {...props}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => setVisible((v) => !v)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-brand-muted hover:text-brand-navy cursor-pointer"
+            aria-label={visible ? "Hide password" : "Show password"}
+          >
+            {visible ? <HiEyeOff /> : <HiEye />}
+          </button>
+        )}
+      </div>
       {hint && <span className="text-[11px] text-brand-muted">{hint}</span>}
     </label>
   );

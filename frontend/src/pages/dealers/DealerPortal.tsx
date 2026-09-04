@@ -8,6 +8,7 @@ import {
 } from "../../api/endpoints";
 import type { DealerOrder } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
+import PasswordInput from "../../components/ui/PasswordInput";
 
 const statuses: DealerOrder["status"][] = [
   "placed",
@@ -88,7 +89,7 @@ export default function DealerPortal() {
             <p className="text-sm text-brand-slate mt-1">Sign in to manage orders routed to your city.</p>
           </div>
           <input required type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
-          <input required type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
+          <PasswordInput required placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm" />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <Button type="submit" disabled={submitting} className="justify-center">{submitting ? "Signing in..." : "Sign in"}</Button>
         </form>

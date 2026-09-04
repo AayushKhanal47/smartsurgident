@@ -8,6 +8,7 @@ import {
 } from "../../api/endpoints";
 import type { AdminAccount } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
+import PasswordInput from "../../components/ui/PasswordInput";
 import { PageHeader, Card, Field, EmptyState, DangerButton } from "./ui";
 
 function errorMessage(err: unknown, fallback: string) {
@@ -52,8 +53,7 @@ function ResetPasswordRow({ admin, onDone }: { admin: AdminAccount; onDone: () =
 
   return (
     <div className="flex items-center gap-2">
-      <input
-        type="password"
+      <PasswordInput
         autoFocus
         value={password}
         onChange={(e) => setPassword(e.target.value)}

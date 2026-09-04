@@ -7,6 +7,8 @@ interface PdfUploaderProps {
   label?: string;
 }
 
+// Same replace-in-place behavior as ImageUploader: the upload button stays
+// visible once a PDF is set, so picking a new file replaces the current one.
 export default function PdfUploader({ value, onChange, label = "PDF file" }: PdfUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -39,32 +41,43 @@ export default function PdfUploader({ value, onChange, label = "PDF file" }: Pdf
 
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-xs text-brand-muted">{label}</p>
-      <div className="flex items-center gap-3">
-        <div className="w-16 h-16 rounded-xl bg-brand-tint flex items-center justify-center text-brand-primary text-xs font-semibold">
+      <p className="text-xs font-medium text-brand-slate">{label}</p>
+      <div className="flex items-center gap-4">
+        <div className="w-16 h-16 shrink-0 rounded-xl bg-brand-tint flex items-center justify-center text-brand-primary text-xs font-semibold">
           PDF
         </div>
-        <div className="min-w-0">
-          <input
-            ref={inputRef}
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileChange}
-            disabled={uploading}
-            className="text-xs"
-          />
-          {uploading && <p className="text-xs text-brand-primary mt-1">Uploading...</p>}
+        <div className="flex flex-col items-start gap-1.5 min-w-0">
+          <label className="inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-3.5 py-1.5 text-xs font-medium text-brand-primary transition-colors hover:bg-brand-primary hover:text-white">
+            {uploading ? "Uploading…" : value ? "Change PDF" : "Upload PDF"}
+            <input
+              ref={inputRef}
+              type="file"
+              accept="application/pdf"
+              onChange={handleFileChange}
+              disabled={uploading}
+              className="hidden"
+            />
+          </label>
           {value && (
-            <a
-              href={value}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-xs text-brand-primary font-medium mt-1 hover:text-brand-navy"
-            >
-              Open uploaded PDF
-            </a>
+            <div className="flex items-center gap-3">
+              <a
+                href={value}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-brand-primary hover:text-brand-navy truncate"
+              >
+                Open uploaded PDF
+              </a>
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="text-xs font-medium text-red-500 hover:text-red-600"
+              >
+                Remove
+              </button>
+            </div>
           )}
-          {error && <p className="text-xs text-red-500 mt-1">{error}</p>}
+          {error && <p className="text-xs text-red-500">{error}</p>}
         </div>
       </div>
     </div>

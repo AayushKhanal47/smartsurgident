@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HiEye, HiEyeOff } from "react-icons/hi";
 
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import { Button } from "../../components/ui/Button";
@@ -12,7 +11,6 @@ export default function AdminLogin() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -49,23 +47,13 @@ export default function AdminLogin() {
             <p className="text-xs text-brand-muted mt-1">Manage the Smart Surgident catalogue</p>
           </div>
           <Field label="Email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-          <div className="relative">
-            <Field
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-[34px] text-brand-muted hover:text-brand-navy"
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? <HiEyeOff /> : <HiEye />}
-            </button>
-          </div>
+          <Field
+            label="Password"
+            type="password"
+            required
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" disabled={submitting} className="justify-center mt-1">
             {submitting ? "Signing in…" : "Sign in"}
