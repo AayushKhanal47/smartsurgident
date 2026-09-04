@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
-import { HiArrowRight } from "react-icons/hi";
+import { useEffect, useState } from "react";
+import { HiArrowRight, HiOutlinePhone, HiOutlineLocationMarker } from "react-icons/hi";
 import { toSvgPaths } from "nepali-geo-pro-max/geo";
 import { NEPAL_PROVINCES_GEO } from "nepali-geo-pro-max/geo/provinces";
 import { servingCities } from "../../data/homepage";
+import { getPublicDealers } from "../../api/endpoints";
+import type { Dealer } from "../../api/endpoints";
 
 // Palette literals mirror index.css brand tokens (SVG paint can't read CSS vars).
 const MAP_FILL = "#E1ECF3"; // --color-brand-tint
@@ -28,7 +30,10 @@ const CITY_COORDS: Record<string, [number, number]> = {
   Pokhara: [28.2096, 83.9856],
   Chitwan: [27.5291, 84.3542],
   Butwal: [27.7006, 83.4484],
-  Biratnagar: [26.4525, 87.2718],
+  // Nudged ~0.15° north of Biratnagar's real coordinate — the city sits so
+  // close to the actual India border that the raw coordinate renders right
+  // on (sometimes just outside) this map's simplified southern boundary.
+  Biratnagar: [26.75, 87.25],
 };
 
 // Chitwan and Butwal project close together — drop Chitwan's label below its
@@ -42,6 +47,11 @@ const CITIES = servingCities
 export default function NepalDealerNetwork() {
   const reduceMotion = useReducedMotion();
   const [activeCity, setActiveCity] = useState<string | null>(null);
+  const [dealers, setDealers] = useState<Dealer[]>([]);
+
+  useEffect(() => {
+    getPublicDealers().then(setDealers).catch(() => setDealers([]));
+  }, []);
 
   return (
     <section className="bg-white py-20 md:py-28">
@@ -141,11 +151,36 @@ export default function NepalDealerNetwork() {
             A growing dealer network keeps genuine equipment, parts and support within
             reach across the country.
           </p>
-          <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
-            {servingCities.map((c) => (
-              <li key={c} className="text-sm font-medium text-brand-navy">{c}</li>
-            ))}
-          </ul>
+          {dealers.length > 0 ? (
+            <ul className="mt-7 flex flex-col gap-4 max-h-80 overflow-y-auto pr-2">
+              {dealers.map((d) => (
+                <li key={d._id}>
+                  <Link to={`/dealers/${d.slug}`} className="group block">
+                    <p className="text-sm font-semibold text-brand-navy group-hover:text-brand-primary transition-colors">
+                      {d.name}
+                      <span className="ml-2 font-normal text-brand-muted">· {d.city?.name}</span>
+                    </p>
+                    <p className="mt-1 flex items-center gap-1.5 text-xs text-brand-slate">
+                      <HiOutlinePhone className="shrink-0" aria-hidden="true" />
+                      {d.phone}
+                    </p>
+                    {d.address && (
+                      <p className="mt-0.5 flex items-start gap-1.5 text-xs text-brand-slate">
+                        <HiOutlineLocationMarker className="shrink-0 mt-0.5" aria-hidden="true" />
+                        {d.address}
+                      </p>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
+              {servingCities.map((c) => (
+                <li key={c} className="text-sm font-medium text-brand-navy">{c}</li>
+              ))}
+            </ul>
+          )}
           <Link
             to="/dealers"
             className="group mt-8 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary"

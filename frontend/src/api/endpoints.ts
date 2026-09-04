@@ -56,6 +56,7 @@ export interface Resource {
   coverImage?: string;
   isPublished: boolean;
   publishedAt?: string;
+  showOnHomepage?: boolean;
 }
 
 export interface City {
@@ -172,6 +173,14 @@ export interface CreateDealerInput {
   whatsapp?: string;
   website?: string;
   profilePhoto?: string;
+  logo?: string;
+  storePhotos?: string[];
+  address?: string;
+  openingHours?: string;
+  description?: string;
+  yearsInOperation?: number;
+  services?: string[];
+  brandsCarried?: string[];
 }
 
 export const createDealerAdmin = (data: CreateDealerInput) =>
@@ -205,6 +214,7 @@ export interface CreateResourceInput {
   coverImage?: string;
   fileUrl: string;
   isPublished: boolean;
+  showOnHomepage?: boolean;
 }
 
 export const createResourceAdmin = (data: CreateResourceInput) =>

@@ -82,7 +82,7 @@ function PromoBannerView({
 
   return (
     <section ref={ref} className={tinted ? "bg-brand-bg" : "bg-white"}>
-      <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-20 md:py-28 grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+      <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-20 md:py-28 grid md:grid-cols-2 gap-10 md:gap-16 items-start">
         {imageLeft ? (
           <>
             {media}

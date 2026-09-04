@@ -6,6 +6,7 @@ import SectionHeader from "../../components/ui/SectionHeader";
 import Reveal from "../../components/ui/Reveal";
 import { getPdfThumbnail } from "../../utils/pdfThumbnail";
 import { usePageMeta } from "../../hooks/usePageMeta";
+import { HiOutlineExternalLink } from "react-icons/hi";
 
 export default function Resources() {
   usePageMeta(
@@ -56,8 +57,8 @@ export default function Resources() {
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4 sm:gap-5">
             {resources.map((r, i) => (
               <Reveal key={r._id} delay={i * 0.05}>
-                <a href={r.fileUrl} target="_blank" rel="noopener noreferrer" className="block bg-white rounded-lg overflow-hidden border border-slate-200 hover:shadow-md hover:border-brand-blue/40 transition-all">
-                  <div className="aspect-[3/4] bg-brand-tint flex items-center justify-center overflow-hidden">
+                <a href={r.fileUrl} target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-lg overflow-hidden border border-slate-300 shadow-sm hover:shadow-md hover:border-brand-blue/40 transition-all">
+                  <div className="aspect-[3/4] bg-brand-tint flex items-center justify-center overflow-hidden border-b border-slate-200">
                     {(r.coverImage || getPdfThumbnail(r.fileUrl)) ? (
                       <img src={r.coverImage || getPdfThumbnail(r.fileUrl)!} alt={r.title} className="h-full w-full object-cover" />
                     ) : (
@@ -66,6 +67,10 @@ export default function Resources() {
                   </div>
                   <div className="p-2.5 text-center">
                     <p className="font-medium text-brand-navy text-xs truncate">{r.title}</p>
+                    <p className="mt-0.5 inline-flex items-center gap-1 text-[11px] font-medium text-brand-blue group-hover:text-brand-navy transition-colors">
+                      Open PDF
+                      <HiOutlineExternalLink aria-hidden="true" />
+                    </p>
                   </div>
                 </a>
               </Reveal>

@@ -11,7 +11,7 @@ import PdfUploader from "./PdfUploader";
 import ImageUploader from "./ImageUploader";
 import { PageHeader, Card, Field, Textarea, Toggle, Badge, EmptyState, DangerButton } from "./ui";
 
-const empty = { title: "", summary: "", fileUrl: "", coverImage: "", isPublished: true };
+const empty = { title: "", summary: "", fileUrl: "", coverImage: "", isPublished: true, showOnHomepage: false };
 
 export default function AdminResources() {
   const [resources, setResources] = useState<Resource[]>([]);
@@ -37,6 +37,7 @@ export default function AdminResources() {
       fileUrl: r.fileUrl ?? "",
       coverImage: r.coverImage ?? "",
       isPublished: r.isPublished,
+      showOnHomepage: r.showOnHomepage ?? false,
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -78,6 +79,7 @@ export default function AdminResources() {
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-sm font-medium text-brand-navy truncate">{r.title}</p>
                   <Badge tone={r.isPublished ? "green" : "slate"}>{r.isPublished ? "Published" : "Draft"}</Badge>
+                  {r.showOnHomepage && <Badge tone="default">On homepage</Badge>}
                   {!r.fileUrl && <Badge tone="amber">No PDF</Badge>}
                 </div>
                 <p className="text-xs text-brand-muted line-clamp-1 mt-0.5">{r.summary}</p>
@@ -107,6 +109,11 @@ export default function AdminResources() {
             <Field label="Title" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
             <Textarea label="Short description" rows={3} required value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} />
             <Toggle label="Published" checked={form.isPublished} onChange={(v) => setForm({ ...form, isPublished: v })} />
+            <Toggle
+              label="Show on homepage E-Library"
+              checked={form.showOnHomepage}
+              onChange={(v) => setForm({ ...form, showOnHomepage: v })}
+            />
             {error && <p className="text-sm text-red-500">{error}</p>}
             <Button type="submit" disabled={submitting} className="justify-center">
               {submitting ? "Saving…" : editingId ? "Save changes" : "Save catalogue"}

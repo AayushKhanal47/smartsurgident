@@ -11,6 +11,7 @@ export interface IResource extends Document {
   linkedBrands: Types.ObjectId[];
   isPublished: boolean;
   publishedAt?: Date;
+  showOnHomepage: boolean;
 }
 
 const resourceSchema = new Schema<IResource>(
@@ -25,6 +26,7 @@ const resourceSchema = new Schema<IResource>(
     linkedBrands: [{ type: Schema.Types.ObjectId, ref: "Brand" }],
     isPublished: { type: Boolean, default: false },
     publishedAt: { type: Date },
+    showOnHomepage: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

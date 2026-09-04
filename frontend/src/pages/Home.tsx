@@ -27,13 +27,13 @@ export default function Home() {
     <div>
       <ProductHeroBanner />
       <TrustStrip />
+      <TrustedBrands />
       <CategoryShowcase />
       {promoBanners[0] && <ProductPromoBanner banner={promoBanners[0]} />}
       <ProductSpotlight />
       <FeaturedProducts />
       {promoBanners[1] && <ProductPromoBanner banner={promoBanners[1]} tinted />}
       <WhySmartSurgident />
-      <TrustedBrands />
       <FeaturedImports />
       <NepalDealerNetwork />
       <ELibraryResources />

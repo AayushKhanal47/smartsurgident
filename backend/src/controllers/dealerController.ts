@@ -107,7 +107,10 @@ export const logoutDealer = (_req: Request, res: Response) => {
 };
 
 export const getDealers = asyncHandler(async (_req: Request, res: Response) => {
-  const dealers = await Dealer.find().populate("city", "name").select("-password");
+  const dealers = await Dealer.find()
+    .populate("city", "name")
+    .populate("brandsCarried", "name slug logoUrl")
+    .select("-password");
   res.json(dealers);
 });
 

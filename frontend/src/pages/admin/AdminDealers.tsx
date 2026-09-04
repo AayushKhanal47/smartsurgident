@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import {
   getCities,
+  getBrands,
   getDealersAdmin,
   createDealerAdmin,
   updateDealerAdmin,
   deleteDealerAdmin,
 } from "../../api/endpoints";
-import type { City } from "../../api/endpoints";
+import type { City, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import ImageUploader from "./ImageUploader";
-import { PageHeader, Card, Field, Select, EmptyState, DangerButton } from "./ui";
+import MultiImageUploader from "./MultiImageUploader";
+import { PageHeader, Card, Field, Textarea, Select, EmptyState, DangerButton } from "./ui";
 
 interface DealerRow {
   _id: string;
@@ -20,16 +22,42 @@ interface DealerRow {
   whatsapp?: string;
   website?: string;
   profilePhoto?: string;
+  logo?: string;
+  storePhotos?: string[];
+  address?: string;
+  openingHours?: string;
+  description?: string;
+  yearsInOperation?: number;
+  services?: string[];
+  brandsCarried?: { _id: string }[];
   city?: { _id?: string; name?: string };
 }
 
-const empty = { name: "", city: "", phone: "", email: "", password: "", province: "", whatsapp: "", website: "" };
+const empty = {
+  name: "",
+  city: "",
+  phone: "",
+  email: "",
+  password: "",
+  province: "",
+  whatsapp: "",
+  website: "",
+  address: "",
+  openingHours: "",
+  description: "",
+  yearsInOperation: "",
+  services: "",
+};
 
 export default function AdminDealers() {
   const [dealers, setDealers] = useState<DealerRow[]>([]);
   const [cities, setCities] = useState<City[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState(empty);
   const [profilePhoto, setProfilePhoto] = useState("");
+  const [logo, setLogo] = useState("");
+  const [storePhotos, setStorePhotos] = useState<string[]>([]);
+  const [brandsCarried, setBrandsCarried] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -37,14 +65,21 @@ export default function AdminDealers() {
   const load = () => {
     getDealersAdmin().then((d) => setDealers(d as DealerRow[])).catch(() => setDealers([]));
     getCities().then(setCities).catch(() => setCities([]));
+    getBrands().then(setBrands).catch(() => setBrands([]));
   };
   useEffect(() => { load(); }, []);
 
   const set = (k: keyof typeof empty, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
+  const toggleBrand = (id: string) =>
+    setBrandsCarried((current) => (current.includes(id) ? current.filter((b) => b !== id) : [...current, id]));
+
   const reset = () => {
     setForm(empty);
     setProfilePhoto("");
+    setLogo("");
+    setStorePhotos([]);
+    setBrandsCarried([]);
     setEditingId(null);
     setError("");
   };
@@ -54,8 +89,14 @@ export default function AdminDealers() {
     setForm({
       name: d.name, city: d.city?._id ?? "", phone: d.phone ?? "", email: d.email,
       password: "", province: d.province ?? "", whatsapp: d.whatsapp ?? "", website: d.website ?? "",
+      address: d.address ?? "", openingHours: d.openingHours ?? "", description: d.description ?? "",
+      yearsInOperation: d.yearsInOperation != null ? String(d.yearsInOperation) : "",
+      services: (d.services ?? []).join(", "),
     });
     setProfilePhoto(d.profilePhoto ?? "");
+    setLogo(d.logo ?? "");
+    setStorePhotos(d.storePhotos ?? []);
+    setBrandsCarried((d.brandsCarried ?? []).map((b) => b._id));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -71,11 +112,20 @@ export default function AdminDealers() {
     setError("");
     setSubmitting(true);
     try {
+      const { password, yearsInOperation, services, ...rest } = form;
+      const payload = {
+        ...rest,
+        profilePhoto,
+        logo,
+        storePhotos,
+        brandsCarried,
+        services: services.split(",").map((s) => s.trim()).filter(Boolean),
+        yearsInOperation: yearsInOperation ? Number(yearsInOperation) : undefined,
+      };
       if (editingId) {
-        const { password, ...rest } = form;
-        await updateDealerAdmin(editingId, { ...rest, profilePhoto, ...(password ? { password } : {}) });
+        await updateDealerAdmin(editingId, { ...payload, ...(password ? { password } : {}) });
       } else {
-        await createDealerAdmin({ ...form, profilePhoto });
+        await createDealerAdmin({ ...payload, password });
       }
       reset();
       load();
@@ -145,6 +195,50 @@ export default function AdminDealers() {
               value={form.password}
               onChange={(e) => set("password", e.target.value)}
             />
+
+            <div className="border-t border-brand-border pt-3.5 mt-1 flex flex-col gap-3.5">
+              <p className="text-xs font-semibold text-brand-navy uppercase tracking-[0.06em]">Public profile</p>
+              <p className="text-[11px] text-brand-muted -mt-2">
+                Shown on this dealer's public page in the Dealer Network directory.
+              </p>
+              <ImageUploader value={logo} onChange={setLogo} label="Logo (optional)" />
+              <MultiImageUploader value={storePhotos} onChange={setStorePhotos} label="Store photos" max={8} />
+              <Field label="Address" value={form.address} onChange={(e) => set("address", e.target.value)} />
+              <Textarea
+                label="Description"
+                rows={3}
+                value={form.description}
+                onChange={(e) => set("description", e.target.value)}
+              />
+              <div className="grid grid-cols-2 gap-3">
+                <Field label="Opening hours" placeholder="Sun–Fri, 10am–6pm" value={form.openingHours} onChange={(e) => set("openingHours", e.target.value)} />
+                <Field label="Years in operation" type="number" min={0} value={form.yearsInOperation} onChange={(e) => set("yearsInOperation", e.target.value)} />
+              </div>
+              <Field
+                label="Services"
+                hint="Comma-separated, e.g. Repair, Installation, Spare parts"
+                value={form.services}
+                onChange={(e) => set("services", e.target.value)}
+              />
+              {brands.length > 0 && (
+                <div>
+                  <p className="text-xs font-medium text-brand-slate mb-1.5">Brands carried</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                    {brands.map((b) => (
+                      <label key={b._id} className="inline-flex items-center gap-1.5 text-xs text-brand-navy">
+                        <input
+                          type="checkbox"
+                          checked={brandsCarried.includes(b._id)}
+                          onChange={() => toggleBrand(b._id)}
+                        />
+                        {b.name}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {error && <p className="text-sm text-red-500">{error}</p>}
             <Button type="submit" disabled={submitting} className="justify-center">
               {submitting ? "Saving…" : editingId ? "Save changes" : "Add dealer"}

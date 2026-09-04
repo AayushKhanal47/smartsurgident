@@ -88,6 +88,7 @@ export const createResource = asyncHandler(async (req: Request, res: Response) =
   const coverImage = String(req.body.coverImage || "").trim();
   const fileUrl = String(req.body.fileUrl || "").trim();
   const isPublished = Boolean(req.body.isPublished);
+  const showOnHomepage = Boolean(req.body.showOnHomepage);
 
   validateRequiredFields({ title, summary, coverImage, fileUrl }, res);
 
@@ -99,6 +100,7 @@ export const createResource = asyncHandler(async (req: Request, res: Response) =
     fileUrl,
     isPublished,
     publishedAt: isPublished ? new Date() : undefined,
+    showOnHomepage,
   });
   res.status(201).json(resource);
 });
@@ -116,6 +118,8 @@ export const updateResource = asyncHandler(async (req: Request, res: Response) =
   const fileUrl = String(req.body.fileUrl ?? existing.fileUrl).trim();
   const isPublished =
     typeof req.body.isPublished === "boolean" ? req.body.isPublished : existing.isPublished;
+  const showOnHomepage =
+    typeof req.body.showOnHomepage === "boolean" ? req.body.showOnHomepage : existing.showOnHomepage;
 
   validateRequiredFields({ title, summary, coverImage, fileUrl }, res);
 
@@ -136,6 +140,7 @@ export const updateResource = asyncHandler(async (req: Request, res: Response) =
       fileUrl,
       isPublished,
       publishedAt: isPublished ? existing.publishedAt || new Date() : undefined,
+      showOnHomepage,
     },
     { new: true }
   );

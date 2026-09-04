@@ -1,19 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
-import { HiArrowRight, HiOutlineDocumentText } from "react-icons/hi";
+import { HiArrowRight, HiOutlineDocumentText, HiOutlineExternalLink } from "react-icons/hi";
 import { getResources } from "../../api/endpoints";
 import type { Resource } from "../../api/endpoints";
 import { getPdfThumbnail } from "../../utils/pdfThumbnail";
 
 // E-LIBRARY. Real published resources, using the Cloudinary page-1 render of
-// each PDF as the cover. Renders nothing if there are none.
+// each PDF as the cover. Renders nothing if there are none. Admins choose
+// which catalogues show here via the "Show on homepage" toggle in
+// Admin → E-Library; falls back to the 4 most recent if none are flagged
+// yet, so this section never goes empty.
 export default function ELibraryResources() {
   const [resources, setResources] = useState<Resource[]>([]);
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    getResources().then((r) => setResources(r.slice(0, 4))).catch(() => setResources([]));
+    getResources()
+      .then((r) => {
+        const featured = r.filter((x) => x.showOnHomepage);
+        setResources((featured.length > 0 ? featured : r).slice(0, 4));
+      })
+      .catch(() => setResources([]));
   }, []);
 
   if (resources.length === 0) return null;
@@ -49,8 +57,13 @@ export default function ELibraryResources() {
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.5, delay: Math.min(i, 4) * 0.07, ease: [0.22, 1, 0.36, 1] }}
               >
-                <Link to={`/resources/${r.slug}`} className="group block">
-                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-white border border-brand-border">
+                <a
+                  href={r.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  <div className="aspect-[3/4] rounded-xl overflow-hidden bg-white border border-brand-border shadow-sm">
                     {thumb ? (
                       <img
                         src={thumb}
@@ -68,7 +81,11 @@ export default function ELibraryResources() {
                   <p className="mt-3 text-sm font-semibold text-brand-navy leading-snug group-hover:text-brand-primary transition-colors">
                     {r.title}
                   </p>
-                </Link>
+                  <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-brand-primary">
+                    Open PDF
+                    <HiOutlineExternalLink aria-hidden="true" />
+                  </span>
+                </a>
               </motion.div>
             );
           })}
