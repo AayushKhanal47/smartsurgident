@@ -2,6 +2,8 @@ import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import WhatsAppButton from "./components/WhatsAppButton";
+import ScrollToTop from "./components/ScrollToTop";
+import BackToTopButton from "./components/BackToTopButton";
 
 import Home from "./pages/Home";
 import Products from "./pages/Products";
@@ -53,13 +55,16 @@ function SiteLayout({ children }: { children: React.ReactNode }) {
       <main className="flex-1">{children}</main>
       <Footer />
       <WhatsAppButton />
+      <BackToTopButton />
     </div>
   );
 }
 
 function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       {/* Admin area — own layout, no public Navbar/Footer */}
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/dealer/login" element={<DealerPortal />} />
@@ -113,7 +118,8 @@ function App() {
 
       <Route path="/cart" element={<SiteLayout><Cart /></SiteLayout>} />
       <Route path="/checkout" element={<SiteLayout><Checkout /></SiteLayout>} />
-    </Routes>
+      </Routes>
+    </>
   );
 }
 
