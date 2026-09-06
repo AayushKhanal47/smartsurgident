@@ -157,7 +157,7 @@ export default function Navbar() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          <LanguageToggle className="hidden sm:inline-flex" />
+          <LanguageToggle className="!hidden sm:!inline-flex" />
           <SearchField className="hidden xl:block w-52" />
 
           <button
@@ -185,7 +185,7 @@ export default function Navbar() {
             )}
           </Link>
 
-          <ButtonLink to="/support/quote" className="hidden md:inline-flex">
+          <ButtonLink to="/support/quote" className="!hidden md:!inline-flex">
             {t("nav.talkToExpert")}
           </ButtonLink>
 
