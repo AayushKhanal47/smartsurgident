@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { HiArrowRight } from "react-icons/hi";
+import { useTranslation } from "../../i18n/useTranslation";
 
 import hongke from "../../assets/brands/brand-hongke.jpg";
 import bondentCbct from "../../assets/brands/brand-bondent-cbct.jpg";
@@ -23,6 +24,7 @@ const IMPORTS = [
 // CategoryShowcase's fallback tiles, so it needs no catalogue data to show.
 export default function FeaturedImports() {
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
 
   return (
     <section className="bg-brand-bg py-20 md:py-28">
@@ -34,13 +36,10 @@ export default function FeaturedImports() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl"
         >
-          <span className="eyebrow">What we import</span>
-          <h2 className="display-2 mt-3 text-brand-navy">
-            Equipment from trusted global manufacturers
-          </h2>
+          <span className="eyebrow">{t("imports.eyebrow")}</span>
+          <h2 className="display-2 mt-3 text-brand-navy">{t("imports.title")}</h2>
           <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate">
-            A sample of the genuine dental and surgical equipment lines we bring
-            into Nepal — sourced directly, not through grey-market imports.
+            {t("imports.description")}
           </p>
         </motion.div>
 

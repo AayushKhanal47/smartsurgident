@@ -7,6 +7,8 @@ import { NEPAL_PROVINCES_GEO } from "nepali-geo-pro-max/geo/provinces";
 import { servingCities } from "../../data/homepage";
 import { getPublicDealers } from "../../api/endpoints";
 import type { Dealer } from "../../api/endpoints";
+import { useTranslation } from "../../i18n/useTranslation";
+import type { TranslationKey } from "../../i18n/translations";
 
 // Palette literals mirror index.css brand tokens (SVG paint can't read CSS vars).
 const MAP_FILL = "#E1ECF3"; // --color-brand-tint
@@ -46,6 +48,7 @@ const CITIES = servingCities
 
 export default function NepalDealerNetwork() {
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
   const [activeCity, setActiveCity] = useState<string | null>(null);
   const [dealers, setDealers] = useState<Dealer[]>([]);
 
@@ -145,11 +148,10 @@ export default function NepalDealerNetwork() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="eyebrow">Nationwide presence</span>
-          <h2 className="display-2 mt-3 text-brand-navy">Close to your clinic</h2>
+          <span className="eyebrow">{t("dealerNetwork.eyebrow")}</span>
+          <h2 className="display-2 mt-3 text-brand-navy">{t("dealerNetwork.title")}</h2>
           <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate max-w-md">
-            A growing dealer network keeps genuine equipment, parts and support within
-            reach across the country.
+            {t("dealerNetwork.description")}
           </p>
           {dealers.length > 0 ? (
             <ul className="mt-7 flex flex-col gap-4 max-h-80 overflow-y-auto pr-2">
@@ -177,7 +179,9 @@ export default function NepalDealerNetwork() {
           ) : (
             <ul className="mt-7 flex flex-wrap gap-x-6 gap-y-2">
               {servingCities.map((c) => (
-                <li key={c} className="text-sm font-medium text-brand-navy">{c}</li>
+                <li key={c} className="text-sm font-medium text-brand-navy">
+                  {t(`city.${c}` as TranslationKey)}
+                </li>
               ))}
             </ul>
           )}
@@ -185,7 +189,7 @@ export default function NepalDealerNetwork() {
             to="/dealers"
             className="group mt-8 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary"
           >
-            View all dealers
+            {t("dealerNetwork.viewAll")}
             <HiArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Link>
         </motion.div>

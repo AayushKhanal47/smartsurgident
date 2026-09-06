@@ -10,7 +10,7 @@ import { usePageMeta } from "../../hooks/usePageMeta";
 export default function SupportContact() {
   usePageMeta(
     "Contact Us",
-    "Reach Smart Surgident for product questions, orders, or dealer inquiries — dental and surgical equipment distribution across Nepal."
+    "Reach Smart Surgident for product questions, orders, or dealer inquiries about dental and surgical equipment distribution across Nepal."
   );
 
   const [form, setForm] = useState({ name: "", email: "", message: "" });
@@ -65,7 +65,7 @@ export default function SupportContact() {
         <Reveal delay={0.1}>
           {submitted ? (
             <div className="bg-brand-tint rounded-2xl p-6 text-brand-blue text-sm">
-              Thanks — your message has been noted. We'll get back to you soon.
+              Thanks! Your message has been noted. We'll get back to you soon.
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-4">

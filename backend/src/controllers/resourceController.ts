@@ -47,13 +47,14 @@ const validateRequiredFields = (
 };
 
 export const getResources = asyncHandler(async (req: Request, res: Response) => {
-  const { search } = req.query;
+  const { search, brand } = req.query;
   const filter: Record<string, unknown> = {
     isPublished: true,
     fileUrl: { $exists: true, $ne: "" },
   };
 
   if (search) filter.$text = { $search: String(search) };
+  if (brand) filter.linkedBrands = brand;
 
   const resources = await Resource.find(filter)
     .sort({ publishedAt: -1, createdAt: -1 })
@@ -82,6 +83,9 @@ export const getResourceBySlug = asyncHandler(async (req: Request, res: Response
   res.json(resource);
 });
 
+const sanitizeIds = (value: unknown): string[] =>
+  Array.isArray(value) ? value.filter((id): id is string => typeof id === "string") : [];
+
 export const createResource = asyncHandler(async (req: Request, res: Response) => {
   const title = String(req.body.title || "").trim();
   const summary = String(req.body.summary || "").trim();
@@ -89,6 +93,7 @@ export const createResource = asyncHandler(async (req: Request, res: Response) =
   const fileUrl = String(req.body.fileUrl || "").trim();
   const isPublished = Boolean(req.body.isPublished);
   const showOnHomepage = Boolean(req.body.showOnHomepage);
+  const linkedBrands = sanitizeIds(req.body.linkedBrands);
 
   validateRequiredFields({ title, summary, coverImage, fileUrl }, res);
 
@@ -101,6 +106,7 @@ export const createResource = asyncHandler(async (req: Request, res: Response) =
     isPublished,
     publishedAt: isPublished ? new Date() : undefined,
     showOnHomepage,
+    linkedBrands,
   });
   res.status(201).json(resource);
 });
@@ -120,6 +126,9 @@ export const updateResource = asyncHandler(async (req: Request, res: Response) =
     typeof req.body.isPublished === "boolean" ? req.body.isPublished : existing.isPublished;
   const showOnHomepage =
     typeof req.body.showOnHomepage === "boolean" ? req.body.showOnHomepage : existing.showOnHomepage;
+  const linkedBrands = Array.isArray(req.body.linkedBrands)
+    ? sanitizeIds(req.body.linkedBrands)
+    : existing.linkedBrands;
 
   validateRequiredFields({ title, summary, coverImage, fileUrl }, res);
 
@@ -141,6 +150,7 @@ export const updateResource = asyncHandler(async (req: Request, res: Response) =
       isPublished,
       publishedAt: isPublished ? existing.publishedAt || new Date() : undefined,
       showOnHomepage,
+      linkedBrands,
     },
     { new: true }
   );

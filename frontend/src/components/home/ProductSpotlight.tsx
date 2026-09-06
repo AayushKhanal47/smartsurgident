@@ -4,6 +4,7 @@ import { getProductBySlug } from "../../api/endpoints";
 import type { Product } from "../../api/endpoints";
 import { spotlight } from "../../data/homepage";
 import { ButtonLink } from "../ui/Button";
+import { useTranslation } from "../../i18n/useTranslation";
 
 // PRODUCT SPOTLIGHT — one real product shown large with a thumbnail strip of
 // every image on the record. Renders nothing until `spotlight.productSlug`
@@ -12,6 +13,7 @@ export default function ProductSpotlight() {
   const [product, setProduct] = useState<Product | null>(null);
   const [active, setActive] = useState(0);
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!spotlight.productSlug) return;
@@ -76,13 +78,13 @@ export default function ProductSpotlight() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          <span className="eyebrow">{spotlight.eyebrow}</span>
+          <span className="eyebrow">{t(spotlight.eyebrowKey)}</span>
           {product.brand?.name && (
             <p className="mt-3 text-xs uppercase tracking-[0.1em] text-brand-muted">{product.brand.name}</p>
           )}
           <h2 className="display-2 mt-1 text-brand-navy">{product.name}</h2>
           <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate max-w-md">
-            {product.description || spotlight.fallbackHeadline}
+            {product.description || t(spotlight.fallbackHeadlineKey)}
           </p>
 
           {specs.length > 0 && (
@@ -97,7 +99,7 @@ export default function ProductSpotlight() {
           )}
 
           <div className="mt-8 flex flex-wrap gap-3 items-center">
-            <ButtonLink to={`/products/${product.slug}`}>View product</ButtonLink>
+            <ButtonLink to={`/products/${product.slug}`}>{t("spotlight.viewProduct")}</ButtonLink>
             {product.price > 0 && (
               <span className="text-sm font-semibold text-brand-navy">
                 Rs {product.price.toLocaleString()}

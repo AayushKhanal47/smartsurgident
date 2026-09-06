@@ -5,6 +5,7 @@ import { HiArrowRight, HiOutlineDocumentText, HiOutlineExternalLink } from "reac
 import { getResources } from "../../api/endpoints";
 import type { Resource } from "../../api/endpoints";
 import { getPdfThumbnail } from "../../utils/pdfThumbnail";
+import { useTranslation } from "../../i18n/useTranslation";
 
 // E-LIBRARY. Real published resources, using the Cloudinary page-1 render of
 // each PDF as the cover. Renders nothing if there are none. Admins choose
@@ -14,6 +15,7 @@ import { getPdfThumbnail } from "../../utils/pdfThumbnail";
 export default function ELibraryResources() {
   const [resources, setResources] = useState<Resource[]>([]);
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
 
   useEffect(() => {
     getResources()
@@ -31,17 +33,17 @@ export default function ELibraryResources() {
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8">
         <div className="flex items-end justify-between gap-6 flex-wrap mb-12">
           <div className="max-w-xl">
-            <span className="eyebrow">E-Library</span>
-            <h2 className="display-2 mt-3 text-brand-navy">Catalogues &amp; product guides</h2>
+            <span className="eyebrow">{t("elibrary.eyebrow")}</span>
+            <h2 className="display-2 mt-3 text-brand-navy">{t("elibrary.title")}</h2>
             <p className="mt-4 text-[15px] md:text-base text-brand-slate leading-relaxed">
-              Specifications, manuals and reference material for the equipment we distribute.
+              {t("elibrary.description")}
             </p>
           </div>
           <Link
             to="/resources"
             className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-primary"
           >
-            Open the E-Library
+            {t("elibrary.open")}
             <HiArrowRight className="transition-transform group-hover:translate-x-1" aria-hidden="true" />
           </Link>
         </div>
@@ -82,7 +84,7 @@ export default function ELibraryResources() {
                     {r.title}
                   </p>
                   <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-brand-primary">
-                    Open PDF
+                    {t("elibrary.openPdf")}
                     <HiOutlineExternalLink aria-hidden="true" />
                   </span>
                 </a>

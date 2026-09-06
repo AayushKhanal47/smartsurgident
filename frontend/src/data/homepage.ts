@@ -9,6 +9,7 @@
 import categoryDentalUnits from "../assets/categories/category-dental-units.jpg";
 import categoryInstruments from "../assets/categories/category-instruments.jpg";
 import categorySterilization from "../assets/categories/category-sterilization.jpg";
+import type { TranslationKey } from "../i18n/translations";
 
 export type BannerSource =
   | { type: "product"; slug: string }
@@ -17,52 +18,47 @@ export type BannerSource =
 export interface PromoBanner {
   id: string;
   source: BannerSource;
-  eyebrow: string;
-  headline: string;
-  body: string;
-  primaryCta: { label: string; to: string };
-  secondaryCta?: { label: string; to: string };
+  eyebrowKey: TranslationKey;
+  headlineKey: TranslationKey;
+  bodyKey: TranslationKey;
+  primaryCta: { labelKey: TranslationKey; to: string };
+  secondaryCta?: { labelKey: TranslationKey; to: string };
   imageSide: "left" | "right";
 }
 
 // --- HERO -----------------------------------------------------------------
 // The hero image is a project asset (src/assets/hero.jpg — a dental treatment
 // unit). `featuredProductSlug` is reserved for a future product overlay.
+// Copy itself lives in i18n/translations.ts (hero.* keys) so it can be
+// shown in English or Nepali — only the routes stay here.
 export const hero = {
-  eyebrow: "Dental & Surgical Equipment · Nepal",
-  headline: "Dental technology,",
-  headlineAccent: "delivered and supported",
-  headlineTail: "across Nepal",
-  body:
-    "Genuine dental units, sterilization, imaging and instruments for clinics nationwide — with expert product guidance and a dealer network near you.",
-  primaryCta: { label: "Browse the catalogue", to: "/products" },
-  secondaryCta: { label: "Talk to an expert", to: "/support/quote" },
+  primaryCta: { to: "/products" },
+  secondaryCta: { to: "/support/quote" },
   featuredProductSlug: "" as string,
 };
 
 // Cities with an established Smart Surgident presence (City records exist in DB).
 export const servingCities = ["Kathmandu", "Pokhara", "Chitwan", "Butwal", "Biratnagar"];
 
-// --- TRUST BAR (verified capabilities, not invented counts) --------------
-export const trustBar = ["Nationwide delivery", "Genuine products", "Expert support", "Dealer network"];
-
 // --- EXPLORE THE RANGE (fallback when the Category collection is empty) ---
-export const exploreLinks: { label: string; hint: string; to: string; image: string }[] = [
+// label/hint are i18n/translations.ts keys, not literal copy, so this
+// fallback follows the EN/NP toggle like the rest of the homepage.
+export const exploreLinks: { labelKey: TranslationKey; hintKey: TranslationKey; to: string; image: string }[] = [
   {
-    label: "Dental units & equipment",
-    hint: "Treatment units, compressors, delivery systems",
+    labelKey: "explore.dentalUnits.label",
+    hintKey: "explore.dentalUnits.hint",
     to: "/products",
     image: categoryDentalUnits,
   },
   {
-    label: "Instruments & handpieces",
-    hint: "Hand instruments, rotary, endodontics",
+    labelKey: "explore.instruments.label",
+    hintKey: "explore.instruments.hint",
     to: "/products",
     image: categoryInstruments,
   },
   {
-    label: "Sterilization & consumables",
-    hint: "Autoclaves, infection control, chairside materials",
+    labelKey: "explore.sterilization.label",
+    hintKey: "explore.sterilization.hint",
     to: "/products",
     image: categorySterilization,
   },
@@ -75,23 +71,21 @@ export const promoBanners: PromoBanner[] = [
   {
     id: "imaging",
     source: { type: "resource", slug: "bonsensor" },
-    eyebrow: "Diagnostic imaging",
-    headline: "Precision intraoral imaging, built for everyday clinical use",
-    body:
-      "A digital sensor engineered for clear captures and a fast, low-friction workflow — so diagnosis is quicker and your team is confident from day one.",
-    primaryCta: { label: "View catalogue", to: "/resources/bonsensor" },
-    secondaryCta: { label: "Request a quote", to: "/support/quote" },
+    eyebrowKey: "promo.imaging.eyebrow",
+    headlineKey: "promo.imaging.headline",
+    bodyKey: "promo.imaging.body",
+    primaryCta: { labelKey: "promo.viewCatalogue", to: "/resources/bonsensor" },
+    secondaryCta: { labelKey: "support.quote", to: "/support/quote" },
     imageSide: "right",
   },
   {
     id: "endodontics",
     source: { type: "resource", slug: "actor-i-pro" },
-    eyebrow: "Endodontics",
-    headline: "Ultrasonic activation for cleaner canal preparation",
-    body:
-      "Cordless ultrasonic irrigation and activation with multiple working modes and interchangeable tips for a range of root-canal requirements.",
-    primaryCta: { label: "View catalogue", to: "/resources/actor-i-pro" },
-    secondaryCta: { label: "Request a quote", to: "/support/quote" },
+    eyebrowKey: "promo.endodontics.eyebrow",
+    headlineKey: "promo.endodontics.headline",
+    bodyKey: "promo.endodontics.body",
+    primaryCta: { labelKey: "promo.viewCatalogue", to: "/resources/actor-i-pro" },
+    secondaryCta: { labelKey: "support.quote", to: "/support/quote" },
     imageSide: "left",
   },
 ];
@@ -103,15 +97,15 @@ export const promoBanners: PromoBanner[] = [
 // the section renders nothing.
 export const spotlight = {
   productSlug: "" as string,
-  eyebrow: "In focus",
-  fallbackHeadline: "Engineered for the modern operatory",
+  eyebrowKey: "spotlight.eyebrow" as TranslationKey,
+  fallbackHeadlineKey: "spotlight.fallbackHeadline" as TranslationKey,
 };
 
 // --- WHY SMART SURGIDENT (verified — no unsupported claims) --------------
-export const whyPoints: { title: string; body: string }[] = [
-  { title: "Genuine products", body: "Supplied through proper channels, not grey imports." },
-  { title: "Trusted brands", body: "Equipment from established dental manufacturers." },
-  { title: "Expert guidance", body: "Help choosing the right equipment for your practice." },
-  { title: "Nationwide reach", body: "Distribution and dealer presence across Nepal." },
-  { title: "Installation & support", body: "Setup assistance and after-sales service." },
+export const whyPoints: { titleKey: TranslationKey; bodyKey: TranslationKey }[] = [
+  { titleKey: "why.genuine.title", bodyKey: "why.genuine.body" },
+  { titleKey: "why.brands.title", bodyKey: "why.brands.body" },
+  { titleKey: "why.guidance.title", bodyKey: "why.guidance.body" },
+  { titleKey: "why.reach.title", bodyKey: "why.reach.body" },
+  { titleKey: "why.install.title", bodyKey: "why.install.body" },
 ];

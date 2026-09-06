@@ -5,6 +5,7 @@ import type { Brand } from "../api/endpoints";
 import Breadcrumbs from "../components/ui/Breadcrumbs";
 import SectionHeader from "../components/ui/SectionHeader";
 import Reveal from "../components/ui/Reveal";
+import { getTrimmedLogoUrl } from "../utils/brandLogo";
 import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function Brands() {
@@ -42,7 +43,7 @@ export default function Brands() {
 
         {filtered.length === 0 ? (
           <p className="text-sm text-brand-muted">
-            No brands yet — add some from the admin panel to see them here.
+            No brands yet. Add some from the admin panel to see them here.
           </p>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -54,7 +55,7 @@ export default function Brands() {
                 >
                   <div className="w-14 h-14 rounded-full bg-brand-tint flex items-center justify-center overflow-hidden">
                     {brand.logoUrl ? (
-                      <img src={brand.logoUrl} alt={brand.name} className="w-full h-full object-cover" />
+                      <img src={getTrimmedLogoUrl(brand.logoUrl)} alt={brand.name} className="w-full h-full object-contain p-2" />
                     ) : (
                       <span className="text-brand-blue font-semibold">{brand.name[0]}</span>
                     )}

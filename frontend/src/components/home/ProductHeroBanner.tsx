@@ -3,12 +3,15 @@ import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion
 import { ButtonLink } from "../ui/Button";
 import { hero, servingCities } from "../../data/homepage";
 import heroImage from "../../assets/hero.jpg";
+import { useTranslation } from "../../i18n/useTranslation";
+import type { TranslationKey } from "../../i18n/translations";
 
 // MAIN HERO — the dental treatment unit (src/assets/hero.jpg) is the section
 // background; navy copy sits over a white scrim on the left so it stays
 // readable while the chair shows through on the right. Background parallaxes
 // on scroll; copy staggers in on load.
 export default function ProductHeroBanner() {
+  const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -42,24 +45,24 @@ export default function ProductHeroBanner() {
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8 flex items-center min-h-[78vh] md:min-h-[86vh] py-20">
         <div className="relative max-w-xl">
           <motion.p {...fade(0)} className="eyebrow">
-            {hero.eyebrow}
+            {t("hero.eyebrow")}
           </motion.p>
           <motion.h1 {...fade(0.08)} className="display-1 mt-4 text-brand-navy">
-            {hero.headline}{" "}
-            <span className="text-brand-primary">{hero.headlineAccent}</span>{" "}
-            {hero.headlineTail}
+            {t("hero.headline")}{" "}
+            <span className="text-brand-primary">{t("hero.headlineAccent")}</span>{" "}
+            {t("hero.headlineTail")}
           </motion.h1>
           <motion.p {...fade(0.16)} className="mt-6 text-[15px] sm:text-base leading-relaxed text-brand-slate max-w-md">
-            {hero.body}
+            {t("hero.body")}
           </motion.p>
           <motion.div {...fade(0.24)} className="mt-8 flex flex-wrap gap-3">
-            <ButtonLink to={hero.primaryCta.to}>{hero.primaryCta.label}</ButtonLink>
+            <ButtonLink to={hero.primaryCta.to}>{t("hero.primaryCta")}</ButtonLink>
             <ButtonLink to={hero.secondaryCta.to} variant="secondary">
-              {hero.secondaryCta.label}
+              {t("hero.secondaryCta")}
             </ButtonLink>
           </motion.div>
           <motion.p {...fade(0.32)} className="mt-10 text-xs uppercase tracking-[0.14em] text-brand-muted">
-            Serving {servingCities.join(" · ")}
+            {t("hero.serving")} {servingCities.map((c) => t(`city.${c}` as TranslationKey)).join(" · ")}
           </motion.p>
         </div>
       </div>

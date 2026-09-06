@@ -4,6 +4,7 @@ import { ButtonLink } from "../ui/Button";
 import { useBannerSource } from "../../hooks/useBannerSource";
 import type { ResolvedBanner } from "../../hooks/useBannerSource";
 import type { PromoBanner } from "../../data/homepage";
+import { useTranslation } from "../../i18n/useTranslation";
 
 // Large editorial product showcase. Data-driven: give it a PromoBanner config
 // and it pulls the image + name from live catalogue data. Renders nothing if
@@ -26,6 +27,7 @@ function PromoBannerView({
   tinted: boolean;
 }) {
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-3%", "3%"]);
@@ -61,19 +63,19 @@ function PromoBannerView({
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       className="max-w-lg"
     >
-      <span className="eyebrow">{banner.eyebrow}</span>
-      <h2 className="display-2 mt-3 text-brand-navy">{banner.headline}</h2>
-      <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate">{banner.body}</p>
+      <span className="eyebrow">{t(banner.eyebrowKey)}</span>
+      <h2 className="display-2 mt-3 text-brand-navy">{t(banner.headlineKey)}</h2>
+      <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate">{t(banner.bodyKey)}</p>
       {(data.brandName || data.price) && (
         <p className="mt-5 text-xs uppercase tracking-[0.1em] text-brand-muted">
           {[data.brandName, data.price ? `Rs ${data.price.toLocaleString()}` : null].filter(Boolean).join("  ·  ")}
         </p>
       )}
       <div className="mt-8 flex flex-wrap gap-3">
-        <ButtonLink to={banner.primaryCta.to}>{banner.primaryCta.label}</ButtonLink>
+        <ButtonLink to={banner.primaryCta.to}>{t(banner.primaryCta.labelKey)}</ButtonLink>
         {banner.secondaryCta && (
           <ButtonLink to={banner.secondaryCta.to} variant="secondary">
-            {banner.secondaryCta.label}
+            {t(banner.secondaryCta.labelKey)}
           </ButtonLink>
         )}
       </div>

@@ -21,7 +21,7 @@ export default function PagePlaceholder({
   title,
   description,
   breadcrumbs,
-  note = "This section is structured and ready — real content will appear here once it's provided.",
+  note = "This section is structured and ready. Real content will appear here once it's provided.",
 }: PagePlaceholderProps) {
   return (
     <div>

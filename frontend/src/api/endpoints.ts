@@ -57,6 +57,7 @@ export interface Resource {
   isPublished: boolean;
   publishedAt?: string;
   showOnHomepage?: boolean;
+  linkedBrands?: Brand[];
 }
 
 export interface City {
@@ -99,7 +100,7 @@ export const getPublicDealers = (params?: { province?: string; city?: string }) 
 export const getPublicDealerBySlug = (slug: string) =>
   api.get<Dealer>(`/dealers/public/${slug}`).then((r) => r.data);
 
-export const getResources = (params?: { search?: string }) =>
+export const getResources = (params?: { search?: string; brand?: string }) =>
   api.get<Resource[]>("/resources", { params }).then((r) => r.data);
 
 export const getResourceBySlug = (slug: string) =>
@@ -215,6 +216,7 @@ export interface CreateResourceInput {
   fileUrl: string;
   isPublished: boolean;
   showOnHomepage?: boolean;
+  linkedBrands?: string[];
 }
 
 export const createResourceAdmin = (data: CreateResourceInput) =>

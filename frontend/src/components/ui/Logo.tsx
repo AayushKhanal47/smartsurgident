@@ -12,7 +12,7 @@ export default function Logo({ variant = "full", theme = "dark", className = "" 
   const textColor = theme === "light" ? "text-white" : "text-brand-navy";
 
   return (
-    <Link to="/" className={`flex items-center gap-2.5 shrink-0 ${className}`} aria-label="Smart Surgident — home">
+    <Link to="/" className={`flex items-center gap-2.5 shrink-0 ${className}`} aria-label="Smart Surgident home">
       <img src={logo} alt="Smart Surgident" className="h-9 w-9 object-contain" />
       {variant === "full" && (
         <span className={`font-display font-bold text-lg leading-tight ${textColor}`}>

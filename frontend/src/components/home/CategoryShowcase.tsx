@@ -5,6 +5,7 @@ import { HiArrowRight } from "react-icons/hi";
 import { getCategories } from "../../api/endpoints";
 import type { Category } from "../../api/endpoints";
 import { exploreLinks } from "../../data/homepage";
+import { useTranslation } from "../../i18n/useTranslation";
 
 interface Tile {
   key: string;
@@ -21,6 +22,7 @@ interface Tile {
 export default function CategoryShowcase() {
   const [categories, setCategories] = useState<Category[] | null>(null);
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
 
   useEffect(() => {
     getCategories().then(setCategories).catch(() => setCategories([]));
@@ -37,9 +39,9 @@ export default function CategoryShowcase() {
           image: cat.image,
         }))
       : exploreLinks.map((link) => ({
-          key: link.label,
-          name: link.label,
-          hint: link.hint,
+          key: link.labelKey,
+          name: t(link.labelKey),
+          hint: t(link.hintKey),
           to: link.to,
           image: link.image,
         }));
@@ -54,13 +56,10 @@ export default function CategoryShowcase() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="max-w-2xl"
         >
-          <span className="eyebrow">Explore the range</span>
-          <h2 className="display-2 mt-3 text-brand-navy">
-            A full range for the modern practice
-          </h2>
+          <span className="eyebrow">{t("explore.eyebrow")}</span>
+          <h2 className="display-2 mt-3 text-brand-navy">{t("explore.title")}</h2>
           <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate">
-            From treatment units to everyday consumables — sourced from established
-            manufacturers and supported across Nepal.
+            {t("explore.description")}
           </p>
         </motion.div>
 
@@ -95,7 +94,7 @@ export default function CategoryShowcase() {
                     <p className="mt-1.5 text-[13px] text-white/70 leading-relaxed">{tile.hint}</p>
                   )}
                   <span className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-white transition-transform duration-300 group-hover:translate-x-1">
-                    Explore
+                    {t("explore.cta")}
                     <HiArrowRight aria-hidden="true" />
                   </span>
                 </div>

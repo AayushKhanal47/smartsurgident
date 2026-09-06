@@ -11,7 +11,7 @@ import { usePageMeta } from "../../hooks/usePageMeta";
 export default function Dealers() {
   usePageMeta(
     "Dealer Network",
-    "Find an authorized Smart Surgident dealer near you across Nepal — genuine dental and surgical equipment, stocked locally."
+    "Find an authorized Smart Surgident dealer near you across Nepal, with genuine dental and surgical equipment stocked locally."
   );
 
   const [dealers, setDealers] = useState<Dealer[]>([]);
@@ -39,7 +39,7 @@ export default function Dealers() {
           <p className="text-sm text-brand-muted">Loading...</p>
         ) : dealers.length === 0 ? (
           <div className="bg-brand-tint rounded-2xl px-5 py-4 text-sm text-brand-blue max-w-lg">
-            No dealers are published yet — once dealer profiles are added from the admin panel,
+            No dealers are published yet. Once dealer profiles are added from the admin panel,
             they'll appear here with photos, contact details, and location.
           </div>
         ) : (

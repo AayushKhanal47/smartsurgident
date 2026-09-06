@@ -52,7 +52,7 @@ export default function SupportQuote() {
         <Reveal delay={0.1}>
           {submitted ? (
             <div className="bg-brand-tint rounded-2xl p-6 text-brand-blue text-sm">
-              Thanks — your quote request has been noted. Our team will follow up shortly.
+              Thanks! Your quote request has been noted. Our team will follow up shortly.
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 flex flex-col gap-4">

@@ -15,7 +15,7 @@ export default function DealerDetail() {
   const [notFound, setNotFound] = useState(false);
 
   usePageMeta(
-    dealer ? `${dealer.name} — Dealer in ${dealer.city?.name ?? "Nepal"}` : "",
+    dealer ? `${dealer.name} · Dealer in ${dealer.city?.name ?? "Nepal"}` : "",
     dealer ? `Genuine dental and surgical equipment from ${dealer.name}, Smart Surgident's authorized dealer in ${dealer.city?.name ?? "Nepal"}.` : undefined
   );
 

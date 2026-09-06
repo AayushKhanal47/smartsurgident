@@ -139,7 +139,7 @@ export default function WhatsAppButton() {
                 )}
                 {loadError && (
                   <p className="px-3 py-4 text-sm text-brand-muted">
-                    Couldn't load dealers right now — please try again shortly.
+                    Couldn't load dealers right now. Please try again shortly.
                   </p>
                 )}
                 {cities && cities.length === 0 && (

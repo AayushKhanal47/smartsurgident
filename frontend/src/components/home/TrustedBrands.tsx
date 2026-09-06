@@ -3,16 +3,23 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { getBrands } from "../../api/endpoints";
 import type { Brand } from "../../api/endpoints";
+import { getTrimmedLogoUrl } from "../../utils/brandLogo";
+import { useTranslation } from "../../i18n/useTranslation";
 
 function BrandMark({ brand }: { brand: Brand }) {
   return (
     <Link
       to={`/brands/${brand.slug}`}
-      className="flex items-center justify-center h-14 px-6 grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition"
+      className="flex items-center justify-center h-14 px-6"
       title={brand.name}
     >
       {brand.logoUrl ? (
-        <img src={brand.logoUrl} alt={brand.name} loading="lazy" className="max-h-10 max-w-[140px] object-contain" />
+        <img
+          src={getTrimmedLogoUrl(brand.logoUrl)}
+          alt={brand.name}
+          loading="lazy"
+          className="max-h-10 max-w-[140px] object-contain"
+        />
       ) : (
         <span className="font-display text-lg font-semibold text-brand-navy whitespace-nowrap">{brand.name}</span>
       )}
@@ -25,6 +32,7 @@ function BrandMark({ brand }: { brand: Brand }) {
 export default function TrustedBrands() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
 
   useEffect(() => {
     getBrands().then(setBrands).catch(() => setBrands([]));
@@ -43,7 +51,7 @@ export default function TrustedBrands() {
           transition={{ duration: 0.5 }}
           className="text-center text-xs uppercase tracking-[0.16em] text-brand-muted"
         >
-          Brands we carry
+          {t("brands.eyebrow")}
         </motion.p>
 
         {marquee ? (

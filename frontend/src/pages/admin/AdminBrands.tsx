@@ -3,6 +3,7 @@ import { getBrands, createBrandAdmin, updateBrandAdmin, deleteBrandAdmin } from 
 import type { Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import ImageUploader from "./ImageUploader";
+import { getTrimmedLogoUrl } from "../../utils/brandLogo";
 import { PageHeader, Card, Field, Textarea, EmptyState, DangerButton } from "./ui";
 
 const empty = { name: "", slug: "", description: "" };
@@ -67,7 +68,7 @@ export default function AdminBrands() {
           {brands.map((b) => (
             <div key={b._id} className="p-4 flex items-center gap-4">
               {b.logoUrl ? (
-                <img src={b.logoUrl} alt="" className="w-11 h-11 rounded-lg object-contain bg-white border border-brand-border shrink-0" />
+                <img src={getTrimmedLogoUrl(b.logoUrl)} alt="" className="w-11 h-11 rounded-lg object-contain bg-white border border-brand-border shrink-0" />
               ) : (
                 <div className="w-11 h-11 rounded-lg bg-brand-sunk shrink-0" />
               )}

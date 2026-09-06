@@ -5,6 +5,7 @@ import "./index.css";
 import App from "./App";
 import { CartProvider } from "./context/CartContext";
 import { AdminAuthProvider } from "./context/AdminAuthContext";
+import { LanguageProvider } from "./context/LanguageContext";
 
 if ("scrollRestoration" in window.history) {
   window.history.scrollRestoration = "manual";
@@ -13,11 +14,13 @@ if ("scrollRestoration" in window.history) {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
-      <AdminAuthProvider>
-        <CartProvider>
-          <App />
-        </CartProvider>
-      </AdminAuthProvider>
+      <LanguageProvider>
+        <AdminAuthProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </AdminAuthProvider>
+      </LanguageProvider>
     </BrowserRouter>
   </StrictMode>
 );

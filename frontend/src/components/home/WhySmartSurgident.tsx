@@ -1,10 +1,12 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { whyPoints } from "../../data/homepage";
+import { useTranslation } from "../../i18n/useTranslation";
 
 // WHY SMART SURGIDENT — editorial two-column: a confident statement on the
 // left, a concise verified list on the right. No icon-chip grid.
 export default function WhySmartSurgident() {
   const reduceMotion = useReducedMotion();
+  const { t } = useTranslation();
 
   return (
     <section className="bg-brand-bg py-20 md:py-28">
@@ -16,20 +18,17 @@ export default function WhySmartSurgident() {
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="lg:pt-2"
         >
-          <span className="eyebrow">Why Smart Surgident</span>
-          <h2 className="display-2 mt-3 text-brand-navy">
-            A supply partner clinics can rely on
-          </h2>
+          <span className="eyebrow">{t("why.eyebrow")}</span>
+          <h2 className="display-2 mt-3 text-brand-navy">{t("why.title")}</h2>
           <p className="mt-5 text-[15px] md:text-base leading-relaxed text-brand-slate max-w-md">
-            We focus on genuine equipment, honest guidance and dependable support —
-            before and long after the sale.
+            {t("why.description")}
           </p>
         </motion.div>
 
         <div>
           {whyPoints.map((point, i) => (
             <motion.div
-              key={point.title}
+              key={point.titleKey}
               initial={reduceMotion ? undefined : { opacity: 0, y: 14 }}
               whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-60px" }}
@@ -40,8 +39,8 @@ export default function WhySmartSurgident() {
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div>
-                <p className="font-display text-lg font-semibold text-brand-navy">{point.title}</p>
-                <p className="mt-1 text-sm text-brand-slate leading-relaxed">{point.body}</p>
+                <p className="font-display text-lg font-semibold text-brand-navy">{t(point.titleKey)}</p>
+                <p className="mt-1 text-sm text-brand-slate leading-relaxed">{t(point.bodyKey)}</p>
               </div>
             </motion.div>
           ))}

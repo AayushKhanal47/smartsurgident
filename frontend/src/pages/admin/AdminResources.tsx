@@ -4,8 +4,9 @@ import {
   createResourceAdmin,
   updateResourceAdmin,
   deleteResourceAdmin,
+  getBrands,
 } from "../../api/endpoints";
-import type { Resource } from "../../api/endpoints";
+import type { Resource, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import PdfUploader from "./PdfUploader";
 import ImageUploader from "./ImageUploader";
@@ -15,17 +16,26 @@ const empty = { title: "", summary: "", fileUrl: "", coverImage: "", isPublished
 
 export default function AdminResources() {
   const [resources, setResources] = useState<Resource[]>([]);
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState(empty);
+  const [linkedBrands, setLinkedBrands] = useState<string[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const load = () => getAllResourcesAdmin().then(setResources).catch(() => setResources([]));
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+    getBrands().then(setBrands).catch(() => setBrands([]));
+  }, []);
+
+  const toggleBrand = (id: string) =>
+    setLinkedBrands((current) => (current.includes(id) ? current.filter((b) => b !== id) : [...current, id]));
 
   const reset = () => {
     setEditingId(null);
     setForm(empty);
+    setLinkedBrands([]);
     setError("");
   };
 
@@ -39,6 +49,7 @@ export default function AdminResources() {
       isPublished: r.isPublished,
       showOnHomepage: r.showOnHomepage ?? false,
     });
+    setLinkedBrands((r.linkedBrands ?? []).map((b) => b._id));
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -54,8 +65,9 @@ export default function AdminResources() {
     setError("");
     setSubmitting(true);
     try {
-      if (editingId) await updateResourceAdmin(editingId, form);
-      else await createResourceAdmin(form);
+      const payload = { ...form, linkedBrands };
+      if (editingId) await updateResourceAdmin(editingId, payload);
+      else await createResourceAdmin(payload);
       reset();
       load();
     } catch (err: unknown) {
@@ -83,6 +95,11 @@ export default function AdminResources() {
                   {!r.fileUrl && <Badge tone="amber">No PDF</Badge>}
                 </div>
                 <p className="text-xs text-brand-muted line-clamp-1 mt-0.5">{r.summary}</p>
+                {r.linkedBrands && r.linkedBrands.length > 0 && (
+                  <p className="text-[11px] text-brand-muted mt-1">
+                    Brands: {r.linkedBrands.map((b) => b.name).join(", ")}
+                  </p>
+                )}
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 {r.fileUrl && (
@@ -114,6 +131,21 @@ export default function AdminResources() {
               checked={form.showOnHomepage}
               onChange={(v) => setForm({ ...form, showOnHomepage: v })}
             />
+            {brands.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-brand-slate mb-1.5">
+                  Linked brands <span className="text-brand-muted font-normal">(shown on that brand's page)</span>
+                </p>
+                <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+                  {brands.map((b) => (
+                    <label key={b._id} className="inline-flex items-center gap-1.5 text-xs text-brand-navy">
+                      <input type="checkbox" checked={linkedBrands.includes(b._id)} onChange={() => toggleBrand(b._id)} />
+                      {b.name}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
             {error && <p className="text-sm text-red-500">{error}</p>}
             <Button type="submit" disabled={submitting} className="justify-center">
               {submitting ? "Saving…" : editingId ? "Save changes" : "Save catalogue"}
