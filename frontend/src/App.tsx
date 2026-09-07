@@ -44,6 +44,7 @@ import AdminDealers from "./pages/admin/AdminDealers";
 import AdminCampaigns from "./pages/admin/AdminCampaigns";
 import AdminResources from "./pages/admin/AdminResources";
 import AdminQuotes from "./pages/admin/AdminQuotes";
+import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
 
 // Wraps the public-facing site with the shared Navbar/Footer chrome.
@@ -85,6 +86,7 @@ function App() {
         <Route path="campaigns" element={<AdminCampaigns />} />
         <Route path="resources" element={<AdminResources />} />
         <Route path="quotes" element={<AdminQuotes />} />
+        <Route path="messages" element={<AdminMessages />} />
         <Route path="settings" element={<AdminSettings />} />
       </Route>
 

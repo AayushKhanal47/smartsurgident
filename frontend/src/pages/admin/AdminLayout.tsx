@@ -41,7 +41,10 @@ const GROUPS: { heading: string; links: { label: string; to: string; icon: typeo
   },
   {
     heading: "Enquiries",
-    links: [{ label: "Quote requests", to: "/admin/quotes", icon: HiOutlineClipboardList }],
+    links: [
+      { label: "Quote requests", to: "/admin/quotes", icon: HiOutlineClipboardList },
+      { label: "Contact messages", to: "/admin/messages", icon: HiOutlineClipboardList },
+    ],
   },
   {
     heading: "Account",

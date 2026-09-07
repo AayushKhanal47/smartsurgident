@@ -1,0 +1,41 @@
+import { Request, Response } from "express";
+import asyncHandler from "express-async-handler";
+import ContactMessage from "../models/ContactMessage";
+
+// POST /api/contact  (public — the Contact Us form submits here)
+export const createContactMessage = asyncHandler(async (req: Request, res: Response) => {
+  const { name, email, message } = req.body;
+
+  if (
+    typeof name !== "string" ||
+    typeof email !== "string" ||
+    typeof message !== "string" ||
+    !name ||
+    !email ||
+    !message
+  ) {
+    res.status(400);
+    throw new Error("Name, email and message are required");
+  }
+
+  const contactMessage = await ContactMessage.create({ name, email, message });
+
+  res.status(201).json({ message: "Message received", id: contactMessage._id });
+});
+
+// GET /api/contact  (admin only)
+export const getContactMessages = asyncHandler(async (_req: Request, res: Response) => {
+  const messages = await ContactMessage.find().sort({ createdAt: -1 });
+  res.json(messages);
+});
+
+// PATCH /api/contact/:id/status  (admin only)
+export const updateContactMessageStatus = asyncHandler(async (req: Request, res: Response) => {
+  const { status } = req.body;
+  const contactMessage = await ContactMessage.findByIdAndUpdate(req.params.id, { status }, { new: true });
+  if (!contactMessage) {
+    res.status(404);
+    throw new Error("Message not found");
+  }
+  res.json(contactMessage);
+});

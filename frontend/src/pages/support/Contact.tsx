@@ -6,6 +6,7 @@ import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-ic
 import { FaWhatsapp } from "react-icons/fa";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../../config/whatsapp";
 import { usePageMeta } from "../../hooks/usePageMeta";
+import { submitContactMessage } from "../../api/endpoints";
 
 export default function SupportContact() {
   usePageMeta(
@@ -15,10 +16,25 @@ export default function SupportContact() {
 
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setError("");
+    setSubmitting(true);
+    try {
+      await submitContactMessage(form);
+      setSubmitted(true);
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === "object" && "response" in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      setError(message || "Something went wrong sending your message. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -92,7 +108,10 @@ export default function SupportContact() {
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
               />
-              <Button type="submit">Send message</Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? "Sending..." : "Send message"}
+              </Button>
+              {error && <p className="text-sm text-red-500">{error}</p>}
             </form>
           )}
         </Reveal>

@@ -199,6 +199,8 @@ export interface CreateCampaignInput {
   title: string;
   slug: string;
   description?: string;
+  bannerImage?: string;
+  products?: string[];
   placement: "homepage" | "category" | "standalone";
   isActive: boolean;
 }
@@ -326,6 +328,29 @@ export interface QuoteRequestInput {
 
 export const submitQuoteRequest = (data: QuoteRequestInput) =>
   api.post("/quotes", data).then((r) => r.data);
+
+export interface ContactMessageInput {
+  name: string;
+  email: string;
+  message: string;
+}
+
+export const submitContactMessage = (data: ContactMessageInput) =>
+  api.post("/contact", data).then((r) => r.data);
+
+export interface ContactMessageRecord {
+  _id: string;
+  name: string;
+  email: string;
+  message: string;
+  status: "new" | "read";
+  createdAt: string;
+}
+
+export const getContactMessagesAdmin = () => api.get<ContactMessageRecord[]>("/contact").then((r) => r.data);
+
+export const updateContactMessageStatusAdmin = (id: string, status: string) =>
+  api.patch(`/contact/${id}/status`, { status }).then((r) => r.data);
 
 export const deleteProductAdmin = (id: string) => api.delete(`/products/${id}`).then((r) => r.data);
 export const deleteCategoryAdmin = (id: string) => api.delete(`/categories/${id}`).then((r) => r.data);
