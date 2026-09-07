@@ -206,11 +206,11 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileSearchOpen && (
           <motion.div
-            initial={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-            animate={reduceMotion ? undefined : { height: "auto", opacity: 1 }}
-            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+            initial={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
-            className="xl:hidden overflow-hidden bg-white border-t border-brand-border"
+            className="xl:hidden bg-white border-t border-brand-border"
           >
             <div className="px-5 py-3.5">
               <SearchField onSubmit={() => setMobileSearchOpen(false)} />
@@ -222,11 +222,11 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-            animate={reduceMotion ? undefined : { height: "auto", opacity: 1 }}
-            exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
+            initial={reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
             transition={{ duration: 0.24, ease: "easeInOut" }}
-            className="lg:hidden overflow-hidden bg-white border-t border-brand-border"
+            className="lg:hidden bg-white border-t border-brand-border max-h-[calc(100vh-4rem)] overflow-y-auto"
           >
             <div className="px-5 py-4 flex flex-col">
               <LanguageToggle className="mb-3 sm:hidden" />
