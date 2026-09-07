@@ -107,7 +107,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-[1240px] mx-auto px-5 sm:px-8 h-16 md:h-[72px] flex items-center gap-6">
-        <Logo />
+        <Logo className="[&>span]:hidden sm:[&>span]:inline" />
 
         <nav className="hidden lg:flex items-center gap-0.5 ml-2">
           {NAV_ITEMS.map((item) => (
