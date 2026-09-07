@@ -116,6 +116,9 @@ export interface Category {
 
 export const getCategories = () => api.get<Category[]>("/categories").then((r) => r.data);
 
+export const getCategoryBySlug = (slug: string) =>
+  api.get<Category>(`/categories/${slug}`).then((r) => r.data);
+
 export interface CategoryInput {
   name: string;
   slug: string;
@@ -208,6 +211,20 @@ export const updateCampaignAdmin = (id: string, data: Partial<CreateCampaignInpu
 
 export const getCampaigns = (params?: { placement?: string }) =>
   api.get("/campaigns", { params }).then((r) => r.data);
+
+export interface Campaign {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  bannerImage?: string;
+  products: Product[];
+  placement: "homepage" | "category" | "standalone";
+  isActive: boolean;
+}
+
+export const getCampaignBySlug = (slug: string) =>
+  api.get<Campaign>(`/campaigns/${slug}`).then((r) => r.data);
 
 export interface CreateResourceInput {
   title: string;
