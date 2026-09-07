@@ -6,6 +6,7 @@ import type { Dealer } from "../../api/endpoints";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import SectionHeader from "../../components/ui/SectionHeader";
 import Reveal from "../../components/ui/Reveal";
+import FitImage from "../../components/ui/FitImage";
 import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function Dealers() {
@@ -52,10 +53,10 @@ export default function Dealers() {
                 >
                   <div className="h-32 bg-brand-tint flex items-center justify-center">
                     {dealer.profilePhoto ? (
-                      <img
+                      <FitImage
                         src={dealer.profilePhoto}
                         alt={dealer.name}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full"
                       />
                     ) : (
                       <span className="text-brand-light text-3xl">🏬</span>

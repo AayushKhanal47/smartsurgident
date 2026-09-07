@@ -7,6 +7,7 @@ import { buildWhatsAppLink } from "../../config/whatsapp";
 import type { Dealer } from "../../api/endpoints";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
+import FitImage from "../../components/ui/FitImage";
 import { usePageMeta } from "../../hooks/usePageMeta";
 
 export default function DealerDetail() {
@@ -47,7 +48,7 @@ export default function DealerDetail() {
         <div className="md:col-span-2">
           <div className="h-56 bg-brand-tint rounded-2xl flex items-center justify-center mb-6 overflow-hidden">
             {dealer.profilePhoto ? (
-              <img src={dealer.profilePhoto} alt={dealer.name} className="w-full h-full object-cover" />
+              <FitImage src={dealer.profilePhoto} alt={dealer.name} className="w-full h-full" />
             ) : (
               <span className="text-5xl">🏬</span>
             )}

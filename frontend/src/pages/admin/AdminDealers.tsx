@@ -9,6 +9,7 @@ import {
 } from "../../api/endpoints";
 import type { City, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
+import FitImage from "../../components/ui/FitImage";
 import ImageUploader from "./ImageUploader";
 import MultiImageUploader from "./MultiImageUploader";
 import { PageHeader, Card, Field, Textarea, Select, EmptyState, DangerButton } from "./ui";
@@ -147,7 +148,7 @@ export default function AdminDealers() {
           {dealers.map((d) => (
             <div key={d._id} className="p-4 flex items-center gap-4">
               {d.profilePhoto ? (
-                <img src={d.profilePhoto} alt="" className="w-11 h-11 rounded-full object-cover shrink-0" />
+                <FitImage src={d.profilePhoto} alt="" className="w-11 h-11 rounded-full bg-brand-tint shrink-0" />
               ) : (
                 <div className="w-11 h-11 rounded-full bg-brand-sunk shrink-0" />
               )}
