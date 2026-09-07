@@ -33,9 +33,26 @@ const app = express();
 app.set("trust proxy", 1);
 
 app.use(helmet());
+
+// CLIENT_URL is the canonical frontend origin, but the site is reachable at
+// both the apex and "www" host (see index.html's canonical/og:url tag) — so
+// CORS must allow whichever variant the browser actually sent, not just the
+// one exact string in CLIENT_URL, or every API call silently fails on the
+// other host.
+const clientUrl = process.env.CLIENT_URL || "http://localhost:5173";
+const allowedOrigins = new Set(
+  clientUrl.startsWith("https://www.")
+    ? [clientUrl, clientUrl.replace("https://www.", "https://")]
+    : clientUrl.startsWith("https://")
+      ? [clientUrl, clientUrl.replace("https://", "https://www.")]
+      : [clientUrl]
+);
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+      callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   })
 );
