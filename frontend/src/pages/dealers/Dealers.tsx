@@ -50,12 +50,12 @@ export default function Dealers() {
                   to={`/dealers/${dealer.slug}`}
                   className="bg-white rounded-2xl overflow-hidden block hover:shadow-md transition-shadow"
                 >
-                  <div className="h-32 bg-brand-tint flex items-center justify-center">
+                  <div className="h-32 bg-brand-tint flex items-center justify-center p-3">
                     {dealer.profilePhoto ? (
                       <img
                         src={dealer.profilePhoto}
                         alt={dealer.name}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-contain"
                       />
                     ) : (
                       <span className="text-brand-light text-3xl">🏬</span>
