@@ -45,9 +45,9 @@ export default function DealerDetail() {
 
       <Reveal className="px-6 md:px-10 py-12 grid md:grid-cols-3 gap-10">
         <div className="md:col-span-2">
-          <div className="h-56 bg-brand-tint rounded-2xl flex items-center justify-center mb-6 overflow-hidden p-6">
+          <div className="h-56 bg-brand-tint rounded-2xl flex items-center justify-center mb-6 overflow-hidden">
             {dealer.profilePhoto ? (
-              <img src={dealer.profilePhoto} alt={dealer.name} className="w-full h-full object-contain" />
+              <img src={dealer.profilePhoto} alt={dealer.name} className="w-full h-full object-cover" />
             ) : (
               <span className="text-5xl">🏬</span>
             )}
