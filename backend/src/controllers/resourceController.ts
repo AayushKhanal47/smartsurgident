@@ -63,7 +63,9 @@ export const getResources = asyncHandler(async (req: Request, res: Response) => 
 });
 
 export const getAllResourcesAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const resources = await Resource.find().sort({ createdAt: -1 });
+  const resources = await Resource.find()
+    .sort({ createdAt: -1 })
+    .populate("linkedBrands", "name slug");
   res.json(resources);
 });
 
