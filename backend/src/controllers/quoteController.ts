@@ -45,3 +45,13 @@ export const updateQuoteStatus = asyncHandler(async (req: Request, res: Response
   }
   res.json(quote);
 });
+
+// DELETE /api/quotes/:id  (admin only)
+export const deleteQuoteRequest = asyncHandler(async (req: Request, res: Response) => {
+  const quote = await QuoteRequest.findByIdAndDelete(req.params.id);
+  if (!quote) {
+    res.status(404);
+    throw new Error("Quote request not found");
+  }
+  res.json({ message: "Quote request removed" });
+});

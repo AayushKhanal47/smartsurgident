@@ -10,8 +10,8 @@ export interface IProduct extends Document {
   // (e.g. { "Material": "Stainless steel", "Length": "14cm" })
   specs: Record<string, string>;
   images: string[];
-  price: number;
-  clinicPrice: number; // discounted bulk price for verified clinic accounts
+  price?: number; // omitted/null -> "Contact for price" on the storefront
+  clinicPrice?: number; // discounted bulk price for verified clinic accounts
   stock: number;
   sku: string;
   isActive: boolean;
@@ -32,8 +32,8 @@ const productSchema = new Schema<IProduct>(
     description: { type: String, required: true },
     specs: { type: Schema.Types.Mixed, default: {} },
     images: { type: [String], default: [] },
-    price: { type: Number, required: true, min: 0 },
-    clinicPrice: { type: Number, required: true, min: 0 },
+    price: { type: Number, min: 0 },
+    clinicPrice: { type: Number, min: 0 },
     stock: { type: Number, required: true, min: 0, default: 0 },
     sku: { type: String, required: true, unique: true },
     isActive: { type: Boolean, default: true },

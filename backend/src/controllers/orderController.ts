@@ -72,6 +72,7 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         if (!product) throw new Error(`Product ${productId} is unavailable or out of stock`);
 
         const price = isClinicOrder ? product.clinicPrice : product.price;
+        if (price == null) throw new Error(`${product.name} has no listed price — request a quote instead`);
         orderItems.push({ product: product._id, name: product.name, quantity, price });
         totalAmount += price * quantity;
       }

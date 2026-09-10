@@ -16,8 +16,8 @@ export interface Product {
   description: string;
   specs: Record<string, string>;
   images: string[];
-  price: number;
-  clinicPrice: number;
+  price?: number | null;
+  clinicPrice?: number | null;
   stock: number;
   isFeatured?: boolean;
   isNewArrival?: boolean;
@@ -151,8 +151,8 @@ export interface CreateProductInput {
   brand: string;
   category: string;
   description: string;
-  price: number;
-  clinicPrice: number;
+  price?: number | null;
+  clinicPrice?: number | null;
   stock: number;
   sku: string;
   images?: string[];
@@ -258,6 +258,8 @@ export const getQuoteRequestsAdmin = () => api.get<QuoteRequestRecord[]>("/quote
 export const updateQuoteStatusAdmin = (id: string, status: string) =>
   api.patch(`/quotes/${id}/status`, { status }).then((r) => r.data);
 
+export const deleteQuoteRequestAdmin = (id: string) => api.delete(`/quotes/${id}`).then((r) => r.data);
+
 export interface AdminUser {
   _id: string;
   name: string;
@@ -353,6 +355,8 @@ export const getContactMessagesAdmin = () => api.get<ContactMessageRecord[]>("/c
 
 export const updateContactMessageStatusAdmin = (id: string, status: string) =>
   api.patch(`/contact/${id}/status`, { status }).then((r) => r.data);
+
+export const deleteContactMessageAdmin = (id: string) => api.delete(`/contact/${id}`).then((r) => r.data);
 
 export const deleteProductAdmin = (id: string) => api.delete(`/products/${id}`).then((r) => r.data);
 export const deleteCategoryAdmin = (id: string) => api.delete(`/categories/${id}`).then((r) => r.data);

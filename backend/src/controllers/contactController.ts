@@ -45,3 +45,13 @@ export const updateContactMessageStatus = asyncHandler(async (req: Request, res:
   }
   res.json(contactMessage);
 });
+
+// DELETE /api/contact/:id  (admin only)
+export const deleteContactMessage = asyncHandler(async (req: Request, res: Response) => {
+  const contactMessage = await ContactMessage.findByIdAndDelete(req.params.id);
+  if (!contactMessage) {
+    res.status(404);
+    throw new Error("Message not found");
+  }
+  res.json({ message: "Message removed" });
+});

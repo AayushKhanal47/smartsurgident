@@ -100,7 +100,7 @@ export default function ProductSpotlight() {
 
           <div className="mt-8 flex flex-wrap gap-3 items-center">
             <ButtonLink to={`/products/${product.slug}`}>{t("spotlight.viewProduct")}</ButtonLink>
-            {product.price > 0 && (
+            {!!product.price && (
               <span className="text-sm font-semibold text-brand-navy">
                 Rs {product.price.toLocaleString()}
               </span>

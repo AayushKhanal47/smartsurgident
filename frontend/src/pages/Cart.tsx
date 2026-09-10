@@ -28,7 +28,7 @@ export default function Cart() {
             </div>
             <div className="flex items-center gap-4">
               <p className="text-sm font-semibold text-brand-blue">
-                Rs {(product.price * quantity).toLocaleString()}
+                Rs {((product.price ?? 0) * quantity).toLocaleString()}
               </p>
               <button
                 onClick={() => removeFromCart(product._id)}

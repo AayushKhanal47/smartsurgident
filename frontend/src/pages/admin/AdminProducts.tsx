@@ -62,7 +62,7 @@ export default function AdminProducts() {
       name: p.name, slug: p.slug,
       brand: p.brand?._id ?? "",
       category: p.category, description: p.description,
-      price: String(p.price), clinicPrice: String(p.clinicPrice), stock: String(p.stock),
+      price: p.price != null ? String(p.price) : "", clinicPrice: p.clinicPrice != null ? String(p.clinicPrice) : "", stock: String(p.stock),
       sku: (p as unknown as { sku?: string }).sku ?? "",
       isFeatured: !!p.isFeatured, isNewArrival: !!p.isNewArrival, isBestSeller: !!p.isBestSeller,
     });
@@ -83,8 +83,8 @@ export default function AdminProducts() {
     setSubmitting(true);
     const payload = {
       ...form,
-      price: Number(form.price),
-      clinicPrice: Number(form.clinicPrice),
+      price: form.price === "" ? null : Number(form.price),
+      clinicPrice: form.clinicPrice === "" ? null : Number(form.clinicPrice),
       stock: Number(form.stock),
       images,
     };
@@ -124,7 +124,9 @@ export default function AdminProducts() {
                 </p>
               </div>
               {p.stock === 0 && <Badge tone="amber">Out of stock</Badge>}
-              <p className="text-sm font-semibold text-brand-navy shrink-0">Rs {p.price.toLocaleString()}</p>
+              <p className="text-sm font-semibold text-brand-navy shrink-0">
+                {p.price ? `Rs ${p.price.toLocaleString()}` : "Contact for price"}
+              </p>
               <div className="flex items-center gap-3 shrink-0">
                 <button onClick={() => startEdit(p)} className="text-xs font-semibold text-brand-primary hover:text-brand-primary-hover">
                   Edit
@@ -155,8 +157,8 @@ export default function AdminProducts() {
             <Field label="Category" hint="free text, e.g. Hand instruments" required value={form.category} onChange={(e) => set("category", e.target.value)} />
             <Textarea label="Description" rows={3} required value={form.description} onChange={(e) => set("description", e.target.value)} />
             <div className="grid grid-cols-3 gap-3">
-              <Field label="Price" type="number" min="0" required value={form.price} onChange={(e) => set("price", e.target.value)} />
-              <Field label="Clinic price" type="number" min="0" required value={form.clinicPrice} onChange={(e) => set("clinicPrice", e.target.value)} />
+              <Field label="Price" type="number" min="0" hint="blank = Contact for price" value={form.price} onChange={(e) => set("price", e.target.value)} />
+              <Field label="Clinic price" type="number" min="0" hint="blank = Contact for price" value={form.clinicPrice} onChange={(e) => set("clinicPrice", e.target.value)} />
               <Field label="Stock" type="number" min="0" required value={form.stock} onChange={(e) => set("stock", e.target.value)} />
             </div>
             <Field label="SKU" hint="unique" required value={form.sku} onChange={(e) => set("sku", e.target.value)} />

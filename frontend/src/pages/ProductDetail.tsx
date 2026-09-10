@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { getProductBySlug } from "../api/endpoints";
 import type { Product } from "../api/endpoints";
 import { useCart } from "../context/CartContext";
-import { Button } from "../components/ui/Button";
+import { Button, ButtonLink } from "../components/ui/Button";
 import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function ProductDetail() {
@@ -91,8 +91,8 @@ export default function ProductDetail() {
           <h1 className="font-display text-2xl md:text-3xl font-bold text-brand-navy mt-2">{product.name}</h1>
 
           <p className="mt-4 text-xl font-semibold text-brand-navy">
-            {product.price > 0 ? `Rs ${product.price.toLocaleString()}` : "Request a quote"}
-            {product.clinicPrice > 0 && product.clinicPrice !== product.price && (
+            {product.price ? `Rs ${product.price.toLocaleString()}` : "Contact for price"}
+            {!!product.clinicPrice && product.clinicPrice !== product.price && (
               <span className="block text-sm font-normal text-brand-muted mt-0.5">
                 Rs {product.clinicPrice.toLocaleString()} for verified clinics
               </span>
@@ -102,15 +102,14 @@ export default function ProductDetail() {
           <p className="mt-5 text-sm leading-relaxed text-brand-slate">{product.description}</p>
 
           <div className="mt-7 flex flex-wrap gap-3">
-            <Button onClick={() => addToCart(product)} disabled={product.stock === 0}>
-              {product.stock === 0 ? "Out of stock" : "Add to cart"}
-            </Button>
-            <Link
-              to="/support/quote"
-              className="inline-flex items-center justify-center rounded-full px-6 min-h-11 text-sm font-medium border border-brand-border text-brand-navy hover:border-brand-primary hover:text-brand-primary transition-colors"
-            >
+            {product.price ? (
+              <Button onClick={() => addToCart(product)} disabled={product.stock === 0}>
+                {product.stock === 0 ? "Out of stock" : "Add to cart"}
+              </Button>
+            ) : null}
+            <ButtonLink to="/support/quote" variant={product.price ? "secondary" : "primary"}>
               Request a quote
-            </Link>
+            </ButtonLink>
           </div>
 
           {specs.length > 0 && (

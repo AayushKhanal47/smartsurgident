@@ -3,7 +3,7 @@ import { HiArrowRight } from "react-icons/hi";
 import type { Product } from "../api/endpoints";
 
 // Premium, minimal product card. The product image is the focus; one badge
-// max, no icon clutter, price or "Request a quote".
+// max, no icon clutter, price or "Contact for price".
 export default function ProductCard({ product }: { product: Product }) {
   const badge = product.isBestSeller
     ? "Best seller"
@@ -52,7 +52,7 @@ export default function ProductCard({ product }: { product: Product }) {
             {product.name}
           </p>
           <p className="mt-1.5 text-sm text-brand-slate">
-            {product.price > 0 ? `Rs ${product.price.toLocaleString()}` : "Request a quote"}
+            {product.price ? `Rs ${product.price.toLocaleString()}` : "Contact for price"}
           </p>
         </div>
         <HiArrowRight

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { getContactMessagesAdmin, updateContactMessageStatusAdmin } from "../../api/endpoints";
+import { getContactMessagesAdmin, updateContactMessageStatusAdmin, deleteContactMessageAdmin } from "../../api/endpoints";
 import type { ContactMessageRecord } from "../../api/endpoints";
-import { PageHeader, Card, Select, Badge, EmptyState } from "./ui";
+import { PageHeader, Card, Select, Badge, EmptyState, DangerButton } from "./ui";
 
 const STATUSES = ["new", "read"] as const;
 const TONE: Record<string, "amber" | "green" | "slate" | "default"> = {
@@ -18,6 +18,12 @@ export default function AdminMessages() {
 
   const handleStatusChange = async (id: string, status: string) => {
     await updateContactMessageStatusAdmin(id, status);
+    load();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this message? This cannot be undone.")) return;
+    await deleteContactMessageAdmin(id);
     load();
   };
 
@@ -52,13 +58,16 @@ export default function AdminMessages() {
               </p>
               <p className="text-sm text-brand-slate mt-2 whitespace-pre-wrap">{m.message}</p>
             </div>
-            <Select
-              className="sm:w-32 shrink-0"
-              value={m.status}
-              onChange={(e) => handleStatusChange(m._id, e.target.value)}
-            >
-              {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
-            </Select>
+            <div className="flex items-center gap-3 shrink-0">
+              <Select
+                className="sm:w-32"
+                value={m.status}
+                onChange={(e) => handleStatusChange(m._id, e.target.value)}
+              >
+                {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </Select>
+              <DangerButton onClick={() => handleDelete(m._id)} />
+            </div>
           </div>
         ))}
         {shown.length === 0 && <EmptyState>{messages.length === 0 ? "No messages yet." : "None with this status."}</EmptyState>}

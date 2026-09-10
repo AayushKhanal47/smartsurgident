@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { getQuoteRequestsAdmin, updateQuoteStatusAdmin } from "../../api/endpoints";
+import { getQuoteRequestsAdmin, updateQuoteStatusAdmin, deleteQuoteRequestAdmin } from "../../api/endpoints";
 import type { QuoteRequestRecord } from "../../api/endpoints";
-import { PageHeader, Card, Select, Badge, EmptyState } from "./ui";
+import { PageHeader, Card, Select, Badge, EmptyState, DangerButton } from "./ui";
 
 const STATUSES = ["new", "in_progress", "quoted", "closed"] as const;
 const TONE: Record<string, "amber" | "green" | "slate" | "default"> = {
@@ -20,6 +20,12 @@ export default function AdminQuotes() {
 
   const handleStatusChange = async (id: string, status: string) => {
     await updateQuoteStatusAdmin(id, status);
+    load();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Delete this quote request? This cannot be undone.")) return;
+    await deleteQuoteRequestAdmin(id);
     load();
   };
 
@@ -55,13 +61,16 @@ export default function AdminQuotes() {
               <p className="text-sm text-brand-slate mt-2 whitespace-pre-wrap">{q.items}</p>
               {q.message && <p className="text-xs text-brand-muted mt-1.5 whitespace-pre-wrap">{q.message}</p>}
             </div>
-            <Select
-              className="sm:w-40 shrink-0"
-              value={q.status}
-              onChange={(e) => handleStatusChange(q._id, e.target.value)}
-            >
-              {STATUSES.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
-            </Select>
+            <div className="flex items-center gap-3 shrink-0">
+              <Select
+                className="sm:w-40"
+                value={q.status}
+                onChange={(e) => handleStatusChange(q._id, e.target.value)}
+              >
+                {STATUSES.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}
+              </Select>
+              <DangerButton onClick={() => handleDelete(q._id)} />
+            </div>
           </div>
         ))}
         {shown.length === 0 && <EmptyState>{quotes.length === 0 ? "No quote requests yet." : "None with this status."}</EmptyState>}

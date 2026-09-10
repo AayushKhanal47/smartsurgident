@@ -43,7 +43,7 @@ export function useBannerSource(source: BannerSource): State {
               image: p.images?.[0] ?? null,
               title: p.name,
               brandName: p.brand?.name,
-              price: p.price > 0 ? p.price : undefined,
+              price: p.price ? p.price : undefined,
               href: `/products/${p.slug}`,
             },
           });
