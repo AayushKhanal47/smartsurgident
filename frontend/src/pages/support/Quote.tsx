@@ -3,6 +3,9 @@ import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { Button } from "../../components/ui/Button";
 import { submitQuoteRequest } from "../../api/endpoints";
+import Turnstile from "../../components/ui/Turnstile";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
 export default function SupportQuote() {
   const [form, setForm] = useState({
@@ -16,13 +19,14 @@ export default function SupportQuote() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
     try {
-      await submitQuoteRequest(form);
+      await submitQuoteRequest({ ...form, turnstileToken });
       setSubmitted(true);
     } catch (err: unknown) {
       const message =
@@ -101,7 +105,12 @@ export default function SupportQuote() {
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
               />
-              <Button type="submit" disabled={submitting}>
+              <Turnstile
+                siteKey={TURNSTILE_SITE_KEY}
+                onVerify={setTurnstileToken}
+                onExpire={() => setTurnstileToken("")}
+              />
+              <Button type="submit" disabled={submitting || (!!TURNSTILE_SITE_KEY && !turnstileToken)}>
                 {submitting ? "Submitting..." : "Submit request"}
               </Button>
               {error && <p className="text-sm text-red-500">{error}</p>}

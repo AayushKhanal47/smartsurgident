@@ -324,6 +324,7 @@ export interface QuoteRequestInput {
   email?: string;
   items: string;
   message?: string;
+  turnstileToken?: string;
 }
 
 export const submitQuoteRequest = (data: QuoteRequestInput) =>
@@ -333,6 +334,7 @@ export interface ContactMessageInput {
   name: string;
   email: string;
   message: string;
+  turnstileToken?: string;
 }
 
 export const submitContactMessage = (data: ContactMessageInput) =>

@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import ContactMessage from "../models/ContactMessage";
+import { verifyTurnstileToken } from "../utils/turnstile";
 
 // POST /api/contact  (public — the Contact Us form submits here)
 export const createContactMessage = asyncHandler(async (req: Request, res: Response) => {
-  const { name, email, message } = req.body;
+  const { name, email, message, turnstileToken } = req.body;
 
   if (
     typeof name !== "string" ||
@@ -16,6 +17,11 @@ export const createContactMessage = asyncHandler(async (req: Request, res: Respo
   ) {
     res.status(400);
     throw new Error("Name, email and message are required");
+  }
+
+  if (!(await verifyTurnstileToken(turnstileToken, req.ip))) {
+    res.status(400);
+    throw new Error("Verification failed. Please try again.");
   }
 
   const contactMessage = await ContactMessage.create({ name, email, message });

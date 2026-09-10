@@ -7,6 +7,9 @@ import { FaWhatsapp } from "react-icons/fa";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../../config/whatsapp";
 import { usePageMeta } from "../../hooks/usePageMeta";
 import { submitContactMessage } from "../../api/endpoints";
+import Turnstile from "../../components/ui/Turnstile";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
 export default function SupportContact() {
   usePageMeta(
@@ -18,13 +21,14 @@ export default function SupportContact() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSubmitting(true);
     try {
-      await submitContactMessage(form);
+      await submitContactMessage({ ...form, turnstileToken });
       setSubmitted(true);
     } catch (err: unknown) {
       const message =
@@ -108,7 +112,12 @@ export default function SupportContact() {
                 value={form.message}
                 onChange={(e) => setForm({ ...form, message: e.target.value })}
               />
-              <Button type="submit" disabled={submitting}>
+              <Turnstile
+                siteKey={TURNSTILE_SITE_KEY}
+                onVerify={setTurnstileToken}
+                onExpire={() => setTurnstileToken("")}
+              />
+              <Button type="submit" disabled={submitting || (!!TURNSTILE_SITE_KEY && !turnstileToken)}>
                 {submitting ? "Sending..." : "Send message"}
               </Button>
               {error && <p className="text-sm text-red-500">{error}</p>}

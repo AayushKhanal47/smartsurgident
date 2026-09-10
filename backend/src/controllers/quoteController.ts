@@ -1,14 +1,20 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import QuoteRequest from "../models/QuoteRequest";
+import { verifyTurnstileToken } from "../utils/turnstile";
 
 // POST /api/quotes  (public — the Request a Quote form submits here)
 export const createQuoteRequest = asyncHandler(async (req: Request, res: Response) => {
-  const { organizationName, contactName, phone, email, items, message } = req.body;
+  const { organizationName, contactName, phone, email, items, message, turnstileToken } = req.body;
 
   if (!organizationName || !contactName || !phone || !items) {
     res.status(400);
     throw new Error("Organization name, contact name, phone and items are required");
+  }
+
+  if (!(await verifyTurnstileToken(turnstileToken, req.ip))) {
+    res.status(400);
+    throw new Error("Verification failed. Please try again.");
   }
 
   const quote = await QuoteRequest.create({
