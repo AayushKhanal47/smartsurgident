@@ -46,7 +46,7 @@ export default function DealerDetail() {
 
       <Reveal className="px-6 md:px-10 py-12 grid md:grid-cols-3 gap-10">
         <div className="md:col-span-2">
-          <div className="h-56 bg-brand-tint rounded-2xl flex items-center justify-center mb-6 overflow-hidden">
+          <div className="h-56 bg-white border border-brand-border rounded-2xl flex items-center justify-center mb-6 overflow-hidden">
             {dealer.profilePhoto ? (
               <FitImage src={dealer.profilePhoto} alt={dealer.name} className="w-full h-full" />
             ) : (
