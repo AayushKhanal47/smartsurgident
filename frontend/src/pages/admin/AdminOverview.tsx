@@ -10,8 +10,9 @@ import {
   getAllResourcesAdmin,
   getAllCampaignsAdmin,
   getQuoteRequestsAdmin,
+  getContactMessagesAdmin,
 } from "../../api/endpoints";
-import type { Product, QuoteRequestRecord } from "../../api/endpoints";
+import type { Product, QuoteRequestRecord, ContactMessageRecord } from "../../api/endpoints";
 import { PageHeader, Card, StatCard, Badge, EmptyState } from "./ui";
 
 interface DealerRow { _id: string; city?: { _id?: string; name?: string } }
@@ -21,6 +22,7 @@ export default function AdminOverview() {
   const [counts, setCounts] = useState({ brands: 0, categories: 0, cities: 0, dealers: 0, resources: 0, campaigns: 0 });
   const [dealers, setDealers] = useState<DealerRow[]>([]);
   const [quotes, setQuotes] = useState<QuoteRequestRecord[]>([]);
+  const [messages, setMessages] = useState<ContactMessageRecord[]>([]);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -33,10 +35,12 @@ export default function AdminOverview() {
       getAllResourcesAdmin(),
       getAllCampaignsAdmin(),
       getQuoteRequestsAdmin(),
-    ]).then(([p, b, c, ci, d, r, ca, q]) => {
+      getContactMessagesAdmin(),
+    ]).then(([p, b, c, ci, d, r, ca, q, m]) => {
       if (p.status === "fulfilled") setProducts(p.value);
       if (d.status === "fulfilled") setDealers(d.value as DealerRow[]);
       if (q.status === "fulfilled") setQuotes(q.value);
+      if (m.status === "fulfilled") setMessages(m.value);
       setCounts({
         brands: b.status === "fulfilled" ? b.value.length : 0,
         categories: c.status === "fulfilled" ? c.value.length : 0,
@@ -50,6 +54,7 @@ export default function AdminOverview() {
   }, []);
 
   const newQuotes = quotes.filter((q) => q.status === "new");
+  const newMessages = messages.filter((m) => m.status === "new");
   const outOfStock = products.filter((p) => p.stock === 0);
   const noImage = products.filter((p) => !p.images?.length);
   const coveredCityIds = new Set(dealers.map((d) => d.city?._id).filter(Boolean));
@@ -57,6 +62,7 @@ export default function AdminOverview() {
 
   const attention: { label: string; to: string; count: number }[] = [
     { label: "New quote requests to review", to: "/admin/quotes", count: newQuotes.length },
+    { label: "New contact messages to review", to: "/admin/messages", count: newMessages.length },
     { label: "Products out of stock", to: "/admin/products", count: outOfStock.length },
     { label: "Products with no photo", to: "/admin/products", count: noImage.length },
     { label: "Cities without an active dealer", to: "/admin/dealers", count: Math.max(0, citiesWithoutDealer) },
@@ -77,6 +83,11 @@ export default function AdminOverview() {
           label="New quotes"
           value={loaded ? newQuotes.length : "–"}
           tone={newQuotes.length > 0 ? "accent" : "default"}
+        />
+        <StatCard
+          label="New messages"
+          value={loaded ? newMessages.length : "–"}
+          tone={newMessages.length > 0 ? "accent" : "default"}
         />
         <StatCard label="Total quotes" value={loaded ? quotes.length : "–"} />
       </div>
