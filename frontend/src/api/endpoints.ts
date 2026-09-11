@@ -16,6 +16,7 @@ export interface Product {
   description: string;
   specs: Record<string, string>;
   images: string[];
+  catalogUrl?: string;
   price?: number | null;
   clinicPrice?: number | null;
   stock: number;
@@ -156,6 +157,7 @@ export interface CreateProductInput {
   stock: number;
   sku: string;
   images?: string[];
+  catalogUrl?: string;
   isFeatured?: boolean;
   isNewArrival?: boolean;
   isBestSeller?: boolean;

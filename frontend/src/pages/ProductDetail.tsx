@@ -6,6 +6,7 @@ import type { Product } from "../api/endpoints";
 import { useCart } from "../context/CartContext";
 import { Button, ButtonLink } from "../components/ui/Button";
 import { usePageMeta } from "../hooks/usePageMeta";
+import { getPdfThumbnail } from "../utils/pdfThumbnail";
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -123,6 +124,34 @@ export default function ProductDetail() {
                   </div>
                 ))}
               </dl>
+            </div>
+          )}
+
+          {product.catalogUrl && (
+            <div className="mt-9 border-t border-brand-border pt-6">
+              <p className="font-display font-semibold text-brand-navy text-sm mb-3">Catalogue</p>
+              <a
+                href={product.catalogUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-4 rounded-xl border border-brand-border p-3 hover:border-brand-primary transition-colors"
+              >
+                {getPdfThumbnail(product.catalogUrl) ? (
+                  <img
+                    src={getPdfThumbnail(product.catalogUrl)!}
+                    alt=""
+                    className="w-16 h-16 rounded-lg object-cover shrink-0 bg-brand-sunk"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-lg bg-brand-tint flex items-center justify-center text-brand-primary text-xs font-semibold shrink-0">
+                    PDF
+                  </div>
+                )}
+                <span>
+                  <span className="block text-sm font-medium text-brand-navy">{product.name} catalogue</span>
+                  <span className="block text-xs font-medium text-brand-primary mt-0.5">Open PDF ↗</span>
+                </span>
+              </a>
             </div>
           )}
         </div>

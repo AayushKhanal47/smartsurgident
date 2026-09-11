@@ -9,6 +9,7 @@ import {
 import type { Product, Brand } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import MultiImageUploader from "./MultiImageUploader";
+import PdfUploader from "./PdfUploader";
 import { PageHeader, Card, Field, Textarea, Select, Toggle, Badge, EmptyState, DangerButton } from "./ui";
 
 interface FormState {
@@ -37,6 +38,7 @@ export default function AdminProducts() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [form, setForm] = useState<FormState>(empty);
   const [images, setImages] = useState<string[]>([]);
+  const [catalogUrl, setCatalogUrl] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -52,6 +54,7 @@ export default function AdminProducts() {
   const resetForm = () => {
     setForm(empty);
     setImages([]);
+    setCatalogUrl("");
     setEditingId(null);
     setError("");
   };
@@ -67,6 +70,7 @@ export default function AdminProducts() {
       isFeatured: !!p.isFeatured, isNewArrival: !!p.isNewArrival, isBestSeller: !!p.isBestSeller,
     });
     setImages(p.images ?? []);
+    setCatalogUrl(p.catalogUrl ?? "");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -87,6 +91,7 @@ export default function AdminProducts() {
       clinicPrice: form.clinicPrice === "" ? null : Number(form.clinicPrice),
       stock: Number(form.stock),
       images,
+      catalogUrl,
     };
     try {
       if (editingId) await updateProductAdmin(editingId, payload);
@@ -162,6 +167,7 @@ export default function AdminProducts() {
               <Field label="Stock" type="number" min="0" required value={form.stock} onChange={(e) => set("stock", e.target.value)} />
             </div>
             <Field label="SKU" hint="unique" required value={form.sku} onChange={(e) => set("sku", e.target.value)} />
+            <PdfUploader value={catalogUrl} onChange={setCatalogUrl} label="Catalogue PDF (optional)" />
             <div className="flex flex-wrap gap-4 pt-1">
               <Toggle label="Featured" checked={form.isFeatured} onChange={(v) => set("isFeatured", v)} />
               <Toggle label="New" checked={form.isNewArrival} onChange={(v) => set("isNewArrival", v)} />

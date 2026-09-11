@@ -10,6 +10,7 @@ export interface IProduct extends Document {
   // (e.g. { "Material": "Stainless steel", "Length": "14cm" })
   specs: Record<string, string>;
   images: string[];
+  catalogUrl?: string; // Cloudinary PDF — product-specific spec sheet/catalogue
   price?: number; // omitted/null -> "Contact for price" on the storefront
   clinicPrice?: number; // discounted bulk price for verified clinic accounts
   stock: number;
@@ -32,6 +33,7 @@ const productSchema = new Schema<IProduct>(
     description: { type: String, required: true },
     specs: { type: Schema.Types.Mixed, default: {} },
     images: { type: [String], default: [] },
+    catalogUrl: { type: String },
     price: { type: Number, min: 0 },
     clinicPrice: { type: Number, min: 0 },
     stock: { type: Number, required: true, min: 0, default: 0 },
