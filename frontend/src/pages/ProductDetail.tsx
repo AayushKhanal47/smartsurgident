@@ -5,6 +5,7 @@ import { getProductBySlug } from "../api/endpoints";
 import type { Product } from "../api/endpoints";
 import { useCart } from "../context/CartContext";
 import { Button, ButtonLink } from "../components/ui/Button";
+import OrderWhatsAppButton from "../components/OrderWhatsAppButton";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { getPdfThumbnail } from "../utils/pdfThumbnail";
 
@@ -112,6 +113,12 @@ export default function ProductDetail() {
             <ButtonLink to="/support/quote" variant={product.price ? "secondary" : "primary"}>
               Request a quote
             </ButtonLink>
+            <OrderWhatsAppButton
+              buildDealerMessage={(city) =>
+                `Hello, I would like to order ${product.name} from Smart Surgident. I'm in ${city}. Product: ${window.location.href}`
+              }
+              adminMessage={`Hello Smart Surgident, I would like to order ${product.name}. Product: ${window.location.href}`}
+            />
           </div>
 
           {specs.length > 0 && (

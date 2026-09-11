@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import OrderWhatsAppButton from "../components/OrderWhatsAppButton";
 
 export default function Cart() {
   const { items, removeFromCart, total } = useCart();
+
+  const itemsSummary = () =>
+    items.map(({ product, quantity }) => `${product.name} x${quantity}`).join(", ");
 
   if (items.length === 0) {
     return (
@@ -41,14 +45,23 @@ export default function Cart() {
         ))}
       </div>
 
-      <div className="flex justify-between items-center mt-6">
+      <div className="flex flex-wrap justify-between items-center gap-3 mt-6">
         <p className="font-semibold text-brand-navy">Total: Rs {total.toLocaleString()}</p>
-        <Link
-          to="/checkout"
-          className="bg-brand-blue text-white px-6 py-3 rounded-full font-medium"
-        >
-          Checkout
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <OrderWhatsAppButton
+            buildDealerMessage={(city) =>
+              `Hello, I would like to order: ${itemsSummary()}. Total: Rs ${total.toLocaleString()}. I'm in ${city}.`
+            }
+            adminMessage={`Hello Smart Surgident, I would like to order: ${itemsSummary()}. Total: Rs ${total.toLocaleString()}.`}
+            triggerClassName="inline-flex items-center gap-2 bg-white border border-[#25D366] text-[#128C4A] px-6 py-3 rounded-full font-medium hover:bg-[#25D366]/10 transition-colors"
+          />
+          <Link
+            to="/checkout"
+            className="bg-brand-blue text-white px-6 py-3 rounded-full font-medium"
+          >
+            Checkout
+          </Link>
+        </div>
       </div>
     </div>
   );
