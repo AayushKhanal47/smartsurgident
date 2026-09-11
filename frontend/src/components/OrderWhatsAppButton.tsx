@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { FaWhatsapp } from "react-icons/fa";
-import { HiOutlineChevronLeft, HiOutlineX } from "react-icons/hi";
+import { HiOutlineX } from "react-icons/hi";
 import { getPublicDealers } from "../api/endpoints";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../config/whatsapp";
 
@@ -10,10 +10,16 @@ interface CityContact {
   whatsapp: string;
 }
 
+interface Target {
+  label: string;
+  sublabel: string;
+  link: string;
+}
+
 interface OrderWhatsAppButtonProps {
   // Message sent to the city's dealer once one is picked.
   buildDealerMessage: (city: string) => string;
-  // Message always sent to Smart Surgident Admin, dealer or not.
+  // Message sent to Smart Surgident Admin when the picked city has no dealer.
   adminMessage: string;
   triggerClassName?: string;
   children?: ReactNode;
@@ -21,15 +27,9 @@ interface OrderWhatsAppButtonProps {
 
 type PanelView = "cities" | "confirm";
 
-// "Order via WhatsApp": picks a city, then the order goes to BOTH that
-// city's dealer (if one has a WhatsApp number) and Smart Surgident Admin —
-// not a menu where the customer picks just one contact.
-//
-// Chrome (and other browsers) only allow ONE window.open() per click, even
-// a genuine trusted click — a second call in the same handler is silently
-// blocked, popup or not. So after picking a city we best-effort auto-open
-// both, but always also render them as real, individually-clickable links
-// so the order still reaches both contacts no matter what the browser did.
+// "Order via WhatsApp": picks a city, then opens ONLY that city's dealer
+// chat. If the city has no dealer WhatsApp on file, it falls back to
+// Smart Surgident Admin instead — never both at once.
 export default function OrderWhatsAppButton({
   buildDealerMessage,
   adminMessage,
@@ -40,7 +40,7 @@ export default function OrderWhatsAppButton({
   const [view, setView] = useState<PanelView>("cities");
   const [cities, setCities] = useState<CityContact[] | null>(null);
   const [loadError, setLoadError] = useState(false);
-  const [selected, setSelected] = useState<CityContact | null>(null);
+  const [target, setTarget] = useState<Target | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -80,17 +80,23 @@ export default function OrderWhatsAppButton({
     });
   };
 
-  const dealerLink = selected ? buildWhatsAppLink(selected.whatsapp, buildDealerMessage(selected.city)) : null;
-  const adminLink = buildWhatsAppLink(ADMIN_WHATSAPP_NUMBER, adminMessage);
-
   const pickCity = (contact: CityContact | null) => {
-    setSelected(contact);
+    const picked: Target = contact
+      ? {
+          label: `${contact.city} Dealer`,
+          sublabel: "Message your local dealer",
+          link: buildWhatsAppLink(contact.whatsapp, buildDealerMessage(contact.city)),
+        }
+      : {
+          label: "Smart Surgident Admin",
+          sublabel: "Message the admin team",
+          link: buildWhatsAppLink(ADMIN_WHATSAPP_NUMBER, adminMessage),
+        };
+    setTarget(picked);
     setView("confirm");
-    // Best effort: browsers allow only the first window.open() per click,
-    // so this may only open one of the two — the confirm panel's own links
-    // are the reliable path for whichever one didn't make it through.
-    if (contact) window.open(buildWhatsAppLink(contact.whatsapp, buildDealerMessage(contact.city)), "_blank", "noopener,noreferrer");
-    window.open(buildWhatsAppLink(ADMIN_WHATSAPP_NUMBER, adminMessage), "_blank", "noopener,noreferrer");
+    // Best effort auto-open; the confirm panel's own link is the fallback
+    // in case the browser silently blocks this.
+    window.open(picked.link, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -120,21 +126,9 @@ export default function OrderWhatsAppButton({
           className="absolute z-30 top-[calc(100%+8px)] left-0 w-72 rounded-2xl bg-white border border-brand-border shadow-[0_20px_48px_rgba(31,44,65,0.18)] overflow-hidden"
         >
           <div className="flex items-center justify-between gap-2 px-4 py-3 border-b border-brand-border">
-            <div className="flex items-center gap-2 min-w-0">
-              {view === "confirm" && (
-                <button
-                  type="button"
-                  onClick={() => setView("cities")}
-                  aria-label="Back"
-                  className="shrink-0 -ml-1 p-1 rounded-full text-brand-muted hover:text-brand-navy hover:bg-brand-tint transition-colors"
-                >
-                  <HiOutlineChevronLeft className="text-lg" aria-hidden="true" />
-                </button>
-              )}
-              <p className="text-sm font-semibold text-brand-navy truncate">
-                {view === "cities" ? "Choose your city" : "Tap to message"}
-              </p>
-            </div>
+            <p className="text-sm font-semibold text-brand-navy truncate">
+              {view === "cities" ? "Choose your city" : "Opening WhatsApp…"}
+            </p>
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -171,17 +165,17 @@ export default function OrderWhatsAppButton({
                 onClick={() => pickCity(null)}
                 className="w-full mt-1 pt-2 border-t border-brand-border text-left px-3 py-2.5 text-xs text-brand-muted hover:text-brand-primary transition-colors"
               >
-                My city isn't listed / order via Admin only
+                My city isn't listed / order via Admin
               </button>
             </div>
           ) : (
-            <div className="p-2.5 flex flex-col gap-1">
-              <p className="px-2 pb-1 text-xs text-brand-muted">
-                We tried opening these automatically — if your browser blocked it, tap below.
-              </p>
-              {dealerLink && selected && (
+            target && (
+              <div className="p-2.5 flex flex-col gap-1">
+                <p className="px-2 pb-1 text-xs text-brand-muted">
+                  We tried opening this automatically — if your browser blocked it, tap below.
+                </p>
                 <a
-                  href={dealerLink}
+                  href={target.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
@@ -191,27 +185,12 @@ export default function OrderWhatsAppButton({
                     <FaWhatsapp aria-hidden="true" />
                   </span>
                   <span className="min-w-0">
-                    <span className="block text-sm font-medium text-brand-navy">{selected.city} Dealer</span>
-                    <span className="block text-xs text-brand-muted">Message your local dealer</span>
+                    <span className="block text-sm font-medium text-brand-navy">{target.label}</span>
+                    <span className="block text-xs text-brand-muted">{target.sublabel}</span>
                   </span>
                 </a>
-              )}
-              <a
-                href={adminLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-3 text-left hover:bg-brand-tint transition-colors"
-              >
-                <span className="shrink-0 flex items-center justify-center w-9 h-9 rounded-full bg-brand-tint text-[#128C4A]">
-                  <FaWhatsapp aria-hidden="true" />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium text-brand-navy">Smart Surgident Admin</span>
-                  <span className="block text-xs text-brand-muted">Message the admin team</span>
-                </span>
-              </a>
-            </div>
+              </div>
+            )
           )}
         </div>
       )}
