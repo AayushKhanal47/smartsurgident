@@ -3,6 +3,7 @@ import { HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
 import Logo from "./ui/Logo";
 import { useTranslation } from "../i18n/useTranslation";
 import type { TranslationKey } from "../i18n/translations";
+import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../config/whatsapp";
 
 const COLUMNS: { headingKey: TranslationKey; links: { labelKey: TranslationKey; to: string }[] }[] = [
   {
@@ -80,9 +81,20 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-5 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-white/55">
           <p>&copy; {new Date().getFullYear()} Smart Surgident Pvt. Ltd. {t("footer.rights")}</p>
-          <div className="flex gap-5">
+          <div className="flex flex-wrap justify-center gap-5">
             <Link to="/support/faq" className="hover:text-white transition-colors">{t("footer.privacyPolicy")}</Link>
             <Link to="/support/faq" className="hover:text-white transition-colors">{t("footer.terms")}</Link>
+            <a
+              href={buildWhatsAppLink(
+                ADMIN_WHATSAPP_NUMBER,
+                "Hi, I saw the Smart Surgident website and I'm interested in building one like this."
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors"
+            >
+              Want a website like this? Let's talk.
+            </a>
           </div>
         </div>
       </div>
