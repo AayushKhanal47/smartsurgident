@@ -15,10 +15,9 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getProductBySlug = asyncHandler(async (req: Request, res: Response) => {
-  const product = await Product.findOne({ slug: req.params.slug, isActive: true }).populate(
-    "brand",
-    "name slug logoUrl description"
-  );
+  const product = await Product.findOne({ slug: req.params.slug, isActive: true })
+    .populate("brand", "name slug logoUrl description")
+    .populate("catalogResource", "title slug fileUrl coverImage");
 
   if (!product) {
     res.status(404);

@@ -16,7 +16,9 @@ export interface Product {
   description: string;
   specs: Record<string, string>;
   images: string[];
-  catalogUrl?: string;
+  // Populated (Resource object) on the product-detail endpoint; a raw id
+  // string on list endpoints and when editing in admin.
+  catalogResource?: Resource | string | null;
   price?: number | null;
   clinicPrice?: number | null;
   stock: number;
@@ -157,7 +159,7 @@ export interface CreateProductInput {
   stock: number;
   sku: string;
   images?: string[];
-  catalogUrl?: string;
+  catalogResource?: string | null;
   isFeatured?: boolean;
   isNewArrival?: boolean;
   isBestSeller?: boolean;

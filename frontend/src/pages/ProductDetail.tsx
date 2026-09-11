@@ -32,6 +32,7 @@ export default function ProductDetail() {
   const images = product.images ?? [];
   const current = images[Math.min(active, Math.max(0, images.length - 1))];
   const specs = Object.entries(product.specs ?? {});
+  const catalog = typeof product.catalogResource === "object" ? product.catalogResource : null;
 
   return (
     <div className="max-w-[1240px] mx-auto px-5 sm:px-8 py-10 md:py-16">
@@ -127,18 +128,18 @@ export default function ProductDetail() {
             </div>
           )}
 
-          {product.catalogUrl && (
+          {catalog?.fileUrl && (
             <div className="mt-9 border-t border-brand-border pt-6">
               <p className="font-display font-semibold text-brand-navy text-sm mb-3">Catalogue</p>
               <a
-                href={product.catalogUrl}
+                href={catalog.fileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 rounded-xl border border-brand-border p-3 hover:border-brand-primary transition-colors"
               >
-                {getPdfThumbnail(product.catalogUrl) ? (
+                {catalog.coverImage || getPdfThumbnail(catalog.fileUrl) ? (
                   <img
-                    src={getPdfThumbnail(product.catalogUrl)!}
+                    src={catalog.coverImage || getPdfThumbnail(catalog.fileUrl)!}
                     alt=""
                     className="w-16 h-16 rounded-lg object-cover shrink-0 bg-brand-sunk"
                   />
@@ -148,7 +149,7 @@ export default function ProductDetail() {
                   </div>
                 )}
                 <span>
-                  <span className="block text-sm font-medium text-brand-navy">{product.name} catalogue</span>
+                  <span className="block text-sm font-medium text-brand-navy">{catalog.title}</span>
                   <span className="block text-xs font-medium text-brand-primary mt-0.5">Open PDF ↗</span>
                 </span>
               </a>
