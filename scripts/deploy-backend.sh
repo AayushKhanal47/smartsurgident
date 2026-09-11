@@ -27,7 +27,14 @@ npm run build
 EOF
 
 echo "==> Restarting the app (killing current process so it respawns fresh)..."
+# NOTE: pgrep -f matches against the full command line of every process,
+# including this very ssh command's own argv (which contains the search
+# pattern as literal text) — an unanchored pattern self-matches the shell
+# running this command, and `kill -9` sends SIGKILL to itself before ever
+# reaching the real target, silently no-op'ing the intended restart. The
+# actual app process's argv0 is rewritten to start with "lsnode:", so a
+# leading ^ anchor excludes our own non-matching (e.g. "bash -c ...") argv.
 ssh "$REMOTE_USER@$REMOTE_HOST" \
-  "pid=\$(pgrep -f 'lsnode:$BACKEND_DIR/'); if [ -n \"\$pid\" ]; then kill -9 \$pid; echo killed \$pid; else echo 'no running process found (will spawn on next request)'; fi"
+  "pid=\$(pgrep -f '^lsnode:$BACKEND_DIR/'); if [ -n \"\$pid\" ]; then kill -9 \$pid; echo killed \$pid; else echo 'no running process found (will spawn on next request)'; fi"
 
 echo "==> Done. Verify: curl https://api.smartsurgident.com/api/health"
