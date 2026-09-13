@@ -4,6 +4,7 @@ import Order, { IOrder } from "../models/Order";
 import Product from "../models/Product";
 import Dealer from "../models/Dealer";
 import { sendEmail } from "../utils/email";
+import { verifyTurnstileToken } from "../utils/turnstile";
 import mongoose from "mongoose";
 
 const generateOrderNumber = () => {
@@ -25,11 +26,20 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     customerEmail,
     shippingAddress,
     items,
+    turnstileToken,
   } = req.body;
 
   if (!cityId || !Array.isArray(items) || !items.length) {
     res.status(400);
     throw new Error("City and at least one item are required");
+  }
+
+  // Checkout is public and both decrements real stock and emails a real
+  // dealer — same bot check already required on Contact/Quote (audit
+  // finding H-1).
+  if (!(await verifyTurnstileToken(turnstileToken, req.ip))) {
+    res.status(400);
+    throw new Error("Verification failed. Please try again.");
   }
 
   if (

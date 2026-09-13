@@ -92,6 +92,7 @@ export interface CreateOrderInput {
   shippingAddress: string;
   items: OrderItemInput[];
   isClinicOrder?: boolean;
+  turnstileToken?: string;
 }
 
 export const createOrder = (data: CreateOrderInput) =>

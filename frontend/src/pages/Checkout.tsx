@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { getCities, createOrder } from "../api/endpoints";
 import type { City } from "../api/endpoints";
 import { useCart } from "../context/CartContext";
+import Turnstile from "../components/ui/Turnstile";
+
+const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
 
 export default function Checkout() {
   const { items, clearCart, total } = useCart();
@@ -16,6 +19,7 @@ export default function Checkout() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,6 +35,7 @@ export default function Checkout() {
       await createOrder({
         ...form,
         items: items.map((i) => ({ productId: i.product._id, quantity: i.quantity })),
+        turnstileToken,
       });
       clearCart();
       navigate("/");
@@ -88,13 +93,19 @@ export default function Checkout() {
           ))}
         </select>
 
+        <Turnstile
+          siteKey={TURNSTILE_SITE_KEY}
+          onVerify={setTurnstileToken}
+          onExpire={() => setTurnstileToken("")}
+        />
+
         {error && <p className="text-sm text-red-500">{error}</p>}
 
         <div className="flex justify-between items-center mt-2">
           <p className="font-semibold text-brand-navy">Total: Rs {total.toLocaleString()}</p>
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
             className="bg-brand-blue text-white px-6 py-3 rounded-full font-medium disabled:opacity-50"
           >
             {submitting ? "Placing order..." : "Place order"}
