@@ -1,7 +1,11 @@
   import { Request, Response } from "express";
   import asyncHandler from "express-async-handler";
   import path from "path";
+  import { fromBuffer } from "file-type";
   import cloudinary from "../config/cloudinary";
+
+  const IMAGE_MIMES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+  const PDF_MIMES = ["application/pdf"];
 
   const slugifyFileBase = (value: string) =>
     value
@@ -12,15 +16,29 @@
 
   const uploadToCloudinary = async (
     req: Request,
+    res: Response,
     fieldName: string,
     options: {
       folder: string;
       resourceType?: "image" | "raw";
       publicId?: string;
+      allowedMimes: string[];
     }
   ) => {
     if (!req.file) {
+      res.status(400);
       throw new Error(`No file uploaded — send it under the field name '${fieldName}'`);
+    }
+
+    // multer's fileFilter only checked the client-declared Content-Type,
+    // which an attacker fully controls — this checks the file's actual
+    // magic bytes before it ever reaches Cloudinary (security audit
+    // finding M-5). Uploads are already admin-only; this closes the gap
+    // for a compromised/malicious admin session too.
+    const detected = await fromBuffer(req.file.buffer);
+    if (!detected || !options.allowedMimes.includes(detected.mime)) {
+      res.status(400);
+      throw new Error("File content doesn't match an allowed type for this upload");
     }
 
     const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
@@ -55,8 +73,9 @@
   };
 
   export const uploadImage = asyncHandler(async (req: Request, res: Response) => {
-    const url = await uploadToCloudinary(req, "image", {
+    const url = await uploadToCloudinary(req, res, "image", {
       folder: "smart-surgident/images",
+      allowedMimes: IMAGE_MIMES,
     });
 
     res.status(201).json({ url });
@@ -68,10 +87,11 @@
   const baseName = slugifyFileBase(path.basename(originalName, extension));
   const publicId = `${baseName}-${Date.now()}`;
 
-  const url = await uploadToCloudinary(req, "pdf", {
+  const url = await uploadToCloudinary(req, res, "pdf", {
     folder: "smart-surgident/catalog-pdfs",
     resourceType: "image",
     publicId,
+    allowedMimes: PDF_MIMES,
   });
 
   res.status(201).json({ url });
