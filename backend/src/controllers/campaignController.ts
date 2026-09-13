@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import Campaign from "../models/Campaign";
+import { pick } from "../utils/pick";
+
+const CAMPAIGN_FIELDS = [
+  "title", "slug", "description", "bannerImage", "products", "placement",
+  "startDate", "endDate", "isActive",
+] as const;
 
 export const getCampaigns = asyncHandler(async (req: Request, res: Response) => {
   const { placement } = req.query;
@@ -36,12 +42,12 @@ export const getCampaignBySlug = asyncHandler(async (req: Request, res: Response
 });
 
 export const createCampaign = asyncHandler(async (req: Request, res: Response) => {
-  const campaign = await Campaign.create(req.body);
+  const campaign = await Campaign.create(pick(req.body, CAMPAIGN_FIELDS));
   res.status(201).json(campaign);
 });
 
 export const updateCampaign = asyncHandler(async (req: Request, res: Response) => {
-  const campaign = await Campaign.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const campaign = await Campaign.findByIdAndUpdate(req.params.id, pick(req.body, CAMPAIGN_FIELDS), { new: true });
   if (!campaign) {
     res.status(404);
     throw new Error("Campaign not found");

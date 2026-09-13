@@ -39,7 +39,7 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string, { algorithms: ["HS256"] }) as JwtPayload;
 
     if (decoded.type === "dealer") {
       req.dealer = await Dealer.findById(decoded.id).select("-password");
@@ -61,7 +61,7 @@ export const optionalProtect = asyncHandler(async (req: Request, _res: Response,
   if (!token) return next();
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string, { algorithms: ["HS256"] }) as JwtPayload;
     if (decoded.type === "user") {
       req.user = await User.findById(decoded.id).select("-password");
     }

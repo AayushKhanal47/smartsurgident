@@ -35,7 +35,7 @@ const dealerSchema = new Schema<IDealer>(
     whatsapp: { type: String },
     website: { type: String },
     email: { type: String, required: true, unique: true, lowercase: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true, select: false },
     isActive: { type: Boolean, default: true },
 
     slug: { type: String, required: true, unique: true, lowercase: true },

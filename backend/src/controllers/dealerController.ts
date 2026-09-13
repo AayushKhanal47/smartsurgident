@@ -4,6 +4,13 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Dealer from "../models/Dealer";
 import { authCookieOptions, clearCookieOptions } from "../config/cookies";
+import { pick } from "../utils/pick";
+
+const DEALER_UPDATE_FIELDS = [
+  "name", "city", "province", "phone", "whatsapp", "email", "isActive", "slug",
+  "logo", "profilePhoto", "storePhotos", "address", "latitude", "longitude",
+  "openingHours", "description", "yearsInOperation", "services", "brandsCarried",
+] as const;
 
 const signToken = (id: string) =>
   jwt.sign({ id, type: "dealer" }, process.env.JWT_SECRET as string, { expiresIn: "30d" });
@@ -89,7 +96,7 @@ export const loginDealer = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Invalid dealer credentials");
   }
 
-  const dealer = await Dealer.findOne({ email });
+  const dealer = await Dealer.findOne({ email }).select("+password");
 
   if (!dealer || !(await bcrypt.compare(password, dealer.password))) {
     res.status(401);
@@ -141,7 +148,8 @@ export const getPublicDealerBySlug = asyncHandler(async (req: Request, res: Resp
 });
 
 export const updateDealer = asyncHandler(async (req: Request, res: Response) => {
-  const { password, website, ...rest } = req.body;
+  const { password, website } = req.body;
+  const rest = pick(req.body, DEALER_UPDATE_FIELDS);
   const withWebsite = "website" in req.body ? { ...rest, website: normalizeWebsite(website) } : rest;
   const update = password ? { ...withWebsite, password: await bcrypt.hash(password, 10) } : withWebsite;
 

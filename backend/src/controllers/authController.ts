@@ -59,7 +59,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     throw new Error("Invalid email or password");
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.comparePassword(password))) {
     res.status(401);
@@ -182,7 +182,7 @@ export const changeMyPassword = asyncHandler(async (req: Request, res: Response)
     throw new Error(`New password must be at least ${MIN_PASSWORD_LENGTH} characters`);
   }
 
-  const user = await User.findById(req.user?._id);
+  const user = await User.findById(req.user?._id).select("+password");
   if (!user || !(await user.comparePassword(currentPassword))) {
     res.status(401);
     throw new Error("Current password is incorrect");

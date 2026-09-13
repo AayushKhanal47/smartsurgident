@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import HomepageSection from "../models/HomepageSection";
+import { pick } from "../utils/pick";
+
+const HOMEPAGE_SECTION_FIELDS = ["type", "title", "subtitle", "config", "order", "isVisible"] as const;
 
 // GET /api/homepage-sections — public, ordered, visible-only
 export const getHomepageSections = asyncHandler(async (_req: Request, res: Response) => {
@@ -15,12 +18,12 @@ export const getAllHomepageSections = asyncHandler(async (_req: Request, res: Re
 });
 
 export const createHomepageSection = asyncHandler(async (req: Request, res: Response) => {
-  const section = await HomepageSection.create(req.body);
+  const section = await HomepageSection.create(pick(req.body, HOMEPAGE_SECTION_FIELDS));
   res.status(201).json(section);
 });
 
 export const updateHomepageSection = asyncHandler(async (req: Request, res: Response) => {
-  const section = await HomepageSection.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const section = await HomepageSection.findByIdAndUpdate(req.params.id, pick(req.body, HOMEPAGE_SECTION_FIELDS), { new: true });
   if (!section) {
     res.status(404);
     throw new Error("Homepage section not found");

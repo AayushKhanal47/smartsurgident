@@ -1,6 +1,13 @@
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import Product from "../models/Product";
+import { pick } from "../utils/pick";
+
+const PRODUCT_FIELDS = [
+  "name", "slug", "brand", "category", "description", "specs", "images",
+  "catalogResource", "price", "clinicPrice", "stock", "sku", "isActive",
+  "isFeatured", "isNewArrival", "isBestSeller", "badges",
+] as const;
 
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   const { category, brand, search } = req.query;
@@ -27,12 +34,12 @@ export const getProductBySlug = asyncHandler(async (req: Request, res: Response)
 });
 
 export const createProduct = asyncHandler(async (req: Request, res: Response) => {
-  const product = await Product.create(req.body);
+  const product = await Product.create(pick(req.body, PRODUCT_FIELDS));
   res.status(201).json(product);
 });
 
 export const updateProduct = asyncHandler(async (req: Request, res: Response) => {
-  const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+  const product = await Product.findByIdAndUpdate(req.params.id, pick(req.body, PRODUCT_FIELDS), { new: true });
   if (!product) {
     res.status(404);
     throw new Error("Product not found");

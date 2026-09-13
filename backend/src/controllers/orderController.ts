@@ -29,9 +29,14 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     turnstileToken,
   } = req.body;
 
+  const MAX_ORDER_ITEMS = 50;
   if (!cityId || !Array.isArray(items) || !items.length) {
     res.status(400);
     throw new Error("City and at least one item are required");
+  }
+  if (items.length > MAX_ORDER_ITEMS) {
+    res.status(400);
+    throw new Error(`An order can have at most ${MAX_ORDER_ITEMS} line items`);
   }
 
   // Checkout is public and both decrements real stock and emails a real
