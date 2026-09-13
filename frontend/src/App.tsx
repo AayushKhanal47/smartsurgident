@@ -46,6 +46,11 @@ import AdminResources from "./pages/admin/AdminResources";
 import AdminQuotes from "./pages/admin/AdminQuotes";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminPages from "./pages/admin/AdminPages";
+import AdminNews from "./pages/admin/AdminNews";
+import AdminEvents from "./pages/admin/AdminEvents";
+import AdminCareers from "./pages/admin/AdminCareers";
+import AdminFaq from "./pages/admin/AdminFaq";
 
 // Wraps the public-facing site with the shared Navbar/Footer chrome.
 // The admin area intentionally does NOT use this — it has its own sidebar layout.
@@ -88,6 +93,11 @@ function App() {
         <Route path="quotes" element={<AdminQuotes />} />
         <Route path="messages" element={<AdminMessages />} />
         <Route path="settings" element={<AdminSettings />} />
+        <Route path="pages" element={<AdminPages />} />
+        <Route path="news" element={<AdminNews />} />
+        <Route path="events" element={<AdminEvents />} />
+        <Route path="careers" element={<AdminCareers />} />
+        <Route path="faq" element={<AdminFaq />} />
       </Route>
 
       {/* Public site — shared Navbar/Footer chrome */}

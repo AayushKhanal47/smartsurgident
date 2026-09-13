@@ -14,6 +14,11 @@ import {
   HiOutlineExternalLink,
   HiOutlineLogout,
   HiOutlineCog,
+  HiOutlineDocumentText,
+  HiOutlineNewspaper,
+  HiOutlineCalendar,
+  HiOutlineBriefcase,
+  HiOutlineQuestionMarkCircle,
 } from "react-icons/hi";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import Logo from "../../components/ui/Logo";
@@ -44,6 +49,16 @@ const GROUPS: { heading: string; links: { label: string; to: string; icon: typeo
     links: [
       { label: "Quote requests", to: "/admin/quotes", icon: HiOutlineClipboardList },
       { label: "Contact messages", to: "/admin/messages", icon: HiOutlineClipboardList },
+    ],
+  },
+  {
+    heading: "Site content",
+    links: [
+      { label: "Pages", to: "/admin/pages", icon: HiOutlineDocumentText },
+      { label: "News", to: "/admin/news", icon: HiOutlineNewspaper },
+      { label: "Events", to: "/admin/events", icon: HiOutlineCalendar },
+      { label: "Careers", to: "/admin/careers", icon: HiOutlineBriefcase },
+      { label: "FAQ", to: "/admin/faq", icon: HiOutlineQuestionMarkCircle },
     ],
   },
   {

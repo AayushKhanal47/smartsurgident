@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { Button } from "../../components/ui/Button";
@@ -6,7 +6,8 @@ import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-ic
 import { FaWhatsapp } from "react-icons/fa";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../../config/whatsapp";
 import { usePageMeta } from "../../hooks/usePageMeta";
-import { submitContactMessage } from "../../api/endpoints";
+import { submitContactMessage, getSiteSettings } from "../../api/endpoints";
+import type { SiteSettings } from "../../api/endpoints";
 import Turnstile from "../../components/ui/Turnstile";
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
@@ -22,6 +23,11 @@ export default function SupportContact() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings).catch(() => setSettings(null));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,15 +63,15 @@ export default function SupportContact() {
           <div className="flex flex-col gap-4 text-sm text-brand-navy">
             <span className="flex items-center gap-3">
               <HiOutlineLocationMarker className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
-              Kathmandu, Nepal
+              {settings?.address || "Kathmandu, Nepal"}
             </span>
             <span className="flex items-center gap-3">
               <HiOutlinePhone className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
-              01-4XXXXXX
+              {settings?.phone || "01-4XXXXXX"}
             </span>
             <span className="flex items-center gap-3">
               <HiOutlineMail className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
-              info@smartsurgident.com
+              {settings?.email || "info@smartsurgident.com"}
             </span>
             <a
               href={buildWhatsAppLink(

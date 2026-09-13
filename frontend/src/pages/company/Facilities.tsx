@@ -1,11 +1,12 @@
+import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { ButtonLink } from "../../components/ui/Button";
 import { usePageMeta } from "../../hooks/usePageMeta";
-import { HiOutlineLocationMarker, HiOutlineTruck, HiOutlineShieldCheck, HiOutlineClipboardCheck } from "react-icons/hi";
+import { getPage } from "../../api/endpoints";
+import type { Page } from "../../api/endpoints";
+import { HiOutlineTruck, HiOutlineShieldCheck, HiOutlineClipboardCheck } from "react-icons/hi";
 
-// DRAFT COPY — see About.tsx for the same note. [Bracketed] specifics
-// (address, size, city coverage) are placeholders, not verified facts.
 const CAPABILITIES = [
   {
     icon: HiOutlineClipboardCheck,
@@ -25,6 +26,12 @@ const CAPABILITIES = [
 ];
 
 export default function CompanyFacilities() {
+  const [page, setPage] = useState<Page | null>(null);
+
+  useEffect(() => {
+    getPage("facilities").then(setPage).catch(() => setPage(null));
+  }, []);
+
   usePageMeta(
     "Our Facilities",
     "A look at Smart Surgident's warehouse, inspection, and distribution operations behind the dealer network across Nepal."
@@ -38,22 +45,16 @@ export default function CompanyFacilities() {
         <Reveal>
           <span className="text-brand-blue text-xs font-bold uppercase tracking-wider">Behind the scenes</span>
           <h1 className="mt-3 text-2xl md:text-4xl font-display font-bold text-brand-navy leading-tight">
-            Our facilities
+            {page?.title ?? "Our Facilities"}
           </h1>
-          <p className="mt-5 text-brand-slate text-sm md:text-base leading-relaxed">
-            Our central warehouse and office in [Kathmandu / neighbourhood], Nepal, is where every
-            piece of equipment we distribute is received, inspected, and prepared before it
-            reaches a dealer or a clinic directly. As our dealer network grows to more cities, this
-            facility is what keeps stock consistent and quality checks the same no matter where an
-            order ships to.
-          </p>
+          {(page?.body ?? "").split("\n\n").filter(Boolean).map((para, i) => (
+            <p key={i} className="mt-5 text-brand-slate text-sm md:text-base leading-relaxed">
+              {para}
+            </p>
+          ))}
         </Reveal>
 
         <Reveal delay={0.1} className="mt-12">
-          <div className="flex items-center gap-3 mb-6 text-sm text-brand-navy font-medium">
-            <HiOutlineLocationMarker className="text-brand-primary text-lg shrink-0" aria-hidden="true" />
-            [Street address], [City], Nepal
-          </div>
           <div className="grid sm:grid-cols-3 gap-6">
             {CAPABILITIES.map((c) => (
               <div key={c.title}>

@@ -22,6 +22,12 @@ import homepageSectionRoutes from "./routes/homepageSectionRoutes";
 import quoteRoutes from "./routes/quoteRoutes";
 import contactRoutes from "./routes/contactRoutes";
 import uploadRoutes from "./routes/uploadRoutes";
+import pageRoutes from "./routes/pageRoutes";
+import newsRoutes from "./routes/newsRoutes";
+import eventRoutes from "./routes/eventRoutes";
+import careerRoutes from "./routes/careerRoutes";
+import faqRoutes from "./routes/faqRoutes";
+import siteSettingsRoutes from "./routes/siteSettingsRoutes";
 
 dotenv.config();
 connectDB();
@@ -99,6 +105,12 @@ app.use("/api/homepage-sections", homepageSectionRoutes);
 app.use("/api/quotes", quoteRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/pages", pageRoutes);
+app.use("/api/news", newsRoutes);
+app.use("/api/events", eventRoutes);
+app.use("/api/careers", careerRoutes);
+app.use("/api/faq", faqRoutes);
+app.use("/api/site-settings", siteSettingsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

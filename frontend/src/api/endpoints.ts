@@ -374,3 +374,119 @@ export const getAllResourcesAdmin = () => api.get<Resource[]>("/resources/admin/
 
 export const updateResourceAdmin = (id: string, data: Partial<CreateResourceInput>) =>
   api.put<Resource>(`/resources/${id}`, data).then((r) => r.data);
+
+// ---- Admin-managed content pages (About/Facilities/Warranty, News, Events, Careers, FAQ, site contact info) ----
+
+export interface Page {
+  slug: string;
+  title: string;
+  body: string;
+}
+
+export const getPage = (slug: string) => api.get<Page>(`/pages/${slug}`).then((r) => r.data);
+export const getAllPagesAdmin = () => api.get<Page[]>("/pages/admin/all").then((r) => r.data);
+export const updatePageAdmin = (slug: string, data: { title: string; body: string }) =>
+  api.put<Page>(`/pages/${slug}`, data).then((r) => r.data);
+
+export interface NewsPost {
+  _id: string;
+  title: string;
+  slug: string;
+  date: string;
+  body: string;
+  isPublished: boolean;
+}
+export interface NewsPostInput {
+  title: string;
+  slug?: string;
+  date?: string;
+  body: string;
+  isPublished?: boolean;
+}
+
+export const getNewsPosts = () => api.get<NewsPost[]>("/news").then((r) => r.data);
+export const getAllNewsPostsAdmin = () => api.get<NewsPost[]>("/news/admin/all").then((r) => r.data);
+export const createNewsPostAdmin = (data: NewsPostInput) => api.post<NewsPost>("/news", data).then((r) => r.data);
+export const updateNewsPostAdmin = (id: string, data: Partial<NewsPostInput>) =>
+  api.put<NewsPost>(`/news/${id}`, data).then((r) => r.data);
+export const deleteNewsPostAdmin = (id: string) => api.delete(`/news/${id}`).then((r) => r.data);
+
+export interface EventItem {
+  _id: string;
+  title: string;
+  slug: string;
+  date: string;
+  location?: string;
+  body: string;
+  isPublished: boolean;
+}
+export interface EventInput {
+  title: string;
+  slug?: string;
+  date: string;
+  location?: string;
+  body: string;
+  isPublished?: boolean;
+}
+
+export const getEvents = () => api.get<EventItem[]>("/events").then((r) => r.data);
+export const getAllEventsAdmin = () => api.get<EventItem[]>("/events/admin/all").then((r) => r.data);
+export const createEventAdmin = (data: EventInput) => api.post<EventItem>("/events", data).then((r) => r.data);
+export const updateEventAdmin = (id: string, data: Partial<EventInput>) =>
+  api.put<EventItem>(`/events/${id}`, data).then((r) => r.data);
+export const deleteEventAdmin = (id: string) => api.delete(`/events/${id}`).then((r) => r.data);
+
+export interface JobOpening {
+  _id: string;
+  title: string;
+  location?: string;
+  employmentType?: string;
+  body: string;
+  isActive: boolean;
+}
+export interface JobOpeningInput {
+  title: string;
+  location?: string;
+  employmentType?: string;
+  body: string;
+  isActive?: boolean;
+}
+
+export const getJobOpenings = () => api.get<JobOpening[]>("/careers").then((r) => r.data);
+export const getAllJobOpeningsAdmin = () => api.get<JobOpening[]>("/careers/admin/all").then((r) => r.data);
+export const createJobOpeningAdmin = (data: JobOpeningInput) =>
+  api.post<JobOpening>("/careers", data).then((r) => r.data);
+export const updateJobOpeningAdmin = (id: string, data: Partial<JobOpeningInput>) =>
+  api.put<JobOpening>(`/careers/${id}`, data).then((r) => r.data);
+export const deleteJobOpeningAdmin = (id: string) => api.delete(`/careers/${id}`).then((r) => r.data);
+
+export interface FaqItem {
+  _id: string;
+  question: string;
+  answer: string;
+  order: number;
+  isPublished: boolean;
+}
+export interface FaqItemInput {
+  question: string;
+  answer: string;
+  order?: number;
+  isPublished?: boolean;
+}
+
+export const getFaqItems = () => api.get<FaqItem[]>("/faq").then((r) => r.data);
+export const getAllFaqItemsAdmin = () => api.get<FaqItem[]>("/faq/admin/all").then((r) => r.data);
+export const createFaqItemAdmin = (data: FaqItemInput) => api.post<FaqItem>("/faq", data).then((r) => r.data);
+export const updateFaqItemAdmin = (id: string, data: Partial<FaqItemInput>) =>
+  api.put<FaqItem>(`/faq/${id}`, data).then((r) => r.data);
+export const deleteFaqItemAdmin = (id: string) => api.delete(`/faq/${id}`).then((r) => r.data);
+
+export interface SiteSettings {
+  address: string;
+  phone: string;
+  email: string;
+}
+
+export const getSiteSettings = () => api.get<SiteSettings>("/site-settings").then((r) => r.data);
+export const updateSiteSettingsAdmin = (data: SiteSettings) =>
+  api.put<SiteSettings>("/site-settings", data).then((r) => r.data);

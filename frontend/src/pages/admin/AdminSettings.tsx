@@ -5,8 +5,10 @@ import {
   resetAdminPasswordAdmin,
   deleteAdminAdmin,
   changeMyPasswordAdmin,
+  getSiteSettings,
+  updateSiteSettingsAdmin,
 } from "../../api/endpoints";
-import type { AdminAccount } from "../../api/endpoints";
+import type { AdminAccount, SiteSettings } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import PasswordInput from "../../components/ui/PasswordInput";
 import { PageHeader, Card, Field, EmptyState, DangerButton } from "./ui";
@@ -82,8 +84,29 @@ export default function AdminSettings() {
   const [pwSuccess, setPwSuccess] = useState(false);
   const [pwSubmitting, setPwSubmitting] = useState(false);
 
+  const [siteForm, setSiteForm] = useState<SiteSettings>({ address: "", phone: "", email: "" });
+  const [siteError, setSiteError] = useState("");
+  const [siteSuccess, setSiteSuccess] = useState(false);
+  const [siteSubmitting, setSiteSubmitting] = useState(false);
+
   const load = () => getAdminsAdmin().then(setAdmins).catch(() => setAdmins([]));
   useEffect(() => { load(); }, []);
+  useEffect(() => { getSiteSettings().then(setSiteForm).catch(() => {}); }, []);
+
+  const handleSaveSiteSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSiteError("");
+    setSiteSuccess(false);
+    setSiteSubmitting(true);
+    try {
+      await updateSiteSettingsAdmin(siteForm);
+      setSiteSuccess(true);
+    } catch (err) {
+      setSiteError(errorMessage(err, "Failed to save site info"));
+    } finally {
+      setSiteSubmitting(false);
+    }
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +176,34 @@ export default function AdminSettings() {
         </Card>
 
         <div className="flex flex-col gap-8">
+          <Card className="p-6 flex flex-col gap-3.5">
+            <p className="text-sm font-semibold text-brand-navy">Site contact info</p>
+            <p className="text-xs text-brand-muted -mt-2">Shown on the Contact page and site footer.</p>
+            <form onSubmit={handleSaveSiteSettings} className="flex flex-col gap-3.5">
+              <Field
+                label="Address"
+                value={siteForm.address}
+                onChange={(e) => setSiteForm((f) => ({ ...f, address: e.target.value }))}
+              />
+              <Field
+                label="Phone"
+                value={siteForm.phone}
+                onChange={(e) => setSiteForm((f) => ({ ...f, phone: e.target.value }))}
+              />
+              <Field
+                label="Email"
+                type="email"
+                value={siteForm.email}
+                onChange={(e) => setSiteForm((f) => ({ ...f, email: e.target.value }))}
+              />
+              {siteError && <p className="text-sm text-red-500">{siteError}</p>}
+              {siteSuccess && <p className="text-sm text-emerald-600">Saved.</p>}
+              <Button type="submit" disabled={siteSubmitting} variant="secondary" className="justify-center">
+                {siteSubmitting ? "Saving…" : "Save"}
+              </Button>
+            </form>
+          </Card>
+
           <Card className="p-6 flex flex-col gap-3.5">
             <p className="text-sm font-semibold text-brand-navy">Add an admin</p>
             <form onSubmit={handleCreate} className="flex flex-col gap-3.5">

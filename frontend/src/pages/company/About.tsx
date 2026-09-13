@@ -1,7 +1,10 @@
+import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { ButtonLink } from "../../components/ui/Button";
 import { usePageMeta } from "../../hooks/usePageMeta";
+import { getPage } from "../../api/endpoints";
+import type { Page } from "../../api/endpoints";
 import {
   HiOutlineBadgeCheck,
   HiOutlineGlobeAlt,
@@ -9,12 +12,6 @@ import {
   HiOutlineLightBulb,
 } from "react-icons/hi";
 
-// DRAFT COPY — written to give this page a real structure and voice instead
-// of the "coming soon" placeholder. The narrative is grounded in what the
-// platform actually does (dealer network, brand portfolio, clinic pricing),
-// but [bracketed] specifics (founding year, team size, etc.) are invented
-// placeholders and must be corrected by Smart Surgident before this is
-// treated as published fact.
 const VALUES = [
   {
     icon: HiOutlineBadgeCheck,
@@ -39,6 +36,12 @@ const VALUES = [
 ];
 
 export default function CompanyAbout() {
+  const [page, setPage] = useState<Page | null>(null);
+
+  useEffect(() => {
+    getPage("about").then(setPage).catch(() => setPage(null));
+  }, []);
+
   usePageMeta(
     "About Us",
     "Smart Surgident distributes genuine dental and surgical equipment across Nepal through a growing network of city-based dealers."
@@ -52,22 +55,13 @@ export default function CompanyAbout() {
         <Reveal>
           <span className="text-brand-blue text-xs font-bold uppercase tracking-wider">Our story</span>
           <h1 className="mt-3 text-2xl md:text-4xl font-display font-bold text-brand-navy leading-tight">
-            Genuine equipment, delivered wherever your clinic is.
+            {page?.title ?? "About Smart Surgident"}
           </h1>
-          <p className="mt-5 text-brand-slate text-sm md:text-base leading-relaxed">
-            Smart Surgident was started to solve a simple problem: dental and surgical clinics
-            outside the biggest cities in Nepal often had no direct, reliable way to buy genuine
-            equipment — and no one to call when something needed servicing after the sale.
-            [Founded in YEAR], we built a distribution model around city-based dealers instead of
-            a single storefront, so clinics in Kathmandu, Pokhara, Chitwan, Butwal, Biratnagar, and
-            the cities we add next all have someone local to order from and turn to for support.
-          </p>
-          <p className="mt-4 text-brand-slate text-sm md:text-base leading-relaxed">
-            Today we distribute equipment across dental chairs and units, imaging and CBCT
-            systems, endodontic motors, handpieces, sterilization, and consumables — importing
-            directly from manufacturers we work with, and passing that directness on as genuine
-            products, documented specifications, and pricing clinics can actually plan around.
-          </p>
+          {(page?.body ?? "").split("\n\n").filter(Boolean).map((para, i) => (
+            <p key={i} className="mt-5 text-brand-slate text-sm md:text-base leading-relaxed">
+              {para}
+            </p>
+          ))}
         </Reveal>
 
         <Reveal delay={0.1} className="mt-14">

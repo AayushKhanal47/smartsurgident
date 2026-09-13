@@ -1,9 +1,12 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
 import Logo from "./ui/Logo";
 import { useTranslation } from "../i18n/useTranslation";
 import type { TranslationKey } from "../i18n/translations";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../config/whatsapp";
+import { getSiteSettings } from "../api/endpoints";
+import type { SiteSettings } from "../api/endpoints";
 
 const COLUMNS: { headingKey: TranslationKey; links: { labelKey: TranslationKey; to: string }[] }[] = [
   {
@@ -45,6 +48,11 @@ const COLUMNS: { headingKey: TranslationKey; links: { labelKey: TranslationKey; 
 
 export default function Footer() {
   const { t } = useTranslation();
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+
+  useEffect(() => {
+    getSiteSettings().then(setSettings).catch(() => setSettings(null));
+  }, []);
 
   return (
     <footer className="bg-brand-footer text-white/75">
@@ -54,10 +62,10 @@ export default function Footer() {
           <p className="text-sm mt-4 max-w-xs leading-relaxed">{t("footer.tagline")}</p>
           <div className="flex flex-col gap-2 mt-5 text-sm">
             <span className="flex items-center gap-2">
-              <HiOutlineLocationMarker className="shrink-0 text-brand-light" aria-hidden="true" /> {t("footer.address")}
+              <HiOutlineLocationMarker className="shrink-0 text-brand-light" aria-hidden="true" /> {settings?.address || t("footer.address")}
             </span>
             <span className="flex items-center gap-2">
-              <HiOutlineMail className="shrink-0 text-brand-light" aria-hidden="true" /> info@smartsurgident.com
+              <HiOutlineMail className="shrink-0 text-brand-light" aria-hidden="true" /> {settings?.email || "info@smartsurgident.com"}
             </span>
           </div>
         </div>
