@@ -18,7 +18,7 @@ export default function ProductCard({ product }: { product: Product }) {
       to={`/products/${product.slug}`}
       className="group flex flex-col focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary rounded-2xl"
     >
-      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-brand-sunk">
+      <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-brand-sunk border border-brand-border transition-colors duration-300 group-hover:border-brand-primary">
         {badge && (
           <span className="absolute top-4 left-4 z-10 bg-white/95 text-brand-navy text-[11px] font-semibold uppercase tracking-[0.06em] px-3 py-1 rounded-full">
             {badge}
