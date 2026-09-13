@@ -10,7 +10,13 @@ interface TurnstileVerifyResponse {
 // so local/dev environments work without a Cloudflare account.
 export const verifyTurnstileToken = async (token: unknown, remoteIp?: string): Promise<boolean> => {
   const secret = process.env.TURNSTILE_SECRET_KEY;
-  if (!secret) return true;
+  if (!secret) {
+    // Fail closed in production — a missing secret there means bot
+    // protection is silently off with no visible symptom (security audit
+    // finding M-7). Dev/local still passes through so contributors don't
+    // need a Cloudflare account to test these forms.
+    return process.env.NODE_ENV !== "production";
+  }
   if (typeof token !== "string" || !token) return false;
 
   const body = new URLSearchParams({ secret, response: token });

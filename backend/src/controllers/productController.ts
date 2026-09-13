@@ -6,8 +6,8 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   const { category, brand, search } = req.query;
   const filter: Record<string, unknown> = { isActive: true };
 
-  if (category) filter.category = category;
-  if (brand) filter.brand = brand;
+  if (typeof category === "string" && category) filter.category = category;
+  if (typeof brand === "string" && brand) filter.brand = brand;
   if (search) filter.$text = { $search: String(search) };
 
   const products = await Product.find(filter).populate("brand", "name slug logoUrl");

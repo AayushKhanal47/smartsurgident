@@ -19,10 +19,6 @@
       publicId?: string;
     }
   ) => {
-    console.log("=== UPLOAD DEBUG ===");
-    console.log("User:", req.user?._id, req.user?.email, req.user?.role);
-    console.log("File:", req.file?.originalname, req.file?.mimetype, req.file?.size);
-
     if (!req.file) {
       throw new Error(`No file uploaded — send it under the field name '${fieldName}'`);
     }

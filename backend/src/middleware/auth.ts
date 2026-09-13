@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/User";
 import Dealer from "../models/Dealer";
+import { verifyCsrfToken } from "./csrf";
 
 interface JwtPayload {
   id: string;
@@ -25,6 +26,16 @@ export const protect = asyncHandler(async (req: Request, res: Response, next: Ne
   if (!token) {
     res.status(401);
     throw new Error("Not authorized, no token");
+  }
+
+  // CSRF check for state-changing requests: cookie-based auth (especially
+  // with SameSite=None in production, required for the cross-origin
+  // SPA/API split) doesn't stop a browser from sending this cookie on a
+  // cross-site request, so every mutating authenticated route needs this
+  // independent check (security audit finding M-3).
+  if (!verifyCsrfToken(req)) {
+    res.status(403);
+    throw new Error("CSRF check failed — please refresh the page and try again");
   }
 
   try {

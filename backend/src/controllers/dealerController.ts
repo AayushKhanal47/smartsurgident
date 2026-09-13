@@ -117,8 +117,8 @@ export const getDealers = asyncHandler(async (_req: Request, res: Response) => {
 export const getPublicDealers = asyncHandler(async (req: Request, res: Response) => {
   const { province, city } = req.query;
   const filter: Record<string, unknown> = { isActive: true };
-  if (province) filter.province = province;
-  if (city) filter.city = city;
+  if (typeof province === "string" && province) filter.province = province;
+  if (typeof city === "string" && city) filter.city = city;
 
   const dealers = await Dealer.find(filter)
     .populate("city", "name")

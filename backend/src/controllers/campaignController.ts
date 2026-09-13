@@ -13,7 +13,7 @@ export const getCampaigns = asyncHandler(async (req: Request, res: Response) => 
       { $or: [{ endDate: { $exists: false } }, { endDate: { $gte: now } }] },
     ],
   };
-  if (placement) filter.placement = placement;
+  if (typeof placement === "string" && placement) filter.placement = placement;
 
   const campaigns = await Campaign.find(filter).populate("products");
   res.json(campaigns);

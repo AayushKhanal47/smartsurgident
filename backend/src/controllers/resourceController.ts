@@ -54,7 +54,7 @@ export const getResources = asyncHandler(async (req: Request, res: Response) => 
   };
 
   if (search) filter.$text = { $search: String(search) };
-  if (brand) filter.linkedBrands = brand;
+  if (typeof brand === "string" && brand) filter.linkedBrands = brand;
 
   const resources = await Resource.find(filter)
     .sort({ publishedAt: -1, createdAt: -1 })

@@ -7,6 +7,8 @@ import { authCookieOptions, clearCookieOptions } from "../config/cookies";
 const signToken = (id: string) =>
   jwt.sign({ id, type: "user" }, process.env.JWT_SECRET as string, { expiresIn: "30d" });
 
+const MIN_PASSWORD_LENGTH = 8;
+
 // POST /api/auth/register
 export const registerUser = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password, phone, role, clinicName } = req.body;
@@ -14,6 +16,10 @@ export const registerUser = asyncHandler(async (req: Request, res: Response) => 
   if (typeof email !== "string" || typeof password !== "string") {
     res.status(400);
     throw new Error("Email and password are required");
+  }
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    res.status(400);
+    throw new Error(`Password must be at least ${MIN_PASSWORD_LENGTH} characters`);
   }
 
   const exists = await User.findOne({ email });
@@ -96,8 +102,6 @@ export const verifyClinic = asyncHandler(async (req: Request, res: Response) => 
 // --- Admin account management (admin only — there is no public admin
 // signup; the FIRST admin is still made by registering a normal account
 // and flipping its role to "admin" directly in MongoDB, per project docs) ---
-
-const MIN_PASSWORD_LENGTH = 8;
 
 // GET /api/auth/admins
 export const getAdmins = asyncHandler(async (_req: Request, res: Response) => {

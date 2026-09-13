@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 
 import { connectDB } from "./config/db";
 import { notFound, errorHandler } from "./middleware/errorHandler";
+import { issueCsrfToken } from "./middleware/csrf";
 
 import authRoutes from "./routes/authRoutes";
 import productRoutes from "./routes/productRoutes";
@@ -65,6 +66,7 @@ app.use(
 );
 app.use(express.json());
 app.use(cookieParser());
+app.use(issueCsrfToken);
 if (process.env.NODE_ENV !== "production") app.use(morgan("dev"));
 
 // Baseline abuse guard across the whole API.
