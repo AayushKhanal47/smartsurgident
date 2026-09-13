@@ -94,6 +94,15 @@ app.use("/api/dealers/login", authLimiter);
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok" }));
 
+// The SPA and API are on different domains (smartsurgident.com vs.
+// api.smartsurgident.com) — JS on the frontend origin cannot read a cookie
+// set by the API origin via document.cookie (cross-origin cookie access is
+// never allowed, subdomain or not), so the double-submit CSRF token has to
+// be handed to the frontend in a response body instead. The value itself
+// still lives in the same httpOnly-free `csrfToken` cookie issued by
+// issueCsrfToken; this just echoes it back so JS can read it.
+app.get("/api/csrf-token", (req, res) => res.json({ csrfToken: req.cookies?.csrfToken }));
+
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/brands", brandRoutes);
