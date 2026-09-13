@@ -138,7 +138,7 @@ export default function AdminLayout() {
     <div className="min-h-screen bg-brand-bg lg:flex">
       {/* Mobile bar */}
       <div className="lg:hidden sticky top-0 z-40 bg-white border-b border-brand-border h-14 flex items-center justify-between px-4">
-        <Logo />
+        <Logo to="/admin" />
         <button
           onClick={() => setMobileOpen((v) => !v)}
           className="text-brand-navy p-1"
@@ -163,7 +163,7 @@ export default function AdminLayout() {
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex sticky top-0 h-screen w-64 bg-white border-r border-brand-border flex-col shrink-0">
         <div className="p-5 border-b border-brand-border">
-          <Logo />
+          <Logo to="/admin" />
         </div>
         {nav}
         {footer}
