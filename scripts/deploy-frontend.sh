@@ -38,8 +38,10 @@ cd "$FRONTEND_DIR"
 npm run build
 
 echo "==> Deploying to $TARGET ($REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR)..."
+# .htaccess is no longer excluded: frontend/public/.htaccess is now the
+# source of truth (SPA rewrite + cache headers) and ships as a normal build
+# file, so every deploy keeps the server's copy in sync with the repo.
 rsync -avz --delete \
-  --exclude ".htaccess" \
   --exclude "cgi-bin/" \
   --exclude ".well-known/" \
   dist/ "$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR"

@@ -1,0 +1,22 @@
+# index.html (and the SPA root) must always be revalidated so a fresh
+# deploy is visible immediately — Vite's hashed asset filenames change on
+# every build, but index.html's own filename never does, so without this it
+# gets cached like a static asset and a browser can keep serving yesterday's
+# build for up to an hour (the host's default Cache-Control) after a deploy.
+<IfModule mod_headers.c>
+  <If "%{REQUEST_URI} =~ m#^/assets/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <If "%{REQUEST_URI} == '/' || %{REQUEST_URI} =~ m#\.html$#">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </If>
+</IfModule>
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
