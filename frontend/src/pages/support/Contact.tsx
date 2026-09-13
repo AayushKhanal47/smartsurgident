@@ -67,11 +67,11 @@ export default function SupportContact() {
             </span>
             <span className="flex items-center gap-3">
               <HiOutlinePhone className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
-              {settings?.phone || "01-4XXXXXX"}
+              {settings?.phone || "9851182350"}
             </span>
             <span className="flex items-center gap-3">
               <HiOutlineMail className="text-brand-blue text-lg shrink-0" aria-hidden="true" />
-              {settings?.email || "info@smartsurgident.com"}
+              {settings?.email || "surgidentsmart@gmail.com"}
             </span>
             <a
               href={buildWhatsAppLink(

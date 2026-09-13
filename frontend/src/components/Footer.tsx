@@ -65,7 +65,7 @@ export default function Footer() {
               <HiOutlineLocationMarker className="shrink-0 text-brand-light" aria-hidden="true" /> {settings?.address || t("footer.address")}
             </span>
             <span className="flex items-center gap-2">
-              <HiOutlineMail className="shrink-0 text-brand-light" aria-hidden="true" /> {settings?.email || "info@smartsurgident.com"}
+              <HiOutlineMail className="shrink-0 text-brand-light" aria-hidden="true" /> {settings?.email || "surgidentsmart@gmail.com"}
             </span>
           </div>
         </div>
