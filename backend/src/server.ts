@@ -28,6 +28,7 @@ import newsRoutes from "./routes/newsRoutes";
 import eventRoutes from "./routes/eventRoutes";
 import careerRoutes from "./routes/careerRoutes";
 import faqRoutes from "./routes/faqRoutes";
+import guideRoutes from "./routes/guideRoutes";
 import siteSettingsRoutes from "./routes/siteSettingsRoutes";
 
 dotenv.config();
@@ -121,6 +122,7 @@ app.use("/api/news", newsRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/careers", careerRoutes);
 app.use("/api/faq", faqRoutes);
+app.use("/api/guides", guideRoutes);
 app.use("/api/site-settings", siteSettingsRoutes);
 
 app.use(notFound);
