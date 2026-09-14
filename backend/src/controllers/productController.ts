@@ -16,14 +16,30 @@ const PRODUCT_FIELDS = [
 // JSON-serialize them (perf audit, P2 — free, correct practice; not
 // measurable at the current catalogue size, but it's the right default).
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
-  const { category, brand, search } = req.query;
+  const { category, brand, search, limit } = req.query;
   const filter: Record<string, unknown> = { isActive: true };
+  const hasSearch = typeof search === "string" && search.trim().length > 0;
 
   if (typeof category === "string" && category) filter.category = category;
   if (typeof brand === "string" && brand) filter.brand = brand;
-  if (search) filter.$text = { $search: String(search) };
+  if (hasSearch) filter.$text = { $search: (search as string).trim() };
 
-  const products = await Product.find(filter).populate("brand", "name slug logoUrl").lean();
+  // $meta: "textScore" is only valid alongside a $text query, so the
+  // projection/sort are conditional on hasSearch — without it, results
+  // returned in whatever order Mongo happens to store them, not ranked by
+  // how well they actually match (search "manage the search bar" fix).
+  let query = Product.find(filter, hasSearch ? { score: { $meta: "textScore" } } : undefined).populate(
+    "brand",
+    "name slug logoUrl"
+  );
+  if (hasSearch) query = query.sort({ score: { $meta: "textScore" } });
+
+  // Optional cap — used by the navbar's live suggestions dropdown, which
+  // only needs a handful of top matches, not the whole result set.
+  const limitNum = typeof limit === "string" ? Number.parseInt(limit, 10) : NaN;
+  if (Number.isInteger(limitNum) && limitNum > 0) query = query.limit(Math.min(limitNum, 50));
+
+  const products = await query.lean();
   res.json(products);
 });
 
