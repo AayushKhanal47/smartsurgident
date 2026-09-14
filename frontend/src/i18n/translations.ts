@@ -160,6 +160,7 @@ export const translations = {
   "footer.allProducts": { en: "All products", np: "सबै उत्पादनहरू" },
   "footer.brands": { en: "Brands", np: "ब्रान्डहरू" },
   "footer.elibrary": { en: "E-Library", np: "ई-पुस्तकालय" },
+  "footer.guides": { en: "Guides", np: "गाइडहरू" },
   "footer.contact": { en: "Contact", np: "सम्पर्क" },
   "footer.faq": { en: "FAQ", np: "प्रायः सोधिने प्रश्न" },
   "footer.warranty": { en: "Warranty", np: "वारेन्टी" },

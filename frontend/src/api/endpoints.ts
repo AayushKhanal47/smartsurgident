@@ -414,6 +414,34 @@ export const updateNewsPostAdmin = (id: string, data: Partial<NewsPostInput>) =>
   api.put<NewsPost>(`/news/${id}`, data).then((r) => r.data);
 export const deleteNewsPostAdmin = (id: string) => api.delete(`/news/${id}`).then((r) => r.data);
 
+export interface Guide {
+  _id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  body: string;
+  relatedCategorySlug?: string;
+  isPublished: boolean;
+  publishedAt: string;
+}
+export interface GuideInput {
+  title: string;
+  slug?: string;
+  excerpt: string;
+  body: string;
+  relatedCategorySlug?: string;
+  isPublished?: boolean;
+  publishedAt?: string;
+}
+
+export const getGuides = () => api.get<Guide[]>("/guides").then((r) => r.data);
+export const getGuideBySlug = (slug: string) => api.get<Guide>(`/guides/${slug}`).then((r) => r.data);
+export const getAllGuidesAdmin = () => api.get<Guide[]>("/guides/admin/all").then((r) => r.data);
+export const createGuideAdmin = (data: GuideInput) => api.post<Guide>("/guides", data).then((r) => r.data);
+export const updateGuideAdmin = (id: string, data: Partial<GuideInput>) =>
+  api.put<Guide>(`/guides/${id}`, data).then((r) => r.data);
+export const deleteGuideAdmin = (id: string) => api.delete(`/guides/${id}`).then((r) => r.data);
+
 export interface EventItem {
   _id: string;
   title: string;

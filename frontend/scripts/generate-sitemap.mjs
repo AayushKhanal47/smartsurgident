@@ -23,6 +23,7 @@ const STATIC_ROUTES = [
   { loc: "/brands", priority: "0.7" },
   { loc: "/dealers", priority: "0.7" },
   { loc: "/resources", priority: "0.6" },
+  { loc: "/guides", priority: "0.6" },
   { loc: "/company/about", priority: "0.5" },
   { loc: "/company/facilities", priority: "0.4" },
   { loc: "/company/news", priority: "0.4" },
@@ -57,12 +58,13 @@ function urlEntry(loc, priority) {
 }
 
 async function main() {
-  const [products, brands, categories, dealers, resources] = await Promise.all([
+  const [products, brands, categories, dealers, resources, guides] = await Promise.all([
     fetchSlugs("/products", "products"),
     fetchSlugs("/brands", "brands"),
     fetchSlugs("/categories", "categories"),
     fetchSlugs("/dealers/public", "dealers"),
     fetchSlugs("/resources", "resources"),
+    fetchSlugs("/guides", "guides"),
   ]);
 
   const entries = [
@@ -72,6 +74,7 @@ async function main() {
     ...brands.map((slug) => urlEntry(`/brands/${slug}`, "0.6")),
     ...dealers.map((slug) => urlEntry(`/dealers/${slug}`, "0.6")),
     ...resources.map((slug) => urlEntry(`/resources/${slug}`, "0.5")),
+    ...guides.map((slug) => urlEntry(`/guides/${slug}`, "0.6")),
   ];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
@@ -83,7 +86,7 @@ ${entries.join("\n")}
   await mkdir(DIST_DIR, { recursive: true });
   await writeFile(path.join(DIST_DIR, "sitemap.xml"), xml, "utf-8");
   console.log(
-    `[sitemap] Wrote ${entries.length} URLs (${products.length} products, ${brands.length} brands, ${categories.length} categories, ${dealers.length} dealers, ${resources.length} resources).`
+    `[sitemap] Wrote ${entries.length} URLs (${products.length} products, ${brands.length} brands, ${categories.length} categories, ${dealers.length} dealers, ${resources.length} resources, ${guides.length} guides).`
   );
 }
 

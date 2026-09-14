@@ -19,6 +19,7 @@ import {
   HiOutlineCalendar,
   HiOutlineBriefcase,
   HiOutlineQuestionMarkCircle,
+  HiOutlineAcademicCap,
 } from "react-icons/hi";
 import { useAdminAuth } from "../../context/AdminAuthContext";
 import Logo from "../../components/ui/Logo";
@@ -56,6 +57,7 @@ const GROUPS: { heading: string; links: { label: string; to: string; icon: typeo
     links: [
       { label: "Pages", to: "/admin/pages", icon: HiOutlineDocumentText },
       { label: "News", to: "/admin/news", icon: HiOutlineNewspaper },
+      { label: "Guides", to: "/admin/guides", icon: HiOutlineAcademicCap },
       { label: "Events", to: "/admin/events", icon: HiOutlineCalendar },
       { label: "Careers", to: "/admin/careers", icon: HiOutlineBriefcase },
       { label: "FAQ", to: "/admin/faq", icon: HiOutlineQuestionMarkCircle },

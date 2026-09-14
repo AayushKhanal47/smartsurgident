@@ -23,6 +23,7 @@ const COLUMNS: { headingKey: TranslationKey; links: { labelKey: TranslationKey; 
       { labelKey: "footer.allProducts", to: "/products" },
       { labelKey: "footer.brands", to: "/brands" },
       { labelKey: "footer.elibrary", to: "/resources" },
+      { labelKey: "footer.guides", to: "/guides" },
     ],
   },
   {

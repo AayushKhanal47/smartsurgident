@@ -1,4 +1,4 @@
-import type { Dealer, Product, SiteSettings } from "../api/endpoints";
+import type { Dealer, Guide, Product, SiteSettings } from "../api/endpoints";
 
 export const SITE_URL = "https://www.smartsurgident.com";
 const ORG_NAME = "Smart Surgident Pvt. Ltd.";
@@ -106,6 +106,19 @@ export function dealerLocalBusinessSchema(dealer: Dealer) {
           },
         }
       : {}),
+  };
+}
+
+export function articleSchema(guide: Guide) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: guide.title,
+    description: guide.excerpt,
+    datePublished: guide.publishedAt,
+    author: { "@type": "Organization", name: "Smart Surgident" },
+    publisher: { "@type": "Organization", name: "Smart Surgident" },
+    mainEntityOfPage: `${SITE_URL}/guides/${guide.slug}`,
   };
 }
 

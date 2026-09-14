@@ -31,6 +31,9 @@ import SupportQuote from "./pages/support/Quote";
 import Resources from "./pages/resources/Resources";
 import ResourceDetail from "./pages/resources/ResourceDetail";
 
+import Guides from "./pages/guides/Guides";
+import GuideDetail from "./pages/guides/GuideDetail";
+
 import Dealers from "./pages/dealers/Dealers";
 import DealerDetail from "./pages/dealers/DealerDetail";
 
@@ -59,6 +62,7 @@ const AdminNews = lazy(() => import("./pages/admin/AdminNews"));
 const AdminEvents = lazy(() => import("./pages/admin/AdminEvents"));
 const AdminCareers = lazy(() => import("./pages/admin/AdminCareers"));
 const AdminFaq = lazy(() => import("./pages/admin/AdminFaq"));
+const AdminGuides = lazy(() => import("./pages/admin/AdminGuides"));
 
 // Wraps the public-facing site with the shared Navbar/Footer chrome.
 // The admin area intentionally does NOT use this — it has its own sidebar layout.
@@ -114,6 +118,7 @@ function App() {
           <Route path="events" element={<AdminEvents />} />
           <Route path="careers" element={<AdminCareers />} />
           <Route path="faq" element={<AdminFaq />} />
+          <Route path="guides" element={<AdminGuides />} />
         </Route>
 
         {/* Public site — shared Navbar/Footer chrome */}
@@ -140,6 +145,9 @@ function App() {
 
         <Route path="/resources" element={<SiteLayout><Resources /></SiteLayout>} />
         <Route path="/resources/:slug" element={<SiteLayout><ResourceDetail /></SiteLayout>} />
+
+        <Route path="/guides" element={<SiteLayout><Guides /></SiteLayout>} />
+        <Route path="/guides/:slug" element={<SiteLayout><GuideDetail /></SiteLayout>} />
 
         <Route path="/dealers" element={<SiteLayout><Dealers /></SiteLayout>} />
         <Route path="/dealers/:slug" element={<SiteLayout><DealerDetail /></SiteLayout>} />
