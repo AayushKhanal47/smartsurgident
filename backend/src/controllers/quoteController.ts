@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import QuoteRequest from "../models/QuoteRequest";
 import { verifyTurnstileToken } from "../utils/turnstile";
+import { sendEmail, getAdminNotificationEmail, escapeHtml } from "../utils/email";
 
 // POST /api/quotes  (public — the Request a Quote form submits here)
 export const createQuoteRequest = asyncHandler(async (req: Request, res: Response) => {
@@ -24,6 +25,20 @@ export const createQuoteRequest = asyncHandler(async (req: Request, res: Respons
     email,
     items,
     message,
+  });
+
+  // Quote requests were previously visible only by checking Admin →
+  // Quote requests — no notification fired when one actually came in.
+  await sendEmail({
+    to: await getAdminNotificationEmail(),
+    subject: `New quote request from ${escapeHtml(organizationName)}`,
+    html: `
+      <p>A new quote request was submitted.</p>
+      <p><strong>Organization:</strong> ${escapeHtml(organizationName)}</p>
+      <p><strong>Contact:</strong> ${escapeHtml(contactName)} — ${escapeHtml(phone)}${email ? ` — ${escapeHtml(email)}` : ""}</p>
+      <p><strong>Items requested:</strong> ${escapeHtml(items)}</p>
+      ${message ? `<p><strong>Message:</strong> ${escapeHtml(message)}</p>` : ""}
+    `,
   });
 
   res.status(201).json({ message: "Quote request received", id: quote._id });

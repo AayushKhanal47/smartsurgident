@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import ContactMessage from "../models/ContactMessage";
 import { verifyTurnstileToken } from "../utils/turnstile";
+import { sendEmail, getAdminNotificationEmail, escapeHtml } from "../utils/email";
 
 // POST /api/contact  (public — the Contact Us form submits here)
 export const createContactMessage = asyncHandler(async (req: Request, res: Response) => {
@@ -25,6 +26,19 @@ export const createContactMessage = asyncHandler(async (req: Request, res: Respo
   }
 
   const contactMessage = await ContactMessage.create({ name, email, message });
+
+  // Same gap as quotes — nothing notified admin that a message had
+  // arrived, only the admin panel's Contact messages list showed it.
+  await sendEmail({
+    to: await getAdminNotificationEmail(),
+    subject: `New contact message from ${escapeHtml(name)}`,
+    html: `
+      <p>A new contact form message was submitted.</p>
+      <p><strong>From:</strong> ${escapeHtml(name)} — ${escapeHtml(email)}</p>
+      <p><strong>Message:</strong></p>
+      <p>${escapeHtml(message)}</p>
+    `,
+  });
 
   res.status(201).json({ message: "Message received", id: contactMessage._id });
 });

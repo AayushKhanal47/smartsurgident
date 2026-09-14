@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import Order, { IOrder } from "../models/Order";
 import Product from "../models/Product";
 import Dealer from "../models/Dealer";
-import { sendEmail } from "../utils/email";
+import { sendEmail, getAdminNotificationEmail, escapeHtml } from "../utils/email";
 import { verifyTurnstileToken } from "../utils/turnstile";
 import mongoose from "mongoose";
 
@@ -12,11 +12,6 @@ const generateOrderNumber = () => {
   const random = Math.random().toString(16).slice(2, 6).toUpperCase();
   return `SS-${date}-${random}`;
 };
-
-const escapeHtml = (value: string) =>
-  value.replace(/[&<>'"]/g, (character) =>
-    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]!
-  );
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
   const {
@@ -119,6 +114,23 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
     subject: `New order ${order.orderNumber} routed to you`,
     html: `
       <p>A new order has been routed to <strong>${dealer.name}</strong>.</p>
+      <p><strong>Customer:</strong> ${escapeHtml(customerName)} — ${escapeHtml(customerPhone)}</p>
+      <p><strong>Delivery address:</strong> ${escapeHtml(shippingAddress)}</p>
+      <p><strong>Items:</strong></p>
+      <ul>${itemsList}</ul>
+      <p><strong>Total:</strong> Rs ${totalAmount}</p>
+      <p>Order number: ${order.orderNumber}</p>
+    `,
+  });
+
+  // Admin currently has no in-panel view of orders (only each dealer sees
+  // their own routed orders) — an email copy is the only way to know a
+  // new order came in without checking the database directly.
+  await sendEmail({
+    to: await getAdminNotificationEmail(),
+    subject: `New order ${order.orderNumber} (routed to ${dealer.name})`,
+    html: `
+      <p>A new order was placed and routed to <strong>${dealer.name}</strong>.</p>
       <p><strong>Customer:</strong> ${escapeHtml(customerName)} — ${escapeHtml(customerPhone)}</p>
       <p><strong>Delivery address:</strong> ${escapeHtml(shippingAddress)}</p>
       <p><strong>Items:</strong></p>
