@@ -50,6 +50,15 @@ const productSchema = new Schema<IProduct>(
 productSchema.index({ isFeatured: 1 });
 productSchema.index({ isBestSeller: 1 });
 
-productSchema.index({ name: "text", description: "text", category: "text" });
+// `category` was previously part of this index. Categories are now
+// broad, multi-word buckets (e.g. "Sterilization, Compressors & Clinic
+// Utilities") shared by several unrelated products — with category text
+// searchable, every product in a bucket matched a search for any word in
+// its bucket's name, e.g. "compressor" matched the ultrasonic cleaner,
+// water distiller and pouch sealer too, since they all share that one
+// category string. Dropped in favor of just name/description, weighted
+// so a match in the product's own name ranks far above one that's only
+// in the description (smart-search follow-up).
+productSchema.index({ name: "text", description: "text" }, { weights: { name: 10, description: 1 } });
 
 export default mongoose.model<IProduct>("Product", productSchema);
