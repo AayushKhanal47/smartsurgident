@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { HiMenu, HiX, HiChevronDown, HiOutlineSearch, HiOutlineShoppingBag } from "react-icons/hi";
@@ -8,6 +8,10 @@ import { ButtonLink } from "./ui/Button";
 import LanguageToggle from "./ui/LanguageToggle";
 import { useTranslation } from "../i18n/useTranslation";
 import type { TranslationKey } from "../i18n/translations";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { getProducts } from "../api/endpoints";
+import type { Product } from "../api/endpoints";
+import { getResizedImageUrl } from "../utils/productImage";
 
 interface NavItem {
   labelKey: TranslationKey;
@@ -43,16 +47,64 @@ const NAV_ITEMS: NavItem[] = [
   { labelKey: "nav.dealerNetwork", to: "/dealers" },
 ];
 
+const SUGGESTION_LIMIT = 6;
+
 function SearchField({ onSubmit, className = "" }: { onSubmit?: () => void; className?: string }) {
   const [q, setQ] = useState("");
+  const [suggestions, setSuggestions] = useState<Product[]>([]);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const debouncedQ = useDebouncedValue(q, 250);
+  const requestIdRef = useRef(0);
+  const containerRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const query = debouncedQ.trim();
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+    const requestId = ++requestIdRef.current;
+    getProducts({ search: query, limit: SUGGESTION_LIMIT })
+      .then((data) => {
+        if (requestId === requestIdRef.current) setSuggestions(data);
+      })
+      .catch(() => {
+        if (requestId === requestIdRef.current) setSuggestions([]);
+      });
+  }, [debouncedQ]);
+
+  // Close on an outside click — a plain dropdown, not a modal, so Escape
+  // and clicking away both just dismiss it rather than needing a portal.
+  useEffect(() => {
+    if (!open) return;
+    const handleClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKey);
+    };
+  }, [open]);
+
+  const goToResults = () => {
+    navigate(q.trim() ? `/products?search=${encodeURIComponent(q.trim())}` : "/products");
+    setOpen(false);
+    onSubmit?.();
+  };
+
   return (
     <form
+      ref={containerRef}
       onSubmit={(e) => {
         e.preventDefault();
-        navigate(q.trim() ? `/products?search=${encodeURIComponent(q.trim())}` : "/products");
-        onSubmit?.();
+        goToResults();
       }}
       className={`relative ${className}`}
     >
@@ -60,11 +112,64 @@ function SearchField({ onSubmit, className = "" }: { onSubmit?: () => void; clas
       <input
         type="search"
         value={q}
-        onChange={(e) => setQ(e.target.value)}
+        onChange={(e) => {
+          setQ(e.target.value);
+          setOpen(true);
+        }}
+        onFocus={() => q.trim() && setOpen(true)}
         placeholder={t("nav.searchPlaceholder")}
         aria-label="Search products"
+        autoComplete="off"
         className="w-full h-9 pl-9 pr-3 rounded-full bg-white/80 border border-brand-border text-sm text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-primary focus:bg-white"
       />
+
+      {open && q.trim() && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl border border-brand-border shadow-[0_16px_40px_-12px_rgba(31,44,65,0.22)] overflow-hidden z-10">
+          {suggestions.length > 0 ? (
+            <>
+              <ul className="max-h-80 overflow-y-auto py-1.5">
+                {suggestions.map((p) => (
+                  <li key={p._id}>
+                    <Link
+                      to={`/products/${p.slug}`}
+                      onClick={() => {
+                        setOpen(false);
+                        onSubmit?.();
+                      }}
+                      className="flex items-center gap-3 px-3.5 py-2 hover:bg-brand-bg transition-colors"
+                    >
+                      <span className="shrink-0 w-9 h-9 rounded-lg overflow-hidden bg-brand-sunk">
+                        {p.images[0] && (
+                          <img
+                            src={getResizedImageUrl(p.images[0], 72)}
+                            alt=""
+                            className="w-full h-full object-cover"
+                          />
+                        )}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-sm text-brand-navy truncate">{p.name}</span>
+                        {p.brand?.name && (
+                          <span className="block text-xs text-brand-muted truncate">{p.brand.name}</span>
+                        )}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={goToResults}
+                className="w-full text-left px-3.5 py-2.5 text-xs font-semibold text-brand-primary border-t border-brand-border hover:bg-brand-bg transition-colors"
+              >
+                View all results for "{q.trim()}"
+              </button>
+            </>
+          ) : (
+            <p className="px-3.5 py-3 text-sm text-brand-muted">No products found for "{q.trim()}"</p>
+          )}
+        </div>
+      )}
     </form>
   );
 }

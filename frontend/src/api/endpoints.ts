@@ -71,7 +71,7 @@ export interface City {
   slug: string;
 }
 
-export const getProducts = (params?: { category?: string; brand?: string; search?: string }) =>
+export const getProducts = (params?: { category?: string; brand?: string; search?: string; limit?: number }) =>
   api.get<Product[]>("/products", { params }).then((r) => r.data);
 
 export const getProductBySlug = (slug: string) =>
