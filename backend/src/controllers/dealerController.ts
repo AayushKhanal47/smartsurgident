@@ -117,7 +117,8 @@ export const getDealers = asyncHandler(async (_req: Request, res: Response) => {
   const dealers = await Dealer.find()
     .populate("city", "name")
     .populate("brandsCarried", "name slug logoUrl")
-    .select("-password");
+    .select("-password")
+    .lean();
   res.json(dealers);
 });
 
@@ -130,7 +131,8 @@ export const getPublicDealers = asyncHandler(async (req: Request, res: Response)
   const dealers = await Dealer.find(filter)
     .populate("city", "name")
     .populate("brandsCarried", "name slug logoUrl")
-    .select("-password -email -__v");
+    .select("-password -email -__v")
+    .lean();
   res.json(dealers);
 });
 
@@ -138,7 +140,8 @@ export const getPublicDealerBySlug = asyncHandler(async (req: Request, res: Resp
   const dealer = await Dealer.findOne({ slug: req.params.slug, isActive: true })
     .populate("city", "name")
     .populate("brandsCarried", "name slug logoUrl")
-    .select("-password -email -__v");
+    .select("-password -email -__v")
+    .lean();
 
   if (!dealer) {
     res.status(404);

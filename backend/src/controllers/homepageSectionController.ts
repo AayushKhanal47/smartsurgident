@@ -7,13 +7,13 @@ const HOMEPAGE_SECTION_FIELDS = ["type", "title", "subtitle", "config", "order",
 
 // GET /api/homepage-sections — public, ordered, visible-only
 export const getHomepageSections = asyncHandler(async (_req: Request, res: Response) => {
-  const sections = await HomepageSection.find({ isVisible: true }).sort({ order: 1 });
+  const sections = await HomepageSection.find({ isVisible: true }).sort({ order: 1 }).lean();
   res.json(sections);
 });
 
 // GET /api/homepage-sections/all  (admin only — includes hidden sections for editing)
 export const getAllHomepageSections = asyncHandler(async (_req: Request, res: Response) => {
-  const sections = await HomepageSection.find().sort({ order: 1 });
+  const sections = await HomepageSection.find().sort({ order: 1 }).lean();
   res.json(sections);
 });
 

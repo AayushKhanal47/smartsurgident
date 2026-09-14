@@ -21,19 +21,19 @@ export const getCampaigns = asyncHandler(async (req: Request, res: Response) => 
   };
   if (typeof placement === "string" && placement) filter.placement = placement;
 
-  const campaigns = await Campaign.find(filter).populate("products");
+  const campaigns = await Campaign.find(filter).populate("products").lean();
   res.json(campaigns);
 });
 
 export const getAllCampaignsAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const campaigns = await Campaign.find().sort({ createdAt: -1 }).populate("products");
+  const campaigns = await Campaign.find().sort({ createdAt: -1 }).populate("products").lean();
   res.json(campaigns);
 });
 
 export const getCampaignBySlug = asyncHandler(async (req: Request, res: Response) => {
-  const campaign = await Campaign.findOne({ slug: req.params.slug, isActive: true }).populate(
-    "products"
-  );
+  const campaign = await Campaign.findOne({ slug: req.params.slug, isActive: true })
+    .populate("products")
+    .lean();
   if (!campaign) {
     res.status(404);
     throw new Error("Campaign not found");

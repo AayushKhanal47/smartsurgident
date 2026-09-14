@@ -3,12 +3,12 @@ import asyncHandler from "express-async-handler";
 import JobOpening from "../models/JobOpening";
 
 export const getJobOpenings = asyncHandler(async (_req: Request, res: Response) => {
-  const openings = await JobOpening.find({ isActive: true }).sort({ createdAt: -1 });
+  const openings = await JobOpening.find({ isActive: true }).sort({ createdAt: -1 }).lean();
   res.json(openings);
 });
 
 export const getAllJobOpeningsAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const openings = await JobOpening.find().sort({ createdAt: -1 });
+  const openings = await JobOpening.find().sort({ createdAt: -1 }).lean();
   res.json(openings);
 });
 

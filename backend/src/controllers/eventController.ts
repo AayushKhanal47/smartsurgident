@@ -21,12 +21,12 @@ const generateUniqueSlug = async (value: string, excludeId?: string) => {
 };
 
 export const getEvents = asyncHandler(async (_req: Request, res: Response) => {
-  const events = await Event.find({ isPublished: true }).sort({ date: 1 });
+  const events = await Event.find({ isPublished: true }).sort({ date: 1 }).lean();
   res.json(events);
 });
 
 export const getAllEventsAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const events = await Event.find().sort({ date: 1 });
+  const events = await Event.find().sort({ date: 1 }).lean();
   res.json(events);
 });
 

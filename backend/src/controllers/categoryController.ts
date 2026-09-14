@@ -6,12 +6,12 @@ import { pick } from "../utils/pick";
 const CATEGORY_FIELDS = ["name", "slug", "description", "image", "isActive"] as const;
 
 export const getCategories = asyncHandler(async (_req: Request, res: Response) => {
-  const categories = await Category.find({ isActive: true }).sort({ name: 1 });
+  const categories = await Category.find({ isActive: true }).sort({ name: 1 }).lean();
   res.json(categories);
 });
 
 export const getCategoryBySlug = asyncHandler(async (req: Request, res: Response) => {
-  const category = await Category.findOne({ slug: req.params.slug, isActive: true });
+  const category = await Category.findOne({ slug: req.params.slug, isActive: true }).lean();
   if (!category) {
     res.status(404);
     throw new Error("Category not found");

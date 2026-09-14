@@ -58,14 +58,16 @@ export const getResources = asyncHandler(async (req: Request, res: Response) => 
 
   const resources = await Resource.find(filter)
     .sort({ publishedAt: -1, createdAt: -1 })
-    .populate("linkedBrands", "name slug");
+    .populate("linkedBrands", "name slug")
+    .lean();
   res.json(resources);
 });
 
 export const getAllResourcesAdmin = asyncHandler(async (_req: Request, res: Response) => {
   const resources = await Resource.find()
     .sort({ createdAt: -1 })
-    .populate("linkedBrands", "name slug");
+    .populate("linkedBrands", "name slug")
+    .lean();
   res.json(resources);
 });
 
@@ -76,7 +78,8 @@ export const getResourceBySlug = asyncHandler(async (req: Request, res: Response
     fileUrl: { $exists: true, $ne: "" },
   })
     .populate("linkedProducts", "name slug")
-    .populate("linkedBrands", "name slug");
+    .populate("linkedBrands", "name slug")
+    .lean();
 
   if (!resource) {
     res.status(404);

@@ -9,6 +9,12 @@ const PRODUCT_FIELDS = [
   "isFeatured", "isNewArrival", "isBestSeller", "badges",
 ] as const;
 
+// .lean() on this and every other read-only public query below: these
+// responses are never mutated after the query returns, so there's no
+// reason to pay for hydrating full Mongoose documents (change tracking,
+// getters/virtuals — this app defines none) just to immediately
+// JSON-serialize them (perf audit, P2 — free, correct practice; not
+// measurable at the current catalogue size, but it's the right default).
 export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   const { category, brand, search } = req.query;
   const filter: Record<string, unknown> = { isActive: true };
@@ -17,14 +23,15 @@ export const getProducts = asyncHandler(async (req: Request, res: Response) => {
   if (typeof brand === "string" && brand) filter.brand = brand;
   if (search) filter.$text = { $search: String(search) };
 
-  const products = await Product.find(filter).populate("brand", "name slug logoUrl");
+  const products = await Product.find(filter).populate("brand", "name slug logoUrl").lean();
   res.json(products);
 });
 
 export const getProductBySlug = asyncHandler(async (req: Request, res: Response) => {
   const product = await Product.findOne({ slug: req.params.slug, isActive: true })
     .populate("brand", "name slug logoUrl description")
-    .populate("catalogResource", "title slug fileUrl coverImage");
+    .populate("catalogResource", "title slug fileUrl coverImage")
+    .lean();
 
   if (!product) {
     res.status(404);

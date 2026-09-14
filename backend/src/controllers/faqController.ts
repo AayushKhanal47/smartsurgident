@@ -3,12 +3,12 @@ import asyncHandler from "express-async-handler";
 import FaqItem from "../models/FaqItem";
 
 export const getFaqItems = asyncHandler(async (_req: Request, res: Response) => {
-  const items = await FaqItem.find({ isPublished: true }).sort({ order: 1, createdAt: 1 });
+  const items = await FaqItem.find({ isPublished: true }).sort({ order: 1, createdAt: 1 }).lean();
   res.json(items);
 });
 
 export const getAllFaqItemsAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const items = await FaqItem.find().sort({ order: 1, createdAt: 1 });
+  const items = await FaqItem.find().sort({ order: 1, createdAt: 1 }).lean();
   res.json(items);
 });
 

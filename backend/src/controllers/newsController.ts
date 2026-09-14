@@ -21,12 +21,12 @@ const generateUniqueSlug = async (value: string, excludeId?: string) => {
 };
 
 export const getNewsPosts = asyncHandler(async (_req: Request, res: Response) => {
-  const posts = await NewsPost.find({ isPublished: true }).sort({ date: -1 });
+  const posts = await NewsPost.find({ isPublished: true }).sort({ date: -1 }).lean();
   res.json(posts);
 });
 
 export const getAllNewsPostsAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const posts = await NewsPost.find().sort({ date: -1 });
+  const posts = await NewsPost.find().sort({ date: -1 }).lean();
   res.json(posts);
 });
 

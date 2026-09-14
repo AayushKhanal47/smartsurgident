@@ -6,7 +6,7 @@ import { pick } from "../utils/pick";
 const BRAND_FIELDS = ["name", "slug", "logoUrl", "description", "heroImage", "story", "foundedInfo"] as const;
 
 export const getBrands = asyncHandler(async (_req: Request, res: Response) => {
-  const brands = await Brand.find();
+  const brands = await Brand.find().lean();
   res.json(brands);
 });
 

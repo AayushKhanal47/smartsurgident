@@ -27,7 +27,7 @@ const KNOWN_SLUGS = Object.keys(DEFAULTS);
 
 export const getPage = asyncHandler(async (req: Request, res: Response) => {
   const slug = String(req.params.slug).toLowerCase();
-  const page = await Page.findOne({ slug });
+  const page = await Page.findOne({ slug }).lean();
   if (page) {
     res.json(page);
     return;
@@ -41,7 +41,7 @@ export const getPage = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const getAllPagesAdmin = asyncHandler(async (_req: Request, res: Response) => {
-  const existing = await Page.find();
+  const existing = await Page.find().lean();
   const bySlug = new Map(existing.map((p) => [p.slug, p]));
   const merged = KNOWN_SLUGS.map((slug) => bySlug.get(slug) ?? { slug, ...DEFAULTS[slug] });
   res.json(merged);
