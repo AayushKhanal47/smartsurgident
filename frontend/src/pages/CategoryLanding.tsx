@@ -7,6 +7,8 @@ import ProductCard from "../components/ProductCard";
 import Reveal from "../components/ui/Reveal";
 import PagePlaceholder from "../components/PagePlaceholder";
 import { usePageMeta } from "../hooks/usePageMeta";
+import { useStructuredData } from "../hooks/useStructuredData";
+import { breadcrumbSchema, itemListSchema, SITE_URL } from "../utils/structuredData";
 
 export default function CategoryLanding() {
   const { slug } = useParams<{ slug: string }>();
@@ -16,8 +18,24 @@ export default function CategoryLanding() {
   const [loaded, setLoaded] = useState(false);
 
   usePageMeta(
-    category ? category.name : "",
+    category ? `${category.name} in Nepal | Smart Surgident` : "",
     category?.description || (category ? `${category.name} dental and surgical equipment, distributed across Nepal by Smart Surgident.` : undefined)
+  );
+  useStructuredData(
+    "ld-breadcrumb",
+    category
+      ? breadcrumbSchema([
+          { label: "Home", to: "/" },
+          { label: "Products", to: "/products" },
+          { label: category.name },
+        ])
+      : null
+  );
+  useStructuredData(
+    "ld-itemlist",
+    category && products.length
+      ? itemListSchema(products.map((p) => ({ name: p.name, url: `${SITE_URL}/products/${p.slug}` })))
+      : null
   );
 
   useEffect(() => {

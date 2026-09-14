@@ -8,6 +8,9 @@ import Reveal from "../components/ui/Reveal";
 import { getPdfThumbnail } from "../utils/pdfThumbnail";
 import { getTrimmedLogoUrl } from "../utils/brandLogo";
 import { usePageMeta } from "../hooks/usePageMeta";
+import { useStructuredData } from "../hooks/useStructuredData";
+import { breadcrumbSchema } from "../utils/structuredData";
+import { trimToWordBoundary } from "../utils/text";
 import { HiOutlineDocumentText, HiOutlineExternalLink } from "react-icons/hi";
 
 export default function BrandDetail() {
@@ -17,8 +20,18 @@ export default function BrandDetail() {
   const [documents, setDocuments] = useState<Resource[]>([]);
 
   usePageMeta(
-    brand ? brand.name : "",
-    brand ? `${brand.name} dental and surgical equipment, distributed across Nepal by Smart Surgident.` : undefined
+    brand ? `${brand.name} Dental Equipment in Nepal | Smart Surgident` : "",
+    brand
+      ? trimToWordBoundary(brand.description, 155) ||
+          `${brand.name} dental and surgical equipment, distributed across Nepal by Smart Surgident.`
+      : undefined,
+    brand?.logoUrl
+  );
+  useStructuredData(
+    "ld-breadcrumb",
+    brand
+      ? breadcrumbSchema([{ label: "Home", to: "/" }, { label: "Brands", to: "/brands" }, { label: brand.name }])
+      : null
   );
 
   useEffect(() => {

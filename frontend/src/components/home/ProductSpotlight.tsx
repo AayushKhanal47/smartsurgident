@@ -5,6 +5,7 @@ import type { Product } from "../../api/endpoints";
 import { spotlight } from "../../data/homepage";
 import { ButtonLink } from "../ui/Button";
 import { useTranslation } from "../../i18n/useTranslation";
+import { getResizedImageUrl } from "../../utils/productImage";
 
 // PRODUCT SPOTLIGHT — one real product shown large with a thumbnail strip of
 // every image on the record. Renders nothing until `spotlight.productSlug`
@@ -39,7 +40,7 @@ export default function ProductSpotlight() {
             <AnimatePresence mode="wait">
               <motion.img
                 key={activeImage}
-                src={activeImage}
+                src={getResizedImageUrl(activeImage, 900)}
                 alt={product.name}
                 loading="lazy"
                 decoding="async"
@@ -65,7 +66,7 @@ export default function ProductSpotlight() {
                     i === active ? "border-brand-primary" : "border-transparent hover:border-brand-border"
                   }`}
                 >
-                  <img src={img} alt="" loading="lazy" className="w-full h-full object-cover" />
+                  <img src={getResizedImageUrl(img, 160)} alt="" loading="lazy" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

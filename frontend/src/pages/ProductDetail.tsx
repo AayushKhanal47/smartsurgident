@@ -7,7 +7,11 @@ import { useCart } from "../context/CartContext";
 import { Button, ButtonLink } from "../components/ui/Button";
 import OrderWhatsAppButton from "../components/OrderWhatsAppButton";
 import { usePageMeta } from "../hooks/usePageMeta";
+import { useStructuredData } from "../hooks/useStructuredData";
+import { breadcrumbSchema, productSchema } from "../utils/structuredData";
 import { getPdfThumbnail } from "../utils/pdfThumbnail";
+import { trimToWordBoundary } from "../utils/text";
+import { getResizedImageUrl } from "../utils/productImage";
 
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -21,10 +25,28 @@ export default function ProductDetail() {
     setActive(0);
   }, [slug]);
 
-  usePageMeta(
-    product ? product.name : "",
-    product ? product.description?.slice(0, 160) || `${product.name} from ${product.brand?.name ?? "Smart Surgident"}, distributed across Nepal.` : undefined
+  const productTitle = product
+    ? product.brand?.name
+      ? `${product.name} | ${product.brand.name} Dental Equipment Nepal | Smart Surgident`
+      : `${product.name} | Smart Surgident`
+    : "";
+  const productDescription = product
+    ? trimToWordBoundary(product.description, 155) ||
+      `${product.name} from ${product.brand?.name ?? "Smart Surgident"}, distributed across Nepal.`
+    : undefined;
+
+  usePageMeta(productTitle, productDescription, product?.images?.[0]);
+  useStructuredData(
+    "ld-breadcrumb",
+    product
+      ? breadcrumbSchema([
+          { label: "Home", to: "/" },
+          { label: "Products", to: "/products" },
+          { label: product.name },
+        ])
+      : null
   );
+  useStructuredData("ld-product", product ? productSchema(product) : null);
 
   if (!product) {
     return <p className="max-w-[1240px] mx-auto px-5 sm:px-8 py-16 text-sm text-brand-muted">Loading…</p>;
@@ -50,7 +72,7 @@ export default function ProductDetail() {
               {current ? (
                 <motion.img
                   key={current}
-                  src={current}
+                  src={getResizedImageUrl(current, 900)}
                   alt={product.name}
                   initial={reduceMotion ? undefined : { opacity: 0 }}
                   animate={reduceMotion ? undefined : { opacity: 1 }}
@@ -78,7 +100,7 @@ export default function ProductDetail() {
                     i === active ? "border-brand-primary" : "border-transparent hover:border-brand-border"
                   }`}
                 >
-                  <img src={img} alt="" loading="lazy" className="w-full h-full object-cover" />
+                  <img src={getResizedImageUrl(img, 160)} alt={`${product.name} — view ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

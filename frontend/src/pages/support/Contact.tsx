@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import { Button } from "../../components/ui/Button";
@@ -6,8 +6,8 @@ import { HiOutlinePhone, HiOutlineMail, HiOutlineLocationMarker } from "react-ic
 import { FaWhatsapp } from "react-icons/fa";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../../config/whatsapp";
 import { usePageMeta } from "../../hooks/usePageMeta";
-import { submitContactMessage, getSiteSettings } from "../../api/endpoints";
-import type { SiteSettings } from "../../api/endpoints";
+import { submitContactMessage } from "../../api/endpoints";
+import { useSiteSettings } from "../../hooks/useSiteSettings";
 import Turnstile from "../../components/ui/Turnstile";
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined;
@@ -23,11 +23,7 @@ export default function SupportContact() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-
-  useEffect(() => {
-    getSiteSettings().then(setSettings).catch(() => setSettings(null));
-  }, []);
+  const settings = useSiteSettings();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

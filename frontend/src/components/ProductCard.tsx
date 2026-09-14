@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { HiArrowRight } from "react-icons/hi";
 import type { Product } from "../api/endpoints";
+import { getResizedImageUrl } from "../utils/productImage";
 
 // Premium, minimal product card. The product image is the focus; one badge
 // max, no icon clutter, price or "Contact for price".
@@ -26,7 +27,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
         {product.images[0] ? (
           <img
-            src={product.images[0]}
+            src={getResizedImageUrl(product.images[0], 400)}
             alt={product.name}
             loading="lazy"
             decoding="async"

@@ -9,6 +9,8 @@ import Breadcrumbs from "../../components/ui/Breadcrumbs";
 import Reveal from "../../components/ui/Reveal";
 import FitImage from "../../components/ui/FitImage";
 import { usePageMeta } from "../../hooks/usePageMeta";
+import { useStructuredData } from "../../hooks/useStructuredData";
+import { breadcrumbSchema, dealerLocalBusinessSchema } from "../../utils/structuredData";
 
 export default function DealerDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -19,6 +21,13 @@ export default function DealerDetail() {
     dealer ? `${dealer.name} · Dealer in ${dealer.city?.name ?? "Nepal"}` : "",
     dealer ? `Genuine dental and surgical equipment from ${dealer.name}, Smart Surgident's authorized dealer in ${dealer.city?.name ?? "Nepal"}.` : undefined
   );
+  useStructuredData(
+    "ld-breadcrumb",
+    dealer
+      ? breadcrumbSchema([{ label: "Home", to: "/" }, { label: "Dealer Network", to: "/dealers" }, { label: dealer.name }])
+      : null
+  );
+  useStructuredData("ld-localbusiness", dealer ? dealerLocalBusinessSchema(dealer) : null);
 
   useEffect(() => {
     if (!slug) return;

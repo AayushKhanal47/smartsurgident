@@ -11,6 +11,7 @@ import type { Product, Brand, Resource } from "../../api/endpoints";
 import { Button } from "../../components/ui/Button";
 import MultiImageUploader from "./MultiImageUploader";
 import { PageHeader, Card, Field, Textarea, Select, Toggle, Badge, EmptyState, DangerButton } from "./ui";
+import { getResizedImageUrl } from "../../utils/productImage";
 
 interface FormState {
   name: string;
@@ -122,7 +123,7 @@ export default function AdminProducts() {
           {products.map((p) => (
             <div key={p._id} className="p-4 flex items-center gap-4">
               {p.images?.[0] ? (
-                <img src={p.images[0]} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
+                <img src={getResizedImageUrl(p.images[0], 96)} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0" />
               ) : (
                 <div className="w-12 h-12 rounded-lg bg-brand-sunk shrink-0" />
               )}

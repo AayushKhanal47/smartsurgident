@@ -5,6 +5,7 @@ export interface Brand {
   name: string;
   slug: string;
   logoUrl?: string;
+  description?: string;
 }
 
 export interface Product {
@@ -22,6 +23,7 @@ export interface Product {
   price?: number | null;
   clinicPrice?: number | null;
   stock: number;
+  sku?: string;
   isFeatured?: boolean;
   isNewArrival?: boolean;
   isBestSeller?: boolean;

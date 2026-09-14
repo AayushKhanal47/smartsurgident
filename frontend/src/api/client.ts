@@ -29,7 +29,19 @@ function getCsrfToken(): Promise<string | undefined> {
   return csrfTokenPromise;
 }
 
+// GET/HEAD/OPTIONS never carry the header — the backend's verifyCsrfToken()
+// already treats those as safe methods and never checks it — but every
+// request used to await the same csrf-token fetch regardless of method,
+// so a page's very first reads couldn't even start until that one round
+// trip finished (perf audit, P0: ~0.7-1s added to every page's initial
+// data load for zero security benefit, since reads were never protected
+// by it anyway).
+const SAFE_METHODS = new Set(["get", "head", "options"]);
+
 api.interceptors.request.use(async (config) => {
+  if (config.method && SAFE_METHODS.has(config.method)) {
+    return config;
+  }
   const csrfToken = await getCsrfToken();
   if (csrfToken) {
     config.headers = config.headers ?? {};

@@ -1,12 +1,10 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HiOutlineMail, HiOutlineLocationMarker } from "react-icons/hi";
 import Logo from "./ui/Logo";
 import { useTranslation } from "../i18n/useTranslation";
 import type { TranslationKey } from "../i18n/translations";
 import { ADMIN_WHATSAPP_NUMBER, buildWhatsAppLink } from "../config/whatsapp";
-import { getSiteSettings } from "../api/endpoints";
-import type { SiteSettings } from "../api/endpoints";
+import { useSiteSettings } from "../hooks/useSiteSettings";
 
 const COLUMNS: { headingKey: TranslationKey; links: { labelKey: TranslationKey; to: string }[] }[] = [
   {
@@ -48,11 +46,7 @@ const COLUMNS: { headingKey: TranslationKey; links: { labelKey: TranslationKey; 
 
 export default function Footer() {
   const { t } = useTranslation();
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-
-  useEffect(() => {
-    getSiteSettings().then(setSettings).catch(() => setSettings(null));
-  }, []);
+  const settings = useSiteSettings();
 
   return (
     <footer className="bg-brand-footer text-white/75">
