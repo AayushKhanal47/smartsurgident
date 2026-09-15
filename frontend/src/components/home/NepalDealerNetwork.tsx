@@ -154,7 +154,7 @@ export default function NepalDealerNetwork() {
             {t("dealerNetwork.description")}
           </p>
           {dealers.length > 0 ? (
-            <ul className="mt-7 flex flex-col gap-4 max-h-80 overflow-y-auto pr-2">
+            <ul className="mt-7 flex flex-col gap-4">
               {dealers.map((d) => (
                 <li key={d._id}>
                   <Link to={`/dealers/${d.slug}`} className="group block">
