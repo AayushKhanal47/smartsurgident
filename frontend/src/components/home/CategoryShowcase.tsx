@@ -87,7 +87,7 @@ export default function CategoryShowcase() {
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/85 via-brand-navy/20 to-transparent" />
                 <div className="relative p-6 md:p-7">
-                  <span className="font-display text-xl md:text-[22px] font-semibold text-white leading-snug">
+                  <span className="block font-display text-xl md:text-[22px] font-semibold text-white leading-snug">
                     {tile.name}
                   </span>
                   {tile.hint && (
